@@ -221,7 +221,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Alert variant="danger">
                 {validationResult.missingFields.length >= 2 && (
                   <div className="fw-bold mb-2">
-                    WARNING: This document is likely NOT a HIPAA
+                    WARNING: This document is likely NOT a medical history
                     form.
                   </div>
                 )}
