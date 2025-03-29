@@ -32,7 +32,7 @@ function NavBar() {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
-            Medical Documents Portal
+            MedVault Medical Documents Portal
           </a>
           
           <div className="d-flex ms-auto">
