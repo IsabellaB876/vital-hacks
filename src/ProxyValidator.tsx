@@ -1,5 +1,3 @@
-// DocumentValidator.tsx
-
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { analyzeDocumentFromBuffer } from "./lib/textract";
@@ -173,7 +171,7 @@ const DocumentValidator: React.FC = () => {
           <ul>
             {missingFields.map((field, index) => (
               <li key={index} style={{ color: "#d9534f" }}>
-                {`${field} is missing or invalid`}
+                {`${field} is missing`}
               </li>
             ))}
           </ul>
