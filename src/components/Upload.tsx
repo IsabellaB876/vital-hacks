@@ -90,7 +90,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!file || !validationResult) return;
 
     // Call the onFileUpload callback with validation results
@@ -113,6 +113,17 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     formData.append("filename", "placeholder name");
     formData.append("date", "placeholder date");
     formData.append("description", "placeholder description");
+
+    await fetch("/api/uploadPDF", {
+      method: "POST",
+      body: formData,
+    })
+      .then((data) => {
+        console.log("File uploaded successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
   };
 
   // Validation logic from DocumentValidator
