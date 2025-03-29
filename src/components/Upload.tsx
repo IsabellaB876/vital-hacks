@@ -104,6 +104,15 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
 
     // Optionally close the dialog or show a success message
     // toggleDisplay();
+
+    const formData = new FormData();
+    const pdfFile = file;
+    formData.append("pdfFile", pdfFile);
+    formData.append("filetype", "placeholder type");
+    formData.append("username", "user-1");
+    formData.append("filename", "placeholder name");
+    formData.append("date", "placeholder date");
+    formData.append("description", "placeholder description");
   };
 
   // Validation logic from DocumentValidator
