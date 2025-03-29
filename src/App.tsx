@@ -96,12 +96,6 @@ const DocumentValidator: React.FC = () => {
     return false;
   };
 
-  // Placeholder date-checking logic
-  const checkForDate = (documentText: string): boolean => {
-    // Implement your date validation logic here.
-    return true;
-  };
-
   return (
     <div
       className="container"
@@ -122,7 +116,7 @@ const DocumentValidator: React.FC = () => {
           textAlign: "center",
         }}
       >
-        Tax Clearance Certificate Checker
+        Health Proxy Form Checker
       </h1>
 
       <div
@@ -186,16 +180,14 @@ const DocumentValidator: React.FC = () => {
                 borderRadius: "4px",
               }}
             >
-              ERROR: This document is likely NOT a tax clearance certificate
+              ERROR: This document is likely NOT a healthcare proxy form. Please try again.
             </div>
           )}
           <h2 style={{ fontSize: "1.4rem", color: "#d9534f" }}>Missing Fields:</h2>
           <ul>
             {missingFields.map((field, index) => (
               <li key={index} style={{ color: "#d9534f" }}>
-                {field === "Date must be within the last 6 months"
-                  ? "Date not provided or is not within the last 6 months"
-                  : `${field} is missing or invalid`}
+                {`${field} is missing or invalid`}
               </li>
             ))}
           </ul>
