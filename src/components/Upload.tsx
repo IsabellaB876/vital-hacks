@@ -149,7 +149,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             <Dropdown.Menu>
               <Dropdown.Item>Health Care Proxy</Dropdown.Item>
               <Dropdown.Item>Advanced Directive</Dropdown.Item>
-              <Dropdown.Item>Medical Power of Attorney</Dropdown.Item>
+              <Dropdown.Item>Medical History</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
