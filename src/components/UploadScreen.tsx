@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Alert, Spinner } from "react-bootstrap";
@@ -29,9 +29,13 @@ interface UploadScreenProps {
   ) => void;
 }
 
+type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
+
 function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [selectedDocType, setSelectedDocType] =
+    useState<DocumentType>("Health Care Proxy");
   const [validationResult, setValidationResult] = useState<{
     isValid: boolean;
     missingFields: string[];
@@ -65,8 +69,8 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
         fileBuffer
       )) as TextractResult;
 
-      // Validate document
-      const missingFields = checkForKeywords(textractResult);
+      // Validate document based on selected document type
+      const missingFields = checkForKeywords(textractResult, selectedDocType);
       const isValid = missingFields.length === 0;
 
       // Update validation result state
@@ -102,17 +106,15 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       onFileUpload(file, validationResult.isValid, validationMessage);
     }
 
-    // Optionally close the dialog or show a success message
-    // toggleDisplay();
-
+    // Construct form data for API submission
     const formData = new FormData();
     const pdfFile = file;
     formData.append("pdfFile", pdfFile);
     formData.append("filetype", "HIPAA");
     formData.append("username", "user-1");
-    formData.append("filename", "placeholder name");
-    formData.append("date", "placeholder date");
-    formData.append("description", "placeholder description");
+    formData.append("filename", file.name);
+    formData.append("date", new Date().toISOString());
+    formData.append("description", `${selectedDocType} document`);
 
     await fetch("http://localhost:3000/api/uploadPDF", {
       method: "POST",
@@ -124,10 +126,25 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       .catch((error) => {
         console.error("Error uploading file:", error);
       });
+    console.log("File uploaded successfully");
   };
 
-  // Validation logic from DocumentValidator
-  const checkForKeywords = (textractResult: TextractResult): string[] => {
+  // Handle document type selection
+  const handleDocTypeSelect = (eventKey: string | null) => {
+    if (eventKey) {
+      setSelectedDocType(eventKey as DocumentType);
+      // Re-validate if a file is already selected
+      if (file) {
+        validateDocument(file);
+      }
+    }
+  };
+
+  // Validation logic from DocumentValidator - updated to check based on document type
+  const checkForKeywords = (
+    textractResult: TextractResult,
+    docType: DocumentType
+  ): string[] => {
     const missing: string[] = [];
     const textBlocks = textractResult.Blocks.filter(
       (block) => block.BlockType === "LINE"
@@ -137,17 +154,41 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       .join(" ")
       .toLowerCase();
 
-    // Define the keywords to check for
-    const keywords = [
-      {
-        keyword: "Massachusetts Health Care Proxy",
-        label: "Massachusetts Health Care Proxy",
-      },
-      { keyword: "Health Care Agent", label: "Health Care Agent" },
-    ];
+    // Define the keywords to check for based on document type
+    interface Keyword {
+      keyword: string;
+      label: string;
+    }
+
+    let keywords: Keyword[] = [];
+
+    if (docType === "Health Care Proxy") {
+      keywords = [
+        {
+          keyword: "massachusetts health care proxy",
+          label: "Massachusetts Health Care Proxy",
+        },
+        { keyword: "health care agent", label: "Health Care Agent" },
+      ];
+    } else if (docType === "HIPAA") {
+      keywords = [
+        { keyword: "hipaa release form", label: "HIPAA Release Form" },
+        { keyword: "health information", label: "Health Information" },
+        { keyword: "reason for disclosure", label: "Reason for Disclosure" },
+      ];
+    } else if (docType === "Medical History") {
+      keywords = [
+        { keyword: "health history form", label: "Health History Form" },
+        {
+          keyword: "health insurance information",
+          label: "Health Insurance Information",
+        },
+        { keyword: "medical history", label: "Medical History" },
+      ];
+    }
 
     keywords.forEach(({ keyword, label }) => {
-      if (!documentText.includes(keyword.toLowerCase())) {
+      if (!documentText.includes(keyword)) {
         missing.push(label);
       }
     });
@@ -158,18 +199,22 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   return (
     <Toast onClose={toggleDisplay} show={true}>
       <Toast.Header>
-        <strong className="me-auto">Upload File</strong>
+        <strong className="me-auto">Upload {selectedDocType}</strong>
       </Toast.Header>
       <Toast.Body>
         <div className="d-flex justify-content-between mb-3">
-          <Dropdown>
+          <Dropdown onSelect={handleDocTypeSelect}>
             <Dropdown.Toggle id="dropdown-basic">
-              Requested Files
+              {selectedDocType}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item>Health Care Proxy</Dropdown.Item>
-              <Dropdown.Item>Advanced Directive</Dropdown.Item>
-              <Dropdown.Item>Medical History</Dropdown.Item>
+              <Dropdown.Item eventKey="Health Care Proxy">
+                Health Care Proxy
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="HIPAA">HIPAA</Dropdown.Item>
+              <Dropdown.Item eventKey="Medical History">
+                Medical History
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
@@ -240,7 +285,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Alert variant="danger">
                 {validationResult.missingFields.length >= 2 && (
                   <div className="fw-bold mb-2">
-                    WARNING: This document is likely NOT a healthcare proxy
+                    WARNING: This document is likely NOT a {selectedDocType}{" "}
                     form.
                   </div>
                 )}
