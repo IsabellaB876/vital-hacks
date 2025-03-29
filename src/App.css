@@ -40,3 +40,43 @@
 .read-the-docs {
   color: #888;
 }
+
+.carousel {
+  width: 100%;
+  position: relative; /* Ensure positioning context for arrows and pagination */
+  margin: 0 auto; /* Centering carousel */
+  overflow: visible; /* Allow arrows/pagination to stay visible */
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: -40px;  /* Adjust this value to move the indicators outside */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;    /* Ensure indicators are on top of the carousel */
+  margin: 0;      /* Remove extra margin */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;    /* Ensure the arrows are above the carousel items */
+  width: 40px;    /* Make the arrows appropriately sized */
+  height: 40px;   /* Make the arrows appropriately sized */
+  border-radius: 50%;
+}
+
+.carousel-control-prev {
+  left: -45px;    /* Adjust this value to move the previous arrow outside */
+}
+
+.carousel-control-next {
+  right: -45px;   /* Adjust this value to move the next arrow outside */
+}
+
+.carousel-inner {
+  width: 100%;
+  overflow: hidden;  /* Prevent overflow outside the container */
+}

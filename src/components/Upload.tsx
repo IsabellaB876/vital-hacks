@@ -2,9 +2,9 @@ import Toast from "react-bootstrap/Toast";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Button } from "react-bootstrap";
 
-function UploadScreen() {
+function UploadScreen({ toggleDisplay }: {toggleDisplay : any}) {
   return (
-    <Toast style={{ width: "2500vw", padding: "20px" }}>
+    <Toast style={{ width: "100%", padding: "20px" }}>
       <Toast.Header>
         <strong className="me-auto">Upload File</strong>
       </Toast.Header>
