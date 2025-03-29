@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { analyzeDocumentFromBuffer } from "../lib/textract";
+import { analyzeDocumentFromBuffer } from "./lib/textract";
 
 // Example interface if you have a structured return type:
 interface TextractBlock {
