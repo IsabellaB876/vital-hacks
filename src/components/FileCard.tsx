@@ -1,0 +1,20 @@
+import { Button, Card } from "react-bootstrap";
+
+function FileCard() {
+  return (
+    <Card style={{ width: "18rem" }}>
+      <Card.Img variant="top" src="" alt="Uploaded file" />
+      <Card.Body>
+        <Card.Title>Card Title</Card.Title>
+        <Card.Text>
+          Doctor's Name <br />
+          Due Date <br />
+          The files description. lorem ipsum dolor.
+        </Card.Text>
+        <Button variant="primary">View File</Button>
+      </Card.Body>
+    </Card>
+  );
+}
+
+export default FileCard;

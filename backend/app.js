@@ -8,7 +8,7 @@ require('dotenv').config();//this activates the ability to parse the .env file
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
-
+ 
 
 const {MongoClient, ServerApiVersion} = require('mongodb');
 
@@ -18,7 +18,7 @@ const DB_PASSWORD = process.env.db_password;
 
 
 //put the uri here
-const uri = "sus sus among sus"
+const uri = "mongodb+srv://" + DB_USERNAME + ":" + DB_PASSWORD + "@filecluster.zuhvtjf.mongodb.net/?retryWrites=true&w=majority&appName=filecluster"
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -28,7 +28,11 @@ const client = new MongoClient(uri, {
     }
 });
 
-const database = client.db('PUT NAME OF DATABASE HERE');
+
+//we will store all the user data in this database
+const database = client.db('user-storage');
+
+//we will store one collection for each user
 const collection = database.collection('PUT NAME OF COLLECTION HERE');
 
 
@@ -49,7 +53,7 @@ run().catch(console.dir);
 //this section here handles all sorts of crashes and server terminations so that Mongodb shuts off gracefully.
 
 async function gracefulShutdown(){
-    await client,close();
+    await client.close();
     console.log("We are gracefully shutting down the server and the mongodb connection");
 }
 
