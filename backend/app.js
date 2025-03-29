@@ -18,7 +18,7 @@ const DB_PASSWORD = process.env.db_password;
 
 
 //put the uri here
-const uri = "sus sus among sus"
+const uri = "mongodb+srv://" + DB_USERNAME + ":" + DB_PASSWORD + "@filecluster.zuhvtjf.mongodb.net/?retryWrites=true&w=majority&appName=filecluster"
 
 const client = new MongoClient(uri, {
     serverApi: {
