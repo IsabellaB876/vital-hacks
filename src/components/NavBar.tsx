@@ -1,32 +1,14 @@
-import React, { useState } from "react";
-import { Button, Navbar } from "react-bootstrap";
+import { Container, Button, Image } from "react-bootstrap";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import logo from "../assets/react.svg";
 import UploadScreen from "./UploadScreen";
+import { useState } from "react";
 
 function NavBar() {
-  const [showUploadScreen, setShowUploadScreen] = useState(false);
+  const [display, setDisplay] = useState<boolean>(false);
 
-  // Toggle upload screen visibility
-  const toggleUploadScreen = () => {
-    setShowUploadScreen(!showUploadScreen);
-  };
-
-  // Handle upload completion
-  const handleFileUpload = (
-    file: File,
-    isValid: boolean,
-    validationMessage?: string
-  ) => {
-    console.log(`File ${file.name} uploaded. Valid: ${isValid}`);
-    if (validationMessage) {
-      console.log(`Validation message: ${validationMessage}`);
-    }
-
-    // Optional: Close the upload screen after successful upload
-    // if (isValid) {
-    //   setShowUploadScreen(false);
-    // }
-  };
-
+  const toggleDisplay = () => setDisplay(!display);
   return (
     <>
       <Navbar bg="light" data-bs-theme="light" fixed="top">
@@ -44,13 +26,7 @@ function NavBar() {
         </Container>
       </Navbar>
 
-      {/* Upload Screen */}
-      {showUploadScreen && (
-        <UploadScreen
-          toggleDisplay={toggleUploadScreen}
-          onFileUpload={handleFileUpload}
-        />
-      )}
+      {display && <UploadScreen toggleDisplay={toggleDisplay} />}
     </>
   );
 }
