@@ -18,7 +18,7 @@ interface TextractResult {
   Blocks: TextractBlock[];
 }
 
-const DocumentValidator: React.FC = () => {
+const ProxyValidator: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [documentAccepted, setDocumentAccepted] = useState(false);
@@ -181,4 +181,4 @@ const DocumentValidator: React.FC = () => {
   );
 };
 
-export default DocumentValidator;
+export default ProxyValidator;
