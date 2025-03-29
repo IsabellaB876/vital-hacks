@@ -22,7 +22,7 @@ interface TextractResult {
   Blocks: TextractBlock[];
 }
 
-// Document Validator Component (formerly ProxyValidator.tsx)
+// Document Validator Component
 const DocumentValidator: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [missingFields, setMissingFields] = useState<string[]>([]);
@@ -81,19 +81,7 @@ const DocumentValidator: React.FC = () => {
       }
     });
 
-    // Check for signature (placeholder logic)
-    const hasSignature = checkForSignature(textractResult.Blocks);
-    if (!hasSignature) {
-      missing.push("Signature");
-    }
-
     return missing;
-  };
-
-  // Placeholder signature-checking logic
-  const checkForSignature = (blocks: TextractBlock[]): boolean => {
-    // You would implement your actual signature detection here.
-    return false;
   };
 
   return (
