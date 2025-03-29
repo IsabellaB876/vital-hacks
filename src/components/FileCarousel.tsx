@@ -22,56 +22,37 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
       className="filecarousel"
     >
       <h3>{text}</h3>
-      {
-        <Carousel
-          activeIndex={index}
-          onSelect={handleSelect}
-          data-bs-theme="dark"
-          interval={null}
-          controls={true}
-          indicators={true}
-        >
-          <Carousel.Item>
-            <Stack direction="horizontal" gap={3}>
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-            </Stack>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Stack direction="horizontal" gap={3}>
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-            </Stack>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Stack direction="horizontal" gap={3}>
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-              <FileCard
-                hasFile={text === "Requested Documents" ? false : true}
-              />
-            </Stack>
-          </Carousel.Item>
-        </Carousel>
-      }
+      <Carousel
+        activeIndex={index}
+        onSelect={handleSelect}
+        data-bs-theme="dark"
+        interval={null}
+        controls={true}
+        indicators={true}
+      >
+        <Carousel.Item>
+          <Stack direction="horizontal" gap={3}>
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+          </Stack>
+        </Carousel.Item>
+        <Carousel.Item>
+          <Stack direction="horizontal" gap={3}>
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+          </Stack>
+        </Carousel.Item>
+        <Carousel.Item>
+          <Stack direction="horizontal" gap={3}>
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+          </Stack>
+        </Carousel.Item>
+      </Carousel>
+      {}
     </Stack>
   );
 }
