@@ -1,6 +1,11 @@
 import { Button, Card } from "react-bootstrap";
 
-function FileCard() {
+// Define the type of props
+interface FileCardProps {
+  hasFile: boolean;
+}
+
+function FileCard({ hasFile }: FileCardProps) {
   return (
     <Card style={{ width: "18rem" }}>
       <Card.Img variant="top" src="" alt="Uploaded file" />
@@ -11,7 +16,7 @@ function FileCard() {
           Due Date <br />
           The files description. lorem ipsum dolor.
         </Card.Text>
-        <Button variant="primary">View File</Button>
+        {hasFile ? <Button variant="primary">View File</Button> : <></>}
       </Card.Body>
     </Card>
   );
