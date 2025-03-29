@@ -1,6 +1,7 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { MdAccountCircle } from "react-icons/md";
 
 function NavBar() {
   return (
@@ -11,10 +12,9 @@ function NavBar() {
             <img src={""} alt="Logo" />
           </Navbar.Brand>
           <Nav className="justify-content-end">
-            <Nav.Link href="#values">Values</Nav.Link>
-            <Nav.Link href="#projects">Projects</Nav.Link>
-            <Nav.Link href="#tools">Tools</Nav.Link>
-            <Nav.Link href="#contact">Contact</Nav.Link>
+            <button className="me-4">Request</button>
+            <button className="me-4">Upload</button>
+            <MdAccountCircle size={50} />
           </Nav>
         </Container>
       </Navbar>
