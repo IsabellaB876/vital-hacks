@@ -1,32 +1,55 @@
-import { Container, Button, Image } from "react-bootstrap";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import logo from "../assets/react.svg";
-import UploadScreen from "./Upload";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import UploadScreen from "./UploadScreen";
 
 function NavBar() {
-  const [display, setDisplay] = useState<boolean>(false);
+  const [showUploadScreen, setShowUploadScreen] = useState(false);
 
-  const toggleDisplay = () => setDisplay(!display);
+  // Toggle upload screen visibility
+  const toggleUploadScreen = () => {
+    setShowUploadScreen(!showUploadScreen);
+  };
+
+  // Handle upload completion
+  const handleFileUpload = (
+    file: File,
+    isValid: boolean,
+    validationMessage?: string
+  ) => {
+    console.log(`File ${file.name} uploaded. Valid: ${isValid}`);
+    if (validationMessage) {
+      console.log(`Validation message: ${validationMessage}`);
+    }
+    
+    // Optional: Close the upload screen after successful upload
+    // if (isValid) {
+    //   setShowUploadScreen(false);
+    // }
+  };
+
   return (
     <>
-      <Navbar bg="light" data-bs-theme="light" fixed="top">
-        <Container>
-          <Navbar.Brand href="/">
-            <img src={""} alt="Logo" />
-          </Navbar.Brand>
-          <Nav className="justify-content-end">
-          <Button onClick={toggleDisplay} className="mb-2">
-         Upload
-        </Button>
-            <Nav.Link href="#contact">Profile Name</Nav.Link>
-            <Image src={logo} alt="Profile Photo" roundedCircle />
-          </Nav>
-        </Container>
-      </Navbar>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">
+            Medical Documents Portal
+          </a>
+          
+          <div className="d-flex ms-auto">
+            <Button onClick={toggleUploadScreen} className="btn btn-primary">
+              Upload Document
+            </Button>
+          </div>
+        </div>
+      </nav>
 
-      {display && <UploadScreen toggleDisplay={toggleDisplay} />}
+      {/* Upload Screen */}
+      {showUploadScreen && (
+        <UploadScreen
+          toggleDisplay={toggleUploadScreen}
+          onFileUpload={handleFileUpload}
+        />
+      )}
     </>
   );
 }
