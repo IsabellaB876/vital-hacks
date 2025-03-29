@@ -105,9 +105,10 @@ app.listen(defaultPort, () => {
 
 //expected request body:
 // {
-//     "username": "user1",
+//     "username": "user-1",
 //     "filetype": "HIPAA",
 //     "filename": "example.pdf",
+//     "date": "2023-10-01",
 //     "description": "This is a test file"
 // }
 //expected request file:
@@ -119,10 +120,12 @@ app.listen(defaultPort, () => {
 //this is the endpoint that will be used to upload the pdf file
 
 app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
-    if (!req.file) {
-        return res.status(400).send('No file uploaded');
+    if (!request.file) {
+        return response.status(400).send('No file uploaded');
       }
     const requestBody = request.body;
+
+    const requestDate = requestBody.date;
 
     const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
@@ -136,13 +139,17 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     
     const requestFileBuffer = requestFile.buffer;
 
+    
+    console.log(requestFileName);
 
     const base64String = requestFileBuffer.toString('base64');
-
+    //console.log(base64String);
+    console.log("========================================================================================================");
     const package = {
         file_name: requestFileName,
         description: requestDescription,
-        file: base64String
+        file: base64String,
+        due_date:requestDate
     }
 
     const updatePackage = {
@@ -155,14 +162,22 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
         folder_name: requestFileType
     }//this is the filter that we will use to find the folder in the collection
 
-    const result = await collection.updateOne(filter,updateDoc)
+    console.log(package)
+    const result = await collection.updateOne(filter,updatePackage)
 
-    res.status(200).send({
+    response.status(200).send({
         message: 'PDF uploaded successfully!',
         file: requestFile,  // Send back file details
       });
     
 })
+
+//expected request body:
+// {
+//     "username": "user1",
+//     "filetype": "HIPAA"
+// }
+//this is the endpoint that will be used to retrieve the pdf file
 
 
 app.get("/api/getPDF",async (request,response)=>{
@@ -173,20 +188,23 @@ app.get("/api/getPDF",async (request,response)=>{
     const requestUsername = requestBody.username;
     const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
 
+    console.log("sus");
     const filter = {
         folder_name: requestFileType
     }//this is the filter that we will use to find the folder in the collection
 
-    const result = await collection.find(filter).doc_list.toArray();
+    const result = await collection.findOne(filter);
+    
+    const result_doc_list = result.doc_list
     //const pdfBuffer = Buffer.from(base64String, 'base64');
 
     const fileArray = [];
 
-    for (let i = 0; i < result.length; i++ ){
-        const base64String = result[i].file;
+    for (let i = 0; i < result_doc_list.length; i++ ){
+        const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
-        const pdfFileName = result[i].file_name;
-        const pdfDescription = result[i].description;
+        const pdfFileName = result_doc_list[i].file_name;
+        const pdfDescription = result_doc_list[i].description;
 
 
         const miniPackage = {

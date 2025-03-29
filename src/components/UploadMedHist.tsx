@@ -104,15 +104,6 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
 
     // Optionally close the dialog or show a success message
     // toggleDisplay();
-
-    const formData = new FormData();
-    const pdfFile = file;
-    formData.append("pdfFile", pdfFile);
-    formData.append("filetype", "placeholder type");
-    formData.append("username", "user-1");
-    formData.append("filename", "placeholder name");
-    formData.append("date", "placeholder date");
-    formData.append("description", "placeholder description");
   };
 
   // Validation logic from DocumentValidator
@@ -129,10 +120,11 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     // Define the keywords to check for
     const keywords = [
       {
-        keyword: "Massachusetts Health Care Proxy",
-        label: "Massachusetts Health Care Proxy",
+        keyword: "Health History Form",
+        label: "Health History Form",
       },
-      { keyword: "Health Care Agent", label: "Health Care Agent" },
+      { keyword: "Health Insurance Information", label: "Health Insurance Information" },
+      { keyword: "Student Medical History", label: "Student Medical History"},
     ];
 
     keywords.forEach(({ keyword, label }) => {
@@ -229,7 +221,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Alert variant="danger">
                 {validationResult.missingFields.length >= 2 && (
                   <div className="fw-bold mb-2">
-                    WARNING: This document is likely NOT a healthcare proxy
+                    WARNING: This document is likely NOT a medical history
                     form.
                   </div>
                 )}
