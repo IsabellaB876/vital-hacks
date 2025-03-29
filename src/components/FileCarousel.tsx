@@ -32,23 +32,23 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
       >
         <Carousel.Item>
           <Stack direction="horizontal" gap={3}>
-            <FileCard />
-            <FileCard />
-            <FileCard />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
           </Stack>
         </Carousel.Item>
         <Carousel.Item>
           <Stack direction="horizontal" gap={3}>
-            <FileCard />
-            <FileCard />
-            <FileCard />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
           </Stack>
         </Carousel.Item>
         <Carousel.Item>
           <Stack direction="horizontal" gap={3}>
-            <FileCard />
-            <FileCard />
-            <FileCard />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
+            <FileCard hasFile={text === "Requested Documents" ? false : true} />
           </Stack>
         </Carousel.Item>
       </Carousel>
