@@ -46,7 +46,9 @@
   position: relative; /* Ensure positioning context for arrows and pagination */
   margin: 0 auto; /* Centering carousel */
   overflow: visible; /* Allow arrows/pagination to stay visible */
+  padding: 1em;
 }
+
 
 .carousel-indicators {
   position: absolute;
@@ -56,6 +58,7 @@
   z-index: 10;    /* Ensure indicators are on top of the carousel */
   margin: 0;      /* Remove extra margin */
 }
+
 
 .carousel-control-prev,
 .carousel-control-next {
@@ -68,13 +71,16 @@
   border-radius: 50%;
 }
 
+
 .carousel-control-prev {
   left: -45px;    /* Adjust this value to move the previous arrow outside */
 }
 
+
 .carousel-control-next {
   right: -45px;   /* Adjust this value to move the next arrow outside */
 }
+
 
 .carousel-inner {
   width: 100%;
