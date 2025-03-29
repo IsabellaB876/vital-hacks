@@ -16,7 +16,11 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
   };
 
   return (
-    <Stack gap={3} style={{ backgroundColor: bgColor }}>
+    <Stack
+      gap={3}
+      style={{ backgroundColor: bgColor }}
+      className="filecarousel"
+    >
       <h3>{text}</h3>
       <Carousel
         activeIndex={index}
@@ -27,33 +31,21 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
         indicators={true}
       >
         <Carousel.Item>
-          <Stack
-            className="carousel-inner col-10 mx-auto"
-            direction="horizontal"
-            gap={3}
-          >
+          <Stack direction="horizontal" gap={3}>
             <FileCard />
             <FileCard />
             <FileCard />
           </Stack>
         </Carousel.Item>
         <Carousel.Item>
-          <Stack
-            className="carousel-inner col-10 mx-auto"
-            direction="horizontal"
-            gap={3}
-          >
+          <Stack direction="horizontal" gap={3}>
             <FileCard />
             <FileCard />
             <FileCard />
           </Stack>
         </Carousel.Item>
         <Carousel.Item>
-          <Stack
-            className="carousel-inner col-10 mx-auto"
-            direction="horizontal"
-            gap={3}
-          >
+          <Stack direction="horizontal" gap={3}>
             <FileCard />
             <FileCard />
             <FileCard />
