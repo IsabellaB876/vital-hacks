@@ -1,5 +1,3 @@
-// DocumentValidator.tsx
-
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { analyzeDocumentFromBuffer } from "./lib/textract";
@@ -20,7 +18,7 @@ interface TextractResult {
   Blocks: TextractBlock[];
 }
 
-const DocumentValidator: React.FC = () => {
+const ProxyValidator: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [documentAccepted, setDocumentAccepted] = useState(false);
@@ -173,7 +171,7 @@ const DocumentValidator: React.FC = () => {
           <ul>
             {missingFields.map((field, index) => (
               <li key={index} style={{ color: "#d9534f" }}>
-                {`${field} is missing or invalid`}
+                {`${field} is missing`}
               </li>
             ))}
           </ul>
@@ -183,4 +181,4 @@ const DocumentValidator: React.FC = () => {
   );
 };
 
-export default DocumentValidator;
+export default ProxyValidator;
