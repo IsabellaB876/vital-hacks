@@ -53,7 +53,7 @@ run().catch(console.dir);
 //this section here handles all sorts of crashes and server terminations so that Mongodb shuts off gracefully.
 
 async function gracefulShutdown(){
-    await client,close();
+    await client.close();
     console.log("We are gracefully shutting down the server and the mongodb connection");
 }
 
