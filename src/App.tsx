@@ -169,7 +169,7 @@ const DocumentValidator: React.FC = () => {
 
       {!documentAccepted && missingFields.length > 0 && (
         <div style={{ marginTop: "2rem" }}>
-          {missingFields.length >= 4 && (
+          {missingFields.length >= 2 && (
             <div
               style={{
                 textAlign: "center",
