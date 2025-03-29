@@ -1,7 +1,7 @@
-import Container from "react-bootstrap/Container";
+import { Container, Button, Image } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { MdAccountCircle } from "react-icons/md";
+import logo from "../assets/react.svg";
 
 function NavBar() {
   return (
@@ -12,9 +12,9 @@ function NavBar() {
             <img src={""} alt="Logo" />
           </Navbar.Brand>
           <Nav className="justify-content-end">
-            <button className="me-4">Request</button>
-            <button className="me-4">Upload</button>
-            <MdAccountCircle size={50} />
+            <Button className="me-4">Upload</Button>
+            <Nav.Link href="#contact">Profile Name</Nav.Link>
+            <Image src={logo} alt="Profile Photo" roundedCircle />
           </Nav>
         </Container>
       </Navbar>
