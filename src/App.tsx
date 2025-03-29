@@ -1,13 +1,13 @@
 import "./App.css";
 import NavBar from "./components/NavBar";
-import FileCard from "./components/FileCard";
+import FileCarousel from "./components/FileCarousel";
 import { Container } from "react-bootstrap";
 
 function App() {
   return (
     <Container>
       <NavBar />
-      <FileCard />
+      <FileCarousel />
     </Container>
   );
 }
