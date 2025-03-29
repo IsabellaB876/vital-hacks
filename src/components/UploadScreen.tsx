@@ -34,7 +34,8 @@ type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
 function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const [selectedDocType, setSelectedDocType] = useState<DocumentType>("Health Care Proxy");
+  const [selectedDocType, setSelectedDocType] =
+    useState<DocumentType>("Health Care Proxy");
   const [validationResult, setValidationResult] = useState<{
     isValid: boolean;
     missingFields: string[];
@@ -107,22 +108,25 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
 
     // Construct form data for API submission
     const formData = new FormData();
-    formData.append("pdfFile", file);
-    formData.append("filetype", selectedDocType);
+    const pdfFile = file;
+    formData.append("pdfFile", pdfFile);
+    formData.append("filetype", "HIPAA");
     formData.append("username", "user-1");
     formData.append("filename", file.name);
     formData.append("date", new Date().toISOString());
     formData.append("description", `${selectedDocType} document`);
 
-    try {
-      await fetch("/api/uploadPDF", {
-        method: "POST",
-        body: formData,
+    await fetch("http://localhost:3000/api/uploadPDF", {
+      method: "POST",
+      body: formData,
+    })
+      .then((data) => {
+        console.log("File uploaded successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
       });
-      console.log("File uploaded successfully");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
+    console.log("File uploaded successfully");
   };
 
   // Handle document type selection
@@ -137,7 +141,10 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   };
 
   // Validation logic from DocumentValidator - updated to check based on document type
-  const checkForKeywords = (textractResult: TextractResult, docType: DocumentType): string[] => {
+  const checkForKeywords = (
+    textractResult: TextractResult,
+    docType: DocumentType
+  ): string[] => {
     const missing: string[] = [];
     const textBlocks = textractResult.Blocks.filter(
       (block) => block.BlockType === "LINE"
@@ -152,9 +159,9 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       keyword: string;
       label: string;
     }
-    
+
     let keywords: Keyword[] = [];
-    
+
     if (docType === "Health Care Proxy") {
       keywords = [
         {
@@ -172,7 +179,10 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     } else if (docType === "Medical History") {
       keywords = [
         { keyword: "health history form", label: "Health History Form" },
-        { keyword: "health insurance information", label: "Health Insurance Information" },
+        {
+          keyword: "health insurance information",
+          label: "Health Insurance Information",
+        },
         { keyword: "medical history", label: "Medical History" },
       ];
     }
@@ -198,9 +208,13 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               {selectedDocType}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item eventKey="Health Care Proxy">Health Care Proxy</Dropdown.Item>
+              <Dropdown.Item eventKey="Health Care Proxy">
+                Health Care Proxy
+              </Dropdown.Item>
               <Dropdown.Item eventKey="HIPAA">HIPAA</Dropdown.Item>
-              <Dropdown.Item eventKey="Medical History">Medical History</Dropdown.Item>
+              <Dropdown.Item eventKey="Medical History">
+                Medical History
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
@@ -271,7 +285,8 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Alert variant="danger">
                 {validationResult.missingFields.length >= 2 && (
                   <div className="fw-bold mb-2">
-                    WARNING: This document is likely NOT a {selectedDocType} form.
+                    WARNING: This document is likely NOT a {selectedDocType}{" "}
+                    form.
                   </div>
                 )}
                 <Alert.Heading>Missing Fields:</Alert.Heading>

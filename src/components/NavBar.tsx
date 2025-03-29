@@ -1,55 +1,32 @@
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Container, Button, Image } from "react-bootstrap";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import logo from "../assets/react.svg";
 import UploadScreen from "./UploadScreen";
+import { useState } from "react";
 
 function NavBar() {
-  const [showUploadScreen, setShowUploadScreen] = useState(false);
+  const [display, setDisplay] = useState<boolean>(false);
 
-  // Toggle upload screen visibility
-  const toggleUploadScreen = () => {
-    setShowUploadScreen(!showUploadScreen);
-  };
-
-  // Handle upload completion
-  const handleFileUpload = (
-    file: File,
-    isValid: boolean,
-    validationMessage?: string
-  ) => {
-    console.log(`File ${file.name} uploaded. Valid: ${isValid}`);
-    if (validationMessage) {
-      console.log(`Validation message: ${validationMessage}`);
-    }
-    
-    // Optional: Close the upload screen after successful upload
-    // if (isValid) {
-    //   setShowUploadScreen(false);
-    // }
-  };
-
+  const toggleDisplay = () => setDisplay(!display);
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            MedVault Medical Documents Portal
-          </a>
-          
-          <div className="d-flex ms-auto">
-            <Button onClick={toggleUploadScreen} className="btn btn-primary">
-              Upload Document
+      <Navbar bg="light" data-bs-theme="light" fixed="top">
+        <Container>
+          <Navbar.Brand href="/">
+            <img src={""} alt="Logo" />
+          </Navbar.Brand>
+          <Nav className="justify-content-end">
+            <Button onClick={toggleDisplay} className="mb-2">
+              Upload
             </Button>
-          </div>
-        </div>
-      </nav>
+            <Nav.Link href="#contact">Profile Name</Nav.Link>
+            <Image src={logo} alt="Profile Photo" roundedCircle />
+          </Nav>
+        </Container>
+      </Navbar>
 
-      {/* Upload Screen */}
-      {showUploadScreen && (
-        <UploadScreen
-          toggleDisplay={toggleUploadScreen}
-          onFileUpload={handleFileUpload}
-        />
-      )}
+      {display && <UploadScreen toggleDisplay={toggleDisplay} />}
     </>
   );
 }
