@@ -187,7 +187,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             {validationResult.isValid ? (
               <Alert variant="success">
                 <Alert.Heading>Document Validated!</Alert.Heading>
-                <p>You have uploaded the correct document! REMEMBER TO CLICK SUBMIT!</p>
+                <p>Ready to submit!</p>
               </Alert>
             ) : (
               <Alert variant="danger">
