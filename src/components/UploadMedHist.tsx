@@ -120,11 +120,11 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     // Define the keywords to check for
     const keywords = [
       {
-        keyword: "HIPAA Release Form",
-        label: "HIPAA Release Form",
+        keyword: "Health History Form",
+        label: "Health History Form",
       },
-      { keyword: "Health Information", label: "Health Information" },
-      { keyword: "Reason for Disclosure", label: "Reason for Disclosure"},
+      { keyword: "Health Insurance Information", label: "Health Insurance Information" },
+      { keyword: "Student Medical History", label: "Student Medical History"},
     ];
 
     keywords.forEach(({ keyword, label }) => {
