@@ -67,9 +67,8 @@ const DocumentValidator: React.FC = () => {
 
     // Example keywords
     const keywords = [
-      { keyword: "State of New Jersey", label: "State of New Jersey" },
-      { keyword: "Clearance Certificate", label: "Clearance Certificate Keyword" },
-      { keyword: "Philip D. Murphy", label: "Governor's Name" },
+      { keyword: "Massachusetts Health Care Proxy", label: "Massachusetts Health Care Proxy" },
+      { keyword: "Health Care Agent", label: "Health Care Agent" },
     ];
 
     keywords.forEach(({ keyword, label }) => {
