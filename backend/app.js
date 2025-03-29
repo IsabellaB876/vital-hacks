@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const multer = require('multer');
 const path = require('path');
 const defaultPort = 3000;
 require('dotenv').config();//this activates the ability to parse the .env file
@@ -89,3 +90,12 @@ app.listen(defaultPort, () => {
 
 
 //this is where you can add your routes
+
+
+app.post("/api/uploadDoc",async (request,response)=>{
+    const requestBody = request.body;
+    const requestUser = request.user;
+    const requestBase64String = requestBody.base64String;
+    const requestFileName = requestBody.filename;
+    const requestDescription = requestBody.description;
+})
