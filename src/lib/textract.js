@@ -2,10 +2,10 @@ import { TextractClient, AnalyzeDocumentCommand } from "@aws-sdk/client-textract
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 
 const textractClient = new TextractClient({
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  region: import.meta.env.VITE_AWS_REGION,
   credentials: fromCognitoIdentityPool({
-    identityPoolId: process.env.NEXT_PUBLIC_AWS_IDENTITY_POOL_ID,
-    clientConfig: { region: process.env.NEXT_PUBLIC_AWS_REGION },
+    identityPoolId: import.meta.env.VITE_AWS_IDENTITY_POOL_ID,
+    clientConfig: { region: import.meta.env.VITE_AWS_REGION },
   }),
 });
 
