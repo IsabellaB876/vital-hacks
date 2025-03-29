@@ -34,7 +34,7 @@ const client = new MongoClient(uri, {
 const database = client.db('user-storage');
 
 //we will store one collection for each user
-const collection = database.collection('PUT NAME OF COLLECTION HERE');
+
 
 
 async function run(){
@@ -50,6 +50,16 @@ async function run(){
 }
 
 run().catch(console.dir);
+
+
+
+
+
+// Set up multer storage configuration
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage: storage });
+
 
 //this section here handles all sorts of crashes and server terminations so that Mongodb shuts off gracefully.
 
@@ -92,10 +102,105 @@ app.listen(defaultPort, () => {
 //this is where you can add your routes
 
 
-app.post("/api/uploadDoc",async (request,response)=>{
+
+//expected request body:
+// {
+//     "username": "user1",
+//     "filetype": "HIPAA",
+//     "filename": "example.pdf",
+//     "description": "This is a test file"
+// }
+//expected request file:
+// {
+//     "pdfFile": <binary file>
+// }
+
+
+//this is the endpoint that will be used to upload the pdf file
+
+app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
+    if (!req.file) {
+        return res.status(400).send('No file uploaded');
+      }
     const requestBody = request.body;
-    const requestUser = request.user;
-    const requestBase64String = requestBody.base64String;
+
+    const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
+
+    const requestUsername = requestBody.username;
+    const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
+
+
+    const requestFile = request.file;
     const requestFileName = requestBody.filename;
     const requestDescription = requestBody.description;
+    
+    const requestFileBuffer = requestFile.buffer;
+
+
+    const base64String = requestFileBuffer.toString('base64');
+
+    const package = {
+        file_name: requestFileName,
+        description: requestDescription,
+        file: base64String
+    }
+
+    const updatePackage = {
+        $push: {
+            doc_list:package
+        }
+    }
+
+    const filter = {
+        folder_name: requestFileType
+    }//this is the filter that we will use to find the folder in the collection
+
+    const result = await collection.updateOne(filter,updateDoc)
+
+    res.status(200).send({
+        message: 'PDF uploaded successfully!',
+        file: requestFile,  // Send back file details
+      });
+    
+})
+
+
+app.get("/api/getPDF",async (request,response)=>{
+    const requestBody = request.body;
+
+    const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
+
+    const requestUsername = requestBody.username;
+    const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
+
+    const filter = {
+        folder_name: requestFileType
+    }//this is the filter that we will use to find the folder in the collection
+
+    const result = await collection.find(filter).doc_list.toArray();
+    //const pdfBuffer = Buffer.from(base64String, 'base64');
+
+    const fileArray = [];
+
+    for (let i = 0; i < result.length; i++ ){
+        const base64String = result[i].file;
+        const pdfBuffer = Buffer.from(base64String, 'base64');
+        const pdfFileName = result[i].file_name;
+        const pdfDescription = result[i].description;
+
+
+        const miniPackage = {
+            file_name: pdfFileName,
+            description: pdfDescription,
+            file: pdfBuffer
+        }
+
+        fileArray.push(miniPackage);
+    }
+
+
+    response.status(200).send({
+        message: 'PDF retrieved successfully!',
+        files: fileArray,  // Send back file details
+      });
 })
