@@ -8,7 +8,7 @@ require('dotenv').config();//this activates the ability to parse the .env file
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
-
+ 
 
 const {MongoClient, ServerApiVersion} = require('mongodb');
 
@@ -28,7 +28,11 @@ const client = new MongoClient(uri, {
     }
 });
 
-const database = client.db('PUT NAME OF DATABASE HERE');
+
+//we will store all the user data in this database
+const database = client.db('user-storage');
+
+//we will store one collection for each user
 const collection = database.collection('PUT NAME OF COLLECTION HERE');
 
 
