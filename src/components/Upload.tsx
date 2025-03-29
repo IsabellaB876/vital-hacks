@@ -108,13 +108,13 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     const formData = new FormData();
     const pdfFile = file;
     formData.append("pdfFile", pdfFile);
-    formData.append("filetype", "placeholder type");
+    formData.append("filetype", "HIPAA");
     formData.append("username", "user-1");
     formData.append("filename", "placeholder name");
     formData.append("date", "placeholder date");
     formData.append("description", "placeholder description");
 
-    await fetch("/api/uploadPDF", {
+    await fetch("http://localhost:3000/api/uploadPDF", {
       method: "POST",
       body: formData,
     })

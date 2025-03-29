@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const multer = require('multer');
 const path = require('path');
+const cors = require('cors');
 const defaultPort = 3000;
 require('dotenv').config();//this activates the ability to parse the .env file
 
@@ -9,14 +10,15 @@ require('dotenv').config();//this activates the ability to parse the .env file
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
- 
+app.use(cors())
 
 const {MongoClient, ServerApiVersion} = require('mongodb');
 
 
 const DB_USERNAME = process.env.db_username;
 const DB_PASSWORD = process.env.db_password;
-
+console.log(DB_USERNAME)
+console.log(DB_PASSWORD)
 
 //put the uri here
 const uri = "mongodb+srv://" + DB_USERNAME + ":" + DB_PASSWORD + "@filecluster.zuhvtjf.mongodb.net/?retryWrites=true&w=majority&appName=filecluster"

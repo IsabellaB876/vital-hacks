@@ -17,9 +17,9 @@ function NavBar() {
             <img src={""} alt="Logo" />
           </Navbar.Brand>
           <Nav className="justify-content-end">
-          <Button onClick={toggleDisplay} className="mb-2">
-         Upload
-        </Button>
+            <Button onClick={toggleDisplay} className="mb-2">
+              Upload
+            </Button>
             <Nav.Link href="#contact">Profile Name</Nav.Link>
             <Image src={logo} alt="Profile Photo" roundedCircle />
           </Nav>

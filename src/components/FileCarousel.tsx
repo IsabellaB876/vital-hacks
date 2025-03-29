@@ -22,8 +22,7 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
       className="filecarousel"
     >
       <h3>{text}</h3>
-      {
-        <Carousel
+      {/*<Carousel
           activeIndex={index}
           onSelect={handleSelect}
           data-bs-theme="dark"
@@ -70,8 +69,8 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
               />
             </Stack>
           </Carousel.Item>
-        </Carousel>
-      }
+        </Carousel>*/}
+      {}
     </Stack>
   );
 }
