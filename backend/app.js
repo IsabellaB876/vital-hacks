@@ -166,8 +166,7 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     const result = await collection.updateOne(filter,updatePackage)
 
     response.status(200).send({
-        message: 'PDF uploaded successfully!',
-        file: requestFile,  // Send back file details
+        message: 'PDF uploaded successfully!'
       });
     
 })
