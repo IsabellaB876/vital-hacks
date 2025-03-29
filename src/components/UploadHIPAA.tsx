@@ -120,10 +120,11 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
     // Define the keywords to check for
     const keywords = [
       {
-        keyword: "Massachusetts Health Care Proxy",
-        label: "Massachusetts Health Care Proxy",
+        keyword: "HIPAA Release Form",
+        label: "HIPAA Release Form",
       },
-      { keyword: "Health Care Agent", label: "Health Care Agent" },
+      { keyword: "Health Information", label: "Health Information" },
+      { keyword: "Reason for Disclosure", label: "Reason for Disclosure"},
     ];
 
     keywords.forEach(({ keyword, label }) => {
@@ -220,7 +221,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Alert variant="danger">
                 {validationResult.missingFields.length >= 2 && (
                   <div className="fw-bold mb-2">
-                    WARNING: This document is likely NOT a healthcare proxy
+                    WARNING: This document is likely NOT a HIPAA
                     form.
                   </div>
                 )}

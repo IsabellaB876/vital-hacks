@@ -41,42 +41,44 @@
   color: #888;
 }
 
+.filecarousel {
+  width: 100%;
+  position: relative; /* Ensure positioning context for arrows and pagination */
+  overflow: visible; /* Allow arrows/pagination to stay visible */
+  padding: 1em;
+  padding-bottom: 0em;
+  border-radius: 10px;
+}
+
 .carousel {
   width: 100%;
   position: relative; /* Ensure positioning context for arrows and pagination */
-  margin: 0 auto; /* Centering carousel */
   overflow: visible; /* Allow arrows/pagination to stay visible */
+  padding-left: 5em;
+  padding-right: 5em;
+  padding-bottom: 5em;
+  position: relative;
 }
 
-.carousel-indicators {
-  position: absolute;
-  bottom: -40px;  /* Adjust this value to move the indicators outside */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;    /* Ensure indicators are on top of the carousel */
-  margin: 0;      /* Remove extra margin */
-}
-
-.carousel-control-prev,
+.carousel-control-prev, 
 .carousel-control-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;    /* Ensure the arrows are above the carousel items */
-  width: 40px;    /* Make the arrows appropriately sized */
-  height: 40px;   /* Make the arrows appropriately sized */
+  background-color: white;
   border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  transform: translateY(-100%);
 }
 
-.carousel-control-prev {
-  left: -45px;    /* Adjust this value to move the previous arrow outside */
-}
-
-.carousel-control-next {
-  right: -45px;   /* Adjust this value to move the next arrow outside */
-}
-
-.carousel-inner {
+.toast {
   width: 100%;
-  overflow: hidden;  /* Prevent overflow outside the container */
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  margin-top: 5%;
+  background-color: rgba(255, 255, 255, 1); /* Solid white background */
 }
