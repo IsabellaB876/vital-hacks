@@ -3,6 +3,7 @@ import FileCarousel from "./FileCarousel";
 import NavBar from "./NavBar";
 
 function PatientHome(){
+  console.log("hello");
     return(
     <Stack gap={3} className="text-start">
     <NavBar />

@@ -6,22 +6,14 @@ import FileCard from "./FileCard";
 interface CustomCarouselProps {
   text: string;
   bgColor: string;
-}//fetch api here
+}
 
-async function FileCarousel({ text, bgColor }: CustomCarouselProps) {
+function FileCarousel({ text, bgColor }: CustomCarouselProps) {
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex: number) => {
     setIndex(selectedIndex);
   };
-  const fileArray = await fetch('http://localhost:3000/api/getPDF', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'username': `placeholder`
-    }
-  })
-
 
   return (
     <Stack
