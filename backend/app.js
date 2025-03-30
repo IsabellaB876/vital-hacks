@@ -182,11 +182,10 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
 
 
 app.get("/api/getPDF",async (request,response)=>{
-    const requestBody = request.body;
 
-    const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
+    const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
-    const requestUsername = requestBody.username;
+    const requestUsername = request.headers["username"];
     const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
 
     console.log("sus");
