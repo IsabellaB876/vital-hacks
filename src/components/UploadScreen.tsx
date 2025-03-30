@@ -247,7 +247,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             <input
               type="file"
               id="file-upload"
-              accept="application/pdf,image/png,image/jpeg"
+              accept="application/pdf,image/png,image/jpeg,.doc,.docx"
               onChange={handleFileChange}
               title="Click to upload a file"
               style={{ width: "auto" }}
