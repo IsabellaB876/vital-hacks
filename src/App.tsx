@@ -1,19 +1,20 @@
 import "./App.css";
-import NavBar from "./components/NavBar";
-import FileCarousel from "./components/FileCarousel";
-import { Stack } from "react-bootstrap";
+import { Routes, Route, Navigate } from "react-router";
+import PatientHome from "./components/PatientHome";
+import Account from "./components/Account"
+import { HashRouter } from "react-router-dom";
 
 function App() {
   return (
-    <Stack gap={3} className="text-start">
-      <NavBar />
-      <h2>Welcome Patient!</h2>
-      <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
-      <FileCarousel text="Patient Intake Forms" bgColor="#FFFFFF" />
-      <FileCarousel text="HIPAA and Consent" bgColor="#FFFFFF" />
-      <FileCarousel text="Treatments and Prescriptions" bgColor="#FFFFFF" />
-      <FileCarousel text="Insurance" bgColor="#FFFFFF" />
-    </Stack>
+    <HashRouter>
+    <div className="wd-main-content-offset p-3">
+        <Routes>
+          <Route path="/" element={<Navigate to="Account" />} />
+          <Route path="/PatientHome/*" element={<PatientHome />} />
+          <Route path="/Account/*" element={<Account />} />
+        </Routes>
+    </div>
+    </HashRouter>
   );
 }
 
