@@ -6,7 +6,7 @@ import FileCard from "./FileCard";
 interface CustomCarouselProps {
   text: string;
   bgColor: string;
-}
+}//fetch api here
 
 function FileCarousel({ text, bgColor }: CustomCarouselProps) {
   const [index, setIndex] = useState(0);
