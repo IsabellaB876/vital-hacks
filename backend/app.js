@@ -183,17 +183,17 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
 
 app.get("/api/getPDF",async (request,response)=>{
 
-    const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
+    //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
     const requestUsername = request.headers["username"];
-    const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
+    const collection = database.collection("user-1");
 
     console.log("sus");
     const filter = {
         folder_name: requestFileType
     }//this is the filter that we will use to find the folder in the collection
 
-    const result = await collection.findOne(filter);
+    const result = await collection.findOne(requestUsername);
     
     const result_doc_list = result.doc_list
     //const pdfBuffer = Buffer.from(base64String, 'base64');
@@ -205,12 +205,18 @@ app.get("/api/getPDF",async (request,response)=>{
         const pdfBuffer = Buffer.from(base64String, 'base64');
         const pdfFileName = result_doc_list[i].file_name;
         const pdfDescription = result_doc_list[i].description;
+        const isRequested = result_doc_list[i].isRequested;
+        const pdfDate = result_doc_list[i].due_date;
+        const pdfFileType = result_doc_list[i].folder_name;
 
 
         const miniPackage = {
             file_name: pdfFileName,
             description: pdfDescription,
-            file: pdfBuffer
+            file: pdfBuffer,
+            date:pdfDate,
+            file_type: pdfFileType,
+            isRequested: isRequested
         }
 
         fileArray.push(miniPackage);
