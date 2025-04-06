@@ -157,14 +157,16 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     
 
     //We find the specific request object that has the same unique_id as the one in the request body
-    const fileBox = await collection.findOne({
-        doc_list: {
-            $elemMatch: {
-                unique_id: requestUniqueID
-            }
-        }
+    const findUser = await collection.findOne({
+        "username":requestUsername
     })
-    //fileBox DOES NOT CURRENTLY WORK AS INTENDED. Fix later.
+    let fileBox;
+    for (let i = 0; i < findUser.doc_list.length; i++){
+        if (findUser.doc_list[i].unique_id == requestUniqueID){
+            fileBox = findUser.doc_list[i];
+            break;
+        }
+    }
 
     
 
@@ -175,10 +177,9 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     fileBox.filetype = requestFileType;
     fileBox.isRequested = false;
     
-    const result = await collection.updateOne(
-        { "username": requestUsername },  // Find document where "contacts" array contains contactToRemove
-        { $pull: { doc_list: fileBox } }  // Pull/remove the specific contact from the "contacts" array
-    );
+    
+
+    
 
     
 
