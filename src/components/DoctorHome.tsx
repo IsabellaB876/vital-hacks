@@ -1,12 +1,12 @@
 import { Stack } from "react-bootstrap";  
 import FileCarousel from "./FileCarousel";
-import NavBar from "./NavBar";
+import DocNavBar from "./DocNavBar";
 
 function DoctorHome(){
   console.log("hello");
     return(
     <Stack gap={3} className="text-start">
-    <NavBar />
+    <DocNavBar />
     <h2>Welcome Doctor!</h2>
     <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
     <FileCarousel text="Patient Intake Forms" bgColor="#FFFFFF" />
