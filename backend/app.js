@@ -124,48 +124,67 @@ app.listen(defaultPort, () => {
 app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     if (!request.file) {
         return response.status(400).send('No file uploaded');
-      }
+    }
+    const collection = database.collection("user-1");
+    //const specificUser = collection.findOne({username: requestUsername});
+
+
+    const requestUsername = requestBody.username;
+    
+
+
     const requestBody = request.body;
 
     const requestDate = requestBody.date;
 
     const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
-    const requestUsername = requestBody.username;
-    const collection = database.collection(requestUsername);//we find the specific collection that has the name of user
-
+    
 
     const requestFile = request.file;
     const requestFileName = requestBody.filename;
     const requestDescription = requestBody.description;
+
+    const requestUniqueID = requestBody.unique_id;
     
     const requestFileBuffer = requestFile.buffer;
 
     
-    console.log(requestFileName);
+    
 
+    //this is the converted base64 string of the file
     const base64String = requestFileBuffer.toString('base64');
-    //console.log(base64String);
-    console.log("========================================================================================================");
-    const package = {
-        file_name: requestFileName,
-        description: requestDescription,
-        file: base64String,
-        due_date:requestDate
-    }
+    
 
-    const updatePackage = {
-        $push: {
-            doc_list:package
+    //We find the specific request object that has the same unique_id as the one in the request body
+    const fileBox = await collection.findOne({
+        doc_list: {
+            $elemMatch: {
+                unique_id: requestUniqueID
+            }
         }
-    }
+    })
+    //fileBox DOES NOT CURRENTLY WORK AS INTENDED. Fix later.
 
-    const filter = {
-        folder_name: requestFileType
-    }//this is the filter that we will use to find the folder in the collection
+    
 
-    console.log(package)
-    const result = await collection.updateOne(filter,updatePackage)
+    fileBox.date = requestDate;
+    fileBox.file = base64String;
+    fileBox.file_name = requestFileName;
+    fileBox.description = requestDescription;
+    fileBox.filetype = requestFileType;
+    fileBox.isRequested = false;
+    
+    const result = await collection.updateOne(
+        { "username": requestUsername },  // Find document where "contacts" array contains contactToRemove
+        { $pull: { doc_list: fileBox } }  // Pull/remove the specific contact from the "contacts" array
+    );
+
+    
+
+    
+
+    
 
     response.status(200).send({
         message: 'PDF uploaded successfully!'
@@ -186,12 +205,9 @@ app.get("/api/getPDF",async (request,response)=>{
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
     const requestUsername = request.headers["username"];
-    const collection = database.collection("user-1");
+    const collection = await database.collection("user-1");
 
-    console.log("sus");
-    const filter = {
-        folder_name: requestFileType
-    }//this is the filter that we will use to find the folder in the collection
+    
 
     const result = await collection.findOne(requestUsername);
     
