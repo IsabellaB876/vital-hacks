@@ -2,7 +2,7 @@ import { Container, Button, Image } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/react.svg";
-import UploadScreen from "./UploadScreen";
+import RequestScreen from "./RequestScreen.tsx";
 import { useState } from "react";
 
 function DocNavBar() {
@@ -26,7 +26,7 @@ function DocNavBar() {
         </Container>
       </Navbar>
 
-      {display && <UploadScreen toggleDisplay={toggleDisplay} />}
+      {display && <RequestScreen toggleDisplay={toggleDisplay} />}
     </>
   );
 }
