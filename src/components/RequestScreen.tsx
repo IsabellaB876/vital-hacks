@@ -162,31 +162,6 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
 
     let keywords: Keyword[] = [];
 
-    if (docType === "Health Care Proxy") {
-      keywords = [
-        {
-          keyword: "massachusetts health care proxy",
-          label: "Massachusetts Health Care Proxy",
-        },
-        { keyword: "health care agent", label: "Health Care Agent" },
-      ];
-    } else if (docType === "HIPAA") {
-      keywords = [
-        { keyword: "hipaa release form", label: "HIPAA Release Form" },
-        { keyword: "health information", label: "Health Information" },
-        { keyword: "reason for disclosure", label: "Reason for Disclosure" },
-      ];
-    } else if (docType === "Medical History") {
-      keywords = [
-        { keyword: "health history form", label: "Health History Form" },
-        {
-          keyword: "health insurance information",
-          label: "Health Insurance Information",
-        },
-        { keyword: "medical history", label: "Medical History" },
-      ];
-    }
-
     keywords.forEach(({ keyword, label }) => {
       if (!documentText.includes(keyword)) {
         missing.push(label);
