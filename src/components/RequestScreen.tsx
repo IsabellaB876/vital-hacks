@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Button, Alert, Spinner } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import { MultiSelectComponent } from '@syncfusion/ej2-react-dropdowns';
 
 interface RequestScreenProps {
   toggleDisplay: () => void;
@@ -12,69 +13,45 @@ interface RequestScreenProps {
   ) => void;
 }
 
+// creating dropdown with write-in option
+const CustomTag = () => {
+  // define JSON of data
+  const medDocList: { [key: string]: Object } [] = [
+    { Id: 'Doc1', Doc: 'HIPAA' },
+    { Id: 'Doc2', Doc: 'TB Test' },
+    { Id: 'Doc3', Doc: 'Blood Test' },
+    { Id: 'Doc4', Doc: 'Insulin Prescription' },
+    { Id: 'Doc5', Doc: 'Health Care Proxy' },
+    { Id: 'Doc6', Doc: 'Medical History' }
+  ];
+  const fields: object = { text: "Doc", value: "Id" };
+}
+
 type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
 
 function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
-  const [isValidating, setIsValidating] = useState(false);
   const [selectedDocType, setSelectedDocType] =
     useState<DocumentType>("Health Care Proxy");
-  const [validationResult, setValidationResult] = useState<{
-    isValid: boolean;
-    missingFields: string[];
-  } | null>(null);
 
   // Handle document type selection
   const handleDocTypeSelect = (eventKey: string | null) => {
     if (eventKey) {
       setSelectedDocType(eventKey as DocumentType);
-      validateSelection();
-    }
-  };
-
-  // Validate selection
-  const validateSelection = async () => {
-    try {
-      setIsValidating(true);
-      
-      // Simulated validation process
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, all selections are valid
-      setValidationResult({
-        isValid: true,
-        missingFields: []
-      });
-
-    } catch (error) {
-      console.error("Error processing selection:", error);
-      
-      setValidationResult({
-        isValid: false,
-        missingFields: ["Error processing selection."],
-      });
-    } finally {
-      setIsValidating(false);
     }
   };
 
   // Handle form submission
   const handleSubmit = async () => {
-    if (!validationResult) return;
-
-    // Call the onSubmit callback with validation results
+    // Call the onSubmit callback with current selection
     if (onSubmit) {
-      const validationMessage = validationResult.isValid
-        ? "Selection validated successfully"
-        : `Issues: ${validationResult.missingFields.join(", ")}`;
-
-      onSubmit(selectedDocType, validationResult.isValid, validationMessage);
+      onSubmit(selectedDocType, true, "Selection submitted successfully");
     }
   };
 
   return (
     <Toast onClose={toggleDisplay} show={true}>
       <Toast.Header>
-        <strong className="me-auto">Select Document Type</strong>
+        <strong className="me-auto">Select Documents to Request</strong>
       </Toast.Header>
       <Toast.Body>
         <div className="d-flex justify-content-between mb-3">
@@ -93,44 +70,12 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
             </Dropdown.Menu>
           </Dropdown>
 
-          <Button onClick={handleSubmit} disabled={isValidating || !validationResult}>
-            {isValidating ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-                <span className="ms-2">Processing...</span>
-              </>
-            ) : (
-              "Submit"
-            )}
+          <Button onClick={handleSubmit}>
+            Submit
           </Button>
         </div>
 
-        {/* Validation Results */}
-        {validationResult && !isValidating && (
-          <div className="validation-results mt-3">
-            {validationResult.isValid ? (
-              <Alert variant="success">
-                <Alert.Heading>Selection Validated!</Alert.Heading>
-                <p>Ready to submit!</p>
-              </Alert>
-            ) : (
-              <Alert variant="danger">
-                <Alert.Heading>Issues:</Alert.Heading>
-                <ul>
-                  {validationResult.missingFields.map((field, index) => (
-                    <li key={index}>{field}</li>
-                  ))}
-                </ul>
-              </Alert>
-            )}
-          </div>
-        )}
+
       </Toast.Body>
     </Toast>
   );
