@@ -160,14 +160,6 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       label: string;
     }
 
-    let keywords: Keyword[] = [];
-
-    keywords.forEach(({ keyword, label }) => {
-      if (!documentText.includes(keyword)) {
-        missing.push(label);
-      }
-    });
-
     return missing;
   };
 
