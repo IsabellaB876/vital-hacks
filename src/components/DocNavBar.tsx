@@ -2,10 +2,10 @@ import { Container, Button, Image } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/react.svg";
-import UploadScreen from "./UploadScreen";
+import RequestScreen from "./RequestScreen.tsx";
 import { useState } from "react";
 
-function NavBar() {
+function DocNavBar() {
   const [display, setDisplay] = useState<boolean>(false);
 
   const toggleDisplay = () => setDisplay(!display);
@@ -18,7 +18,7 @@ function NavBar() {
           </Navbar.Brand>
           <Nav className="justify-content-end">
             <Button onClick={toggleDisplay} className="mb-2">
-              Upload
+              Request
             </Button>
             <Nav.Link href="#contact">Profile Name</Nav.Link>
             <Image src={logo} alt="Profile Photo" roundedCircle />
@@ -26,9 +26,9 @@ function NavBar() {
         </Container>
       </Navbar>
 
-      {display && <UploadScreen toggleDisplay={toggleDisplay} />}
+      {display && <RequestScreen toggleDisplay={toggleDisplay} />}
     </>
   );
 }
 
-export default NavBar;
+export default DocNavBar;
