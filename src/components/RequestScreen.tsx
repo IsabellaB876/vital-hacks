@@ -11,11 +11,8 @@ interface RequestScreenProps {
   ) => void;
 }
 
-type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
-
 function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
-  const [selectedDocType, setSelectedDocType] =
-    useState<DocumentType>("Health Care Proxy");
+  const [selectedDocType, setSelectedDocType] = useState<string>("");
   const [customDocType, setCustomDocType] = useState<string>("");
 
   // define document list
@@ -32,7 +29,9 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   const handleDocTypeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     if (value) {
-      setSelectedDocType(value as DocumentType);
+      setSelectedDocType(value);
+      // Clear custom input when selecting from dropdown
+      setCustomDocType("");
     }
   };
 
@@ -54,7 +53,7 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   return (
     <Toast onClose={toggleDisplay} show={true}>
       <Toast.Header>
-        <strong className="me-auto">Select Document to Request</strong>
+        <strong className="me-auto">Select Documents to Request</strong>
       </Toast.Header>
       <Toast.Body>
         <div className="mb-3">
@@ -65,6 +64,7 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
               value={selectedDocType}
               onChange={handleDocTypeSelect}
             >
+              <option value="">Select a document</option>
               {medDocList.map(doc => (
                 <option key={doc.Id} value={doc.Doc}>{doc.Doc}</option>
               ))}
