@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Toast from "react-bootstrap/Toast";
-import Dropdown from "react-bootstrap/Dropdown";
-import { Button } from "react-bootstrap";
-import { MultiSelectComponent } from '@syncfusion/ej2-react-dropdowns';
+import { Button, Form } from "react-bootstrap";
 
 interface RequestScreenProps {
   toggleDisplay: () => void;
@@ -13,10 +11,15 @@ interface RequestScreenProps {
   ) => void;
 }
 
-// creating dropdown with write-in option
-const CustomTag = () => {
-  // define JSON of data
-  const medDocList: { [key: string]: Object } [] = [
+type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
+
+function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
+  const [selectedDocType, setSelectedDocType] =
+    useState<DocumentType>("Health Care Proxy");
+  const [customDocType, setCustomDocType] = useState<string>("");
+
+  // define document list
+  const medDocList = [
     { Id: 'Doc1', Doc: 'HIPAA' },
     { Id: 'Doc2', Doc: 'TB Test' },
     { Id: 'Doc3', Doc: 'Blood Test' },
@@ -24,58 +27,66 @@ const CustomTag = () => {
     { Id: 'Doc5', Doc: 'Health Care Proxy' },
     { Id: 'Doc6', Doc: 'Medical History' }
   ];
-  const fields: object = { text: "Doc", value: "Id" };
-}
-
-type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
-
-function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
-  const [selectedDocType, setSelectedDocType] =
-    useState<DocumentType>("Health Care Proxy");
 
   // Handle document type selection
-  const handleDocTypeSelect = (eventKey: string | null) => {
-    if (eventKey) {
-      setSelectedDocType(eventKey as DocumentType);
+  const handleDocTypeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    if (value) {
+      setSelectedDocType(value as DocumentType);
     }
+  };
+
+  // Handle custom document type input
+  const handleCustomDocType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomDocType(event.target.value);
   };
 
   // Handle form submission
   const handleSubmit = async () => {
     // Call the onSubmit callback with current selection
     if (onSubmit) {
-      onSubmit(selectedDocType, true, "Selection submitted successfully");
+      // If there's a custom document type, use that instead of the dropdown selection
+      const finalDocType = customDocType.trim() ? customDocType : selectedDocType;
+      onSubmit(finalDocType, true, "Selection submitted successfully");
     }
   };
 
   return (
     <Toast onClose={toggleDisplay} show={true}>
       <Toast.Header>
-        <strong className="me-auto">Select Documents to Request</strong>
+        <strong className="me-auto">Select Document to Request</strong>
       </Toast.Header>
       <Toast.Body>
-        <div className="d-flex justify-content-between mb-3">
-          <Dropdown onSelect={handleDocTypeSelect}>
-            <Dropdown.Toggle id="dropdown-basic">
-              {selectedDocType}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item eventKey="Health Care Proxy">
-                Health Care Proxy
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="HIPAA">HIPAA</Dropdown.Item>
-              <Dropdown.Item eventKey="Medical History">
-                Medical History
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Button onClick={handleSubmit}>
-            Submit
-          </Button>
+        <div className="mb-3">
+          <Form.Group className="mb-3">
+            <Form.Label>Select from predefined documents</Form.Label>
+            <Form.Select 
+              aria-label="Select document type"
+              value={selectedDocType}
+              onChange={handleDocTypeSelect}
+            >
+              {medDocList.map(doc => (
+                <option key={doc.Id} value={doc.Doc}>{doc.Doc}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          
+          <Form.Group className="mb-3">
+            <Form.Label>Or enter a custom document type</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter custom document type here"
+              value={customDocType}
+              onChange={handleCustomDocType}
+            />
+          </Form.Group>
+          
+          <div className="d-flex justify-content-end">
+            <Button onClick={handleSubmit}>
+              Submit
+            </Button>
+          </div>
         </div>
-
-
       </Toast.Body>
     </Toast>
   );
