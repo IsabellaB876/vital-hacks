@@ -112,7 +112,7 @@ app.listen(defaultPort, () => {
 // }
 //expected request .file:
 // {
-//     "pdfFile": <binary file>
+//     "file": <binary file>
 // }
 
 
