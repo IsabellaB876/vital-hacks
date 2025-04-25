@@ -105,15 +105,12 @@ app.listen(defaultPort, () => {
 
 
 
-//expected request body:
+//expected request .body:
 // {
-//     "username": "user-1",
-//     "filetype": "HIPAA",
-//     "filename": "example.pdf",
-//     "date": "2023-10-01",
-//     "description": "This is a test file"
+//     "username": "jimbob",
+//     "unique_id": "2",
 // }
-//expected request file:
+//expected request .file:
 // {
 //     "pdfFile": <binary file>
 // }
@@ -121,87 +118,56 @@ app.listen(defaultPort, () => {
 
 //this is the endpoint that will be used to upload the pdf file
 
-app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
+app.post("/api/uploadFile",upload.single('file'),async (request,response)=>{
     if (!request.file) {
         return response.status(400).send('No file uploaded');
     }
-    const collection = database.collection("user-1");
-    //const specificUser = collection.findOne({username: requestUsername});
-
-
-    const requestUsername = requestBody.username;
     
-
 
     const requestBody = request.body;
+    const requestUsername = requestBody.username;
+    const requestUniqueID = Number(requestBody.unique_id);
 
-    const requestDate = requestBody.date;
-
-    const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
-
-    
 
     const requestFile = request.file;
-    const requestFileName = requestBody.filename;
-    const requestDescription = requestBody.description;
-
-    const requestUniqueID = requestBody.unique_id;
-    
     const requestFileBuffer = requestFile.buffer;
-
-    
-    
-
-    //this is the converted base64 string of the file
-    const base64String = requestFileBuffer.toString('base64');
+    const base64String = requestFileBuffer.toString('base64'); //this is the converted base64 string of the file
     
 
+    const collection = database.collection("user-1");
     //We find the specific request object that has the same unique_id as the one in the request body
     const findUser = await collection.findOne({
         "username":requestUsername
     })
-    let fileBox;
-    for (let i = 0; i < findUser.doc_list.length; i++){
-        if (findUser.doc_list[i].unique_id == requestUniqueID){
-            fileBox = findUser.doc_list[i];
-            break;
+    
+    
+
+    await collection.updateOne(
+        { _id: findUser._id,
+            "doc_list.unique_id": requestUniqueID
+         },
+        {
+            $set: {
+                "doc_list.$.file": base64String,
+                "doc_list.$.isRequested": false
+            }
         }
-    }
-
-    
-
-    fileBox.date = requestDate;
-    fileBox.file = base64String;
-    fileBox.file_name = requestFileName;
-    fileBox.description = requestDescription;
-    fileBox.filetype = requestFileType;
-    fileBox.isRequested = false;
-    
-    
-
-    
-
-    
-
-    
-
-    
+    );
 
     response.status(200).send({
-        message: 'PDF uploaded successfully!'
+        message: 'File uploaded successfully!'
       });
     
 })
 
-//expected request body:
+//expected request header:
 // {
-//     "username": "user1",
-//     "filetype": "HIPAA"
+//     "username": "jimbob"
 // }
-//this is the endpoint that will be used to retrieve the pdf file
+//this is the endpoint that will be used to retrieve all the files for a specific user
 
 
-app.get("/api/getPDF",async (request,response)=>{
+app.get("/api/getFiles",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
@@ -210,7 +176,8 @@ app.get("/api/getPDF",async (request,response)=>{
 
     
 
-    const result = await collection.findOne(requestUsername);
+    const result = await collection.findOne({username:requestUsername});
+    
     
     const result_doc_list = result.doc_list
     //const pdfBuffer = Buffer.from(base64String, 'base64');
@@ -218,22 +185,26 @@ app.get("/api/getPDF",async (request,response)=>{
     const fileArray = [];
 
     for (let i = 0; i < result_doc_list.length; i++ ){
+
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
+
         const pdfFileName = result_doc_list[i].file_name;
         const pdfDescription = result_doc_list[i].description;
         const isRequested = result_doc_list[i].isRequested;
         const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].folder_name;
+        const pdfFileType = result_doc_list[i].filetype;
+        const unique_id = result_doc_list[i].unique_id;
 
 
         const miniPackage = {
             file_name: pdfFileName,
-            description: pdfDescription,
             file: pdfBuffer,
+            description: pdfDescription,
             date:pdfDate,
             file_type: pdfFileType,
-            isRequested: isRequested
+            isRequested: isRequested,
+            unique_id: unique_id
         }
 
         fileArray.push(miniPackage);
@@ -241,7 +212,32 @@ app.get("/api/getPDF",async (request,response)=>{
 
 
     response.status(200).send({
-        message: 'PDF retrieved successfully!',
+        message: 'Files retrieved successfully!',
         files: fileArray,  // Send back file details
+      });
+})
+
+
+//expected request body:
+// {
+//     "username": "jimbob",
+//     "file_name": "newfile.pdf",
+//     "description": "this is a new file",
+//     "filetype": "HIPAA",
+//     "due_date": "2023-10-01",
+
+app.post("/api/createRequest",async (request,response)=>{
+
+    const requestBody = request.body;
+
+    const requestUsername = requestBody.username;
+    const requestFileName = requestBody.file_name;
+    const requestDescription = requestBody.description;
+    const requestFileType = requestBody.filetype;
+    const requestDueDate = requestBody.due_date;
+
+
+    response.status(200).send({
+        message: 'Request created successfully!'
       });
 })
