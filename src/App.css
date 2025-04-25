@@ -8,8 +8,7 @@
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 3em;
   will-change: filter;
   transition: filter 300ms;
 }
@@ -84,3 +83,8 @@
   margin-top: 5%;
   background-color: rgba(255, 255, 255, 1); /* Solid white background */
 }
+
+.upload-btn {
+  background-color: #274472;
+}
+
