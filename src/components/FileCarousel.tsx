@@ -18,7 +18,7 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
   return (
     <Stack
       gap={3}
-      style={{ backgroundColor: bgColor }}
+      //style={{ backgroundColor: bgColor }}
       className="filecarousel"
     >
       <h3>{text}</h3>

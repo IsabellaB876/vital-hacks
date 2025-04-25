@@ -1,10 +1,10 @@
 import { Container, Button, Image } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import profile from "../assets/react.svg";
 import logo from "../assets/logo.svg";
 import hammy from "../assets/menu.svg";
 import uploadIcon from "../assets/UploadIcon.svg";
+import taskAdd from "../assets/taskAdd.svg";
 import UploadScreen from "./UploadScreen";
 import { useState } from "react";
 
@@ -14,20 +14,36 @@ function NavBar() {
   const toggleDisplay = () => setDisplay(!display);
   return (
     <>
-      <Navbar bg="light" data-bs-theme="light" fixed="top">
+      <Navbar data-bs-theme="light" fixed="top">
         <Container className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
-            <Image className="hammy" src={hammy} alt="hammy" /> <br/>
+            <Image className="hammy" src={hammy} alt="hammy" /> <br />
+
             <Navbar.Brand href="/" className="m-0">
-              <Image className="logo" src={logo} alt="Logo"/> MedVault
+              <Image className="logo" src={logo} alt="Logo" /> MedVault
             </Navbar.Brand>
+
           </div>
+
+          <form className="d-flex">
+            <input className="search-bar form-control shadow me-2" type="search" placeholder="Search for anything..." aria-label="Search" />
+          </form>
+
           <Nav className="justify-content-end align-items-center">
-            <Button onClick={toggleDisplay} className="upload-btn mb-2" size="lg">
-              <Image className="upload" src={uploadIcon} alt="upload"/> Upload
-            </Button>
-            <Nav.Link href="#contact">Profile Name</Nav.Link>
-            <Image src={profile} alt="Profile Photo" roundedCircle />
+
+            <div className="d-flex gap-5 mb-2">
+              <Button onClick={toggleDisplay} className="upload-btn" size="lg">
+                <Image className="upload-icon" src={uploadIcon} alt="upload" /> Upload
+              </Button>
+
+              <Button className="request-btn" size="lg">
+                <Image className="request-icon" src={taskAdd} alt="task" /> Request
+              </Button>
+            </div>
+
+            {/* <Nav.Link href="#contact">Profile Name</Nav.Link>
+            <Image src={profile} alt="Profile Photo" roundedCircle /> */}
+
           </Nav>
         </Container>
       </Navbar>

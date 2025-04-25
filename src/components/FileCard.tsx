@@ -8,7 +8,7 @@ interface FileCardProps {
 
 function FileCard({ hasFile }: FileCardProps) {
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card>
       <Card.Img variant="top" src={hasFile ? "" : icon} alt="Uploaded file" />
       <Card.Body>
         <Card.Title>Card Title</Card.Title>

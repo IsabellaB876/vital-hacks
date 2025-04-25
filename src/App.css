@@ -38,6 +38,8 @@
   padding: 2em;
 }
 
+
+
 .read-the-docs {
   color: #888;
 }
@@ -55,9 +57,9 @@
   width: 100%;
   position: relative; /* Ensure positioning context for arrows and pagination */
   overflow: visible; /* Allow arrows/pagination to stay visible */
-  padding-left: 5em;
+  /* padding-left: 5em;
   padding-right: 5em;
-  padding-bottom: 5em;
+  padding-bottom: 5em; */
   position: relative;
 }
 
@@ -84,7 +86,29 @@
   background-color: rgba(255, 255, 255, 1); /* Solid white background */
 }
 
+.search-bar{
+  width:460px;
+  height: 60px;
+}
+
 .upload-btn {
+  width: 182px;
+  height: 60px;
   background-color: #274472;
+  color: white;
+  font-size: 25px;
+}
+
+.upload-icon{
+  padding-right: 7px;
+}
+
+
+.request-btn {
+  width: 196px;
+  height: 60px;
+  background-color: #E7F9FA;
+  color: #274472;
+  font-size: 25px;
 }
 

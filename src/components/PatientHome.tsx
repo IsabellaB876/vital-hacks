@@ -7,7 +7,7 @@ function PatientHome(){
     return(
     <Stack gap={3} className="text-start">
     <NavBar />
-    <h2>Welcome Patient!</h2>
+    <h2 style={{ color: "#274472" }}>Welcome Patient!</h2>
     <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
     <FileCarousel text="Patient Intake Forms" bgColor="#FFFFFF" />
     <FileCarousel text="HIPAA and Consent" bgColor="#FFFFFF" />
