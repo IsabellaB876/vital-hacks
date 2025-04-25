@@ -105,11 +105,12 @@ app.listen(defaultPort, () => {
 
 
 
-//expected request body:
+//expected request .body:
 // {
+//     "username": "jimbob",
 //     "unique_id": "2",
 // }
-//expected request file:
+//expected request .file:
 // {
 //     "pdfFile": <binary file>
 // }
@@ -117,7 +118,7 @@ app.listen(defaultPort, () => {
 
 //this is the endpoint that will be used to upload the pdf file
 
-app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
+app.post("/api/uploadFile",upload.single('file'),async (request,response)=>{
     if (!request.file) {
         return response.status(400).send('No file uploaded');
     }
@@ -167,7 +168,7 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
 //this is the endpoint that will be used to retrieve the pdf file
 
 
-app.get("/api/getPDF",async (request,response)=>{
+app.get("/api/getFiles",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
