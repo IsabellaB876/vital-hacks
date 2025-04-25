@@ -155,17 +155,16 @@ app.post("/api/uploadFile",upload.single('file'),async (request,response)=>{
     );
 
     response.status(200).send({
-        message: 'PDF uploaded successfully!'
+        message: 'File uploaded successfully!'
       });
     
 })
 
-//expected request body:
+//expected request header:
 // {
-//     "username": "user1",
-//     "filetype": "HIPAA"
+//     "username": "jimbob"
 // }
-//this is the endpoint that will be used to retrieve the pdf file
+//this is the endpoint that will be used to retrieve all the files for a specific user
 
 
 app.get("/api/getFiles",async (request,response)=>{
@@ -177,7 +176,8 @@ app.get("/api/getFiles",async (request,response)=>{
 
     
 
-    const result = await collection.findOne(requestUsername);
+    const result = await collection.findOne({username:requestUsername});
+    
     
     const result_doc_list = result.doc_list
     //const pdfBuffer = Buffer.from(base64String, 'base64');
@@ -212,15 +212,32 @@ app.get("/api/getFiles",async (request,response)=>{
 
 
     response.status(200).send({
-        message: 'PDF retrieved successfully!',
+        message: 'Files retrieved successfully!',
         files: fileArray,  // Send back file details
       });
 })
 
-app.post("/api/createUser",async (request,response)=>{
+
+//expected request body:
+// {
+//     "username": "jimbob",
+//     "file_name": "newfile.pdf",
+//     "description": "this is a new file",
+//     "filetype": "HIPAA",
+//     "due_date": "2023-10-01",
+
+app.post("/api/createRequest",async (request,response)=>{
 
     const requestBody = request.body;
+
+    const requestUsername = requestBody.username;
+    const requestFileName = requestBody.file_name;
+    const requestDescription = requestBody.description;
+    const requestFileType = requestBody.filetype;
+    const requestDueDate = requestBody.due_date;
+
+
     response.status(200).send({
-        message: 'User created successfully!'
+        message: 'Request created successfully!'
       });
 })
