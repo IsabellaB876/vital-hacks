@@ -107,11 +107,7 @@ app.listen(defaultPort, () => {
 
 //expected request body:
 // {
-//     "username": "user-1",
-//     "filetype": "HIPAA",
-//     "filename": "example.pdf",
-//     "date": "2023-10-01",
-//     "description": "This is a test file"
+//     "unique_id": "2",
 // }
 //expected request file:
 // {
@@ -125,61 +121,25 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     if (!request.file) {
         return response.status(400).send('No file uploaded');
     }
-    const collection = database.collection("user-1");
-    //const specificUser = collection.findOne({username: requestUsername});
-
-
     
-    
-
 
     const requestBody = request.body;
     const requestUsername = requestBody.username;
+    const requestUniqueID = Number(requestBody.unique_id);
 
-    const requestDate = requestBody.date;
-
-    const requestFileType = requestBody.filetype;//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
-
-    
 
     const requestFile = request.file;
-    const requestFileName = requestBody.filename;
-    const requestDescription = requestBody.description;
-
-    const requestUniqueID = Number(requestBody.unique_id);
-    
     const requestFileBuffer = requestFile.buffer;
-
-    
-    
-
-    //this is the converted base64 string of the file
-    const base64String = requestFileBuffer.toString('base64');
+    const base64String = requestFileBuffer.toString('base64'); //this is the converted base64 string of the file
     
 
+    const collection = database.collection("user-1");
     //We find the specific request object that has the same unique_id as the one in the request body
     const findUser = await collection.findOne({
         "username":requestUsername
     })
-    //findUser now holds the user object that has the same username as the one in the request body
-
     
-    let fileBox;
-    for (let i = 0; i < findUser.doc_list.length; i++){
-        if (findUser.doc_list[i].unique_id == requestUniqueID && findUser.doc_list[i].isRequested == true){
-            fileBox = findUser.doc_list[i];
-            break;
-        }
-    }
-
     
-    /**
-    fileBox.date = requestDate;
-    fileBox.file = base64String;
-    fileBox.file_name = requestFileName;
-    fileBox.description = requestDescription;
-    fileBox.filetype = requestFileType;
-    fileBox.isRequested = false;*/
 
     await collection.updateOne(
         { _id: findUser._id,
@@ -187,25 +147,11 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
          },
         {
             $set: {
-                "doc_list.$.date": requestDate,
                 "doc_list.$.file": base64String,
-                "doc_list.$.file_name": requestFileName,
-                "doc_list.$.description": requestDescription,
-                "doc_list.$.filetype": requestFileType,
                 "doc_list.$.isRequested": false
             }
         }
     );
-    
-    
-
-    
-
-    
-
-    
-
-    
 
     response.status(200).send({
         message: 'PDF uploaded successfully!'
@@ -238,22 +184,26 @@ app.get("/api/getPDF",async (request,response)=>{
     const fileArray = [];
 
     for (let i = 0; i < result_doc_list.length; i++ ){
+
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
+
         const pdfFileName = result_doc_list[i].file_name;
         const pdfDescription = result_doc_list[i].description;
         const isRequested = result_doc_list[i].isRequested;
         const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].folder_name;
+        const pdfFileType = result_doc_list[i].filetype;
+        const unique_id = result_doc_list[i].unique_id;
 
 
         const miniPackage = {
             file_name: pdfFileName,
-            description: pdfDescription,
             file: pdfBuffer,
+            description: pdfDescription,
             date:pdfDate,
             file_type: pdfFileType,
-            isRequested: isRequested
+            isRequested: isRequested,
+            unique_id: unique_id
         }
 
         fileArray.push(miniPackage);
@@ -263,5 +213,13 @@ app.get("/api/getPDF",async (request,response)=>{
     response.status(200).send({
         message: 'PDF retrieved successfully!',
         files: fileArray,  // Send back file details
+      });
+})
+
+app.post("/api/createUser",async (request,response)=>{
+
+    const requestBody = request.body;
+    response.status(200).send({
+        message: 'User created successfully!'
       });
 })
