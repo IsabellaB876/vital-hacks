@@ -129,11 +129,12 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     //const specificUser = collection.findOne({username: requestUsername});
 
 
-    const requestUsername = requestBody.username;
+    
     
 
 
     const requestBody = request.body;
+    const requestUsername = requestBody.username;
 
     const requestDate = requestBody.date;
 
@@ -145,7 +146,7 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     const requestFileName = requestBody.filename;
     const requestDescription = requestBody.description;
 
-    const requestUniqueID = requestBody.unique_id;
+    const requestUniqueID = Number(requestBody.unique_id);
     
     const requestFileBuffer = requestFile.buffer;
 
@@ -160,22 +161,41 @@ app.post("/api/uploadPDF",upload.single('pdfFile'),async (request,response)=>{
     const findUser = await collection.findOne({
         "username":requestUsername
     })
+    //findUser now holds the user object that has the same username as the one in the request body
+
+    
     let fileBox;
     for (let i = 0; i < findUser.doc_list.length; i++){
-        if (findUser.doc_list[i].unique_id == requestUniqueID){
+        if (findUser.doc_list[i].unique_id == requestUniqueID && findUser.doc_list[i].isRequested == true){
             fileBox = findUser.doc_list[i];
             break;
         }
     }
 
     
-
+    /**
     fileBox.date = requestDate;
     fileBox.file = base64String;
     fileBox.file_name = requestFileName;
     fileBox.description = requestDescription;
     fileBox.filetype = requestFileType;
-    fileBox.isRequested = false;
+    fileBox.isRequested = false;*/
+
+    await collection.updateOne(
+        { _id: findUser._id,
+            "doc_list.unique_id": requestUniqueID
+         },
+        {
+            $set: {
+                "doc_list.$.date": requestDate,
+                "doc_list.$.file": base64String,
+                "doc_list.$.file_name": requestFileName,
+                "doc_list.$.description": requestDescription,
+                "doc_list.$.filetype": requestFileType,
+                "doc_list.$.isRequested": false
+            }
+        }
+    );
     
     
 
