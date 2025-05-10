@@ -1,10 +1,12 @@
 const defaultPort = 3000;
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const dotenv = require('dotenv'); // this activates the ability to parse the .env file
+
 
 dotenv.config();
 const app = express();
@@ -17,8 +19,10 @@ app.use(cors())
 
 
 
+
 const DB_USERNAME = process.env.db_username || '';
 const DB_PASSWORD = process.env.db_password || '';
+
 console.log(DB_USERNAME)
 console.log(DB_PASSWORD)
 
@@ -258,4 +262,29 @@ app.post("/api/createRequest",async (request,response)=>{
     response.status(200).send({
         message: 'Request created successfully!'
       });
+})
+
+/*
+expected request body:
+{
+    "role": "Patient"
+    "firstName": "Joshua"
+    "lastName": "Paulino Ozuna"
+    "username": "joshypooh17"
+    "password": "mEdVaUlT*2025"}
+*/
+
+app.post('/api/createAccount', async (request, response) => {
+
+    const requestBody = request.body;
+
+    const requestRole = requestBody.role;
+    const requestFirstName = requestBody.firstName;
+    const requestLastName = requestBody.lastName;
+    const requestUsername = requestBody.username;
+    const requestPassword = requestBody.password;
+
+    response.status(200).send ({
+        message: 'Account created successfully!'
+    });
 })
