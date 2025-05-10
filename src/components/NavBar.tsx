@@ -3,7 +3,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/logo.svg";
 import hammy from "../assets/menu.svg";
-import uploadIcon from "../assets/UploadIcon.svg";
+import uploadIcon from "../assets/WhiteUploadIcon.svg";
 import taskAdd from "../assets/taskAdd.svg";
 import UploadScreen from "./UploadScreen";
 import { useState } from "react";
@@ -33,7 +33,7 @@ function NavBar() {
 
             <div className="d-flex gap-5 mb-2">
               <Button onClick={toggleDisplay} className="upload-btn" size="lg">
-                <Image className="upload-icon" src={uploadIcon} alt="upload" /> Upload
+                <Image className="upload-icon" src={uploadIcon} style={{color: "white"}} alt="upload"/> Upload
               </Button>
 
               <Button className="request-btn" size="lg">

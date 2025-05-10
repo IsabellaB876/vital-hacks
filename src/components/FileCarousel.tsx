@@ -8,7 +8,7 @@ interface CustomCarouselProps {
   bgColor: string;
 }
 
-function FileCarousel({ text, bgColor }: CustomCarouselProps) {
+function FileCarousel({ text }: CustomCarouselProps) {
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex: number) => {
@@ -25,7 +25,6 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
       <Carousel
         activeIndex={index}
         onSelect={handleSelect}
-        data-bs-theme="dark"
         interval={null}
         controls={true}
         indicators={true}

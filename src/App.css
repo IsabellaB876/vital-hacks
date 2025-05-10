@@ -38,7 +38,13 @@
   padding: 2em;
 }
 
-
+.blue-upload {
+  background-color: #E7F9FA;
+  border-radius: 15;
+  border: 3px dashed;
+  border-color: #274472;
+  padding: 20px;
+}
 
 .read-the-docs {
   color: #888;
