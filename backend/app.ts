@@ -243,6 +243,16 @@ app.post("/api/createRequest",async (request,response)=>{
       });
 })
 
+/*
+expected request body:
+{
+    "role": "Patient"
+    "firstName": "Joshua"
+    "lastName": "Paulino Ozuna"
+    "username": "joshypooh17"
+    "password": "mEdVaUlT*2025"}
+*/
+
 app.post('/api/createAccount', async (request, response) => {
 
     const requestBody = request.body;
