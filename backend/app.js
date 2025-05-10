@@ -122,9 +122,9 @@ app.listen(defaultPort, () => {
 // }
 
 
-//this is the endpoint that will be used to edit the pdf file
+//this is the endpoint that will be used to upload the pdf file
 
-app.patch("/api/editFile", upload.single('file'), async (request, response) => {
+app.patch("/api/uploadFile", upload.single('file'), async (request, response) => {
     try {
         if (!request.file) {
             response.status(400).send('No file uploaded');
@@ -133,7 +133,7 @@ app.patch("/api/editFile", upload.single('file'), async (request, response) => {
 
         const requestBody = request.body;
         const requestUsername = requestBody.username;
-        const requestUniqueID = Number(requestBody.unique_id);
+        const requestUniqueID = Number(requestBody.id);
 
         const requestFile = request.file;
         const requestFileBuffer = requestFile.buffer;
@@ -148,12 +148,12 @@ app.patch("/api/editFile", upload.single('file'), async (request, response) => {
         await collection.updateOne(
             {
                 _id: findUser._id,
-                "doc_list.unique_id": requestUniqueID
+                "files.id": requestUniqueID
             },
             {
                 $set: {
-                    "doc_list.$.file": base64String,
-                    "doc_list.$.isRequested": false
+                    "files.$.file": base64String,
+                    "files.$.isRequested": false
                 }
             }
         );
