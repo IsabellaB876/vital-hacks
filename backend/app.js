@@ -1,10 +1,10 @@
 const defaultPort = 3000;
-import express, { Request, Response } from 'express';
-import multer, { Multer } from 'multer';
-import path from 'path';
-import cors from 'cors';
-import { MongoClient, ServerApiVersion, Db, Collection } from 'mongodb';
-import dotenv from 'dotenv';//this activates the ability to parse the .env file
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const dotenv = require('dotenv'); // this activates the ability to parse the .env file
 
 dotenv.config();
 const app = express();
@@ -17,15 +17,15 @@ app.use(cors())
 
 
 
-const DB_USERNAME: string = process.env.db_username || '';
-const DB_PASSWORD: string = process.env.db_password || '';
+const DB_USERNAME = process.env.db_username || '';
+const DB_PASSWORD = process.env.db_password || '';
 console.log(DB_USERNAME)
 console.log(DB_PASSWORD)
 
 //put the uri here
-const uri:string = "mongodb+srv://" + DB_USERNAME + ":" + DB_PASSWORD + "@filecluster.zuhvtjf.mongodb.net/?retryWrites=true&w=majority&appName=filecluster"
+const uri = "mongodb+srv://" + DB_USERNAME + ":" + DB_PASSWORD + "@filecluster.zuhvtjf.mongodb.net/?retryWrites=true&w=majority&appName=filecluster"
 
-const client: MongoClient = new MongoClient(uri, {
+const client = new MongoClient(uri, {
     serverApi: {
         version:ServerApiVersion.v1,
         strict: true,
@@ -35,7 +35,7 @@ const client: MongoClient = new MongoClient(uri, {
 
 
 //we will store all the user data in this database
-const database:Db = client.db('user-storage');
+const database = client.db('user-storage');
 
 //we will store one collection for each user
 
@@ -60,9 +60,9 @@ run().catch(console.dir);
 
 
 // Set up multer storage configuration
-const storage:multer.StorageEngine = multer.memoryStorage();
+const storage = multer.memoryStorage();
 
-const upload:Multer = multer({ storage: storage });
+const upload = multer({ storage: storage });
 
 
 //this section here handles all sorts of crashes and server terminations so that Mongodb shuts off gracefully.
@@ -109,8 +109,8 @@ app.listen(defaultPort, () => {
 
 //expected request .body:
 // {
-//     "username": "jimbob",
-//     "unique_id": "2",
+//     File Object as JSON
+//     User Object as JSON
 // }
 //expected request .file:
 // {
@@ -118,26 +118,26 @@ app.listen(defaultPort, () => {
 // }
 
 
-//this is the endpoint that will be used to upload the pdf file
+//this is the endpoint that will be used to edit the pdf file
 
-app.post("/api/uploadFile", upload.single('file'), async (request, response) => {
+app.patch("/api/editFile", upload.single('file'), async (request, response) => {
     try {
         if (!request.file) {
             response.status(400).send('No file uploaded');
             return;
         }
 
-        const requestBody:any = request.body;
-        const requestUsername: string = requestBody.username;
-        const requestUniqueID:number = Number(requestBody.unique_id);
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestUniqueID = Number(requestBody.unique_id);
 
-        const requestFile:any = request.file;
-        const requestFileBuffer:Buffer = requestFile.buffer;
-        const base64String:string = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
+        const requestFile = request.file;
+        const requestFileBuffer = requestFile.buffer;
+        const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
 
-        const collection:Collection<any> = database.collection("user-1");
+        const collection = database.collection("user-1");
         // We find the specific request object that has the same unique_id as the one in the request body
-        const findUser:any | null = await collection.findOne({
+        const findUser = await collection.findOne({
             "username": requestUsername
         });
 
@@ -167,6 +167,20 @@ app.post("/api/uploadFile", upload.single('file'), async (request, response) => 
 // {
 //     "username": "jimbob"
 // }
+//This request header is used to identify the user that is making the request, a special case where we NEED for the get api request
+//For this case only we will not be using the request body and therefore not the entirety of the User Object.
+
+//returns an array of JSON objects with the following format:
+// {
+//     "name": "newfile.pdf",
+//     "file": <binary file>,
+//     "description": "this is a new file",
+//     "date": "2023-10-01",
+//     "type": "HIPAA",
+//     "isRequested": true,
+//     "id": 1
+// }
+//This is going to be transmutated into a File Object in the frontend
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
@@ -174,40 +188,44 @@ app.get("/api/getFiles",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
-    const requestUsername:string | string[] | undefined = request.headers["username"];
+    const requestUsername = request.headers["username"];
     const collection = await database.collection("user-1");
 
     
 
-    const result:any | null = await collection.findOne({username:requestUsername});
+    const result = await collection.findOne({username:requestUsername});
     
     
-    const result_doc_list: any = result.doc_list
+    const result_doc_list = result.files
     //const pdfBuffer = Buffer.from(base64String, 'base64');
 
-    const fileArray: any[] = [];
+    const fileArray = [];
 
     for (let i = 0; i < result_doc_list.length; i++ ){
 
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
 
-        const pdfFileName = result_doc_list[i].file_name;
+        const pdfFileName = result_doc_list[i].name;
         const pdfDescription = result_doc_list[i].description;
         const isRequested = result_doc_list[i].isRequested;
         const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].filetype;
-        const unique_id = result_doc_list[i].unique_id;
+        const pdfFileType = result_doc_list[i].type;
+        const unique_id = result_doc_list[i].id;
+        const requestedBy = result_doc_list[i].requestedBy;
+        const requestedFor = result_doc_list[i].requestedFor;
 
 
         const miniPackage = {
-            file_name: pdfFileName,
+            name: pdfFileName,
             file: pdfBuffer,
             description: pdfDescription,
             date:pdfDate,
-            file_type: pdfFileType,
+            type: pdfFileType,
             isRequested: isRequested,
-            unique_id: unique_id
+            id: unique_id,
+            requestedBy: requestedBy,
+            requestedFor: requestedFor
         }
 
         fileArray.push(miniPackage);
@@ -223,11 +241,8 @@ app.get("/api/getFiles",async (request,response)=>{
 
 //expected request body:
 // {
-//     "username": "jimbob",
-//     "file_name": "newfile.pdf",
-//     "description": "this is a new file",
-//     "filetype": "HIPAA",
-//     "due_date": "2023-10-01",
+//     The user as a JSON object
+//     The file as a JSON object
 
 app.post("/api/createRequest",async (request,response)=>{
 
