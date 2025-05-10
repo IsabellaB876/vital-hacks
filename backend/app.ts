@@ -4,7 +4,7 @@ import multer, { Multer } from 'multer';
 import path from 'path';
 import cors from 'cors';
 import { MongoClient, ServerApiVersion, Db, Collection } from 'mongodb';
-import dotenv from 'dotenv';//this activates the ability to parse the .env file
+import dotenv from 'dotenv'; //this activates the ability to parse the .env file
 
 dotenv.config();
 const app = express();
@@ -13,8 +13,6 @@ const app = express();
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
 app.use(cors())
-
-
 
 
 const DB_USERNAME: string = process.env.db_username || '';
@@ -243,4 +241,19 @@ app.post("/api/createRequest",async (request,response)=>{
     response.status(200).send({
         message: 'Request created successfully!'
       });
+})
+
+app.post('/api/createAccount', async (request, response) => {
+
+    const requestBody = request.body;
+
+    const requestRole = requestBody.role;
+    const requestFirstName = requestBody.firstName;
+    const requestLastName = requestBody.lastName;
+    const requestUsername = requestBody.username;
+    const requestPassword = requestBody.password;
+
+    response.status(200).send ({
+        message: 'Account created successfully!'
+    });
 })
