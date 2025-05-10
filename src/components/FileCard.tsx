@@ -1,5 +1,5 @@
 import { Button, Card } from "react-bootstrap";
-import icon from "../assets/UploadIcon.svg"
+import icon from "../assets/BlueUploadIcon.svg"
 
 // Define the type of props
 interface FileCardProps {
@@ -8,8 +8,8 @@ interface FileCardProps {
 
 function FileCard({ hasFile }: FileCardProps) {
   return (
-    <Card style={{ width: "18rem" }}>
-      <Card.Img variant="top" src={hasFile ? "" : icon} alt="Uploaded file" />
+    <Card>
+      <Card.Img src={hasFile ? "" : icon } alt="Uploaded file" className="blue-upload"/>
       <Card.Body>
         <Card.Title>Card Title</Card.Title>
         <Card.Text>
