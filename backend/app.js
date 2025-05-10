@@ -1,22 +1,28 @@
+const defaultPort = 3000;
+
 const express = require('express');
-const app = express();
 const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
-const defaultPort = 3000;
-require('dotenv').config();//this activates the ability to parse the .env file
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const dotenv = require('dotenv'); // this activates the ability to parse the .env file
 
+
+dotenv.config();
+const app = express();
 
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
 app.use(cors())
 
-const {MongoClient, ServerApiVersion} = require('mongodb');
 
 
-const DB_USERNAME = process.env.db_username;
-const DB_PASSWORD = process.env.db_password;
+
+
+const DB_USERNAME = process.env.db_username || '';
+const DB_PASSWORD = process.env.db_password || '';
+
 console.log(DB_USERNAME)
 console.log(DB_PASSWORD)
 
@@ -107,8 +113,8 @@ app.listen(defaultPort, () => {
 
 //expected request .body:
 // {
-//     "username": "jimbob",
-//     "unique_id": "2",
+//     File Object as JSON
+//     User Object as JSON
 // }
 //expected request .file:
 // {
@@ -116,54 +122,69 @@ app.listen(defaultPort, () => {
 // }
 
 
-//this is the endpoint that will be used to upload the pdf file
+//this is the endpoint that will be used to edit the pdf file
 
-app.post("/api/uploadFile",upload.single('file'),async (request,response)=>{
-    if (!request.file) {
-        return response.status(400).send('No file uploaded');
-    }
-    
-
-    const requestBody = request.body;
-    const requestUsername = requestBody.username;
-    const requestUniqueID = Number(requestBody.unique_id);
-
-
-    const requestFile = request.file;
-    const requestFileBuffer = requestFile.buffer;
-    const base64String = requestFileBuffer.toString('base64'); //this is the converted base64 string of the file
-    
-
-    const collection = database.collection("user-1");
-    //We find the specific request object that has the same unique_id as the one in the request body
-    const findUser = await collection.findOne({
-        "username":requestUsername
-    })
-    
-    
-
-    await collection.updateOne(
-        { _id: findUser._id,
-            "doc_list.unique_id": requestUniqueID
-         },
-        {
-            $set: {
-                "doc_list.$.file": base64String,
-                "doc_list.$.isRequested": false
-            }
+app.patch("/api/editFile", upload.single('file'), async (request, response) => {
+    try {
+        if (!request.file) {
+            response.status(400).send('No file uploaded');
+            return;
         }
-    );
 
-    response.status(200).send({
-        message: 'File uploaded successfully!'
-      });
-    
-})
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestUniqueID = Number(requestBody.unique_id);
+
+        const requestFile = request.file;
+        const requestFileBuffer = requestFile.buffer;
+        const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
+
+        const collection = database.collection("user-1");
+        // We find the specific request object that has the same unique_id as the one in the request body
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+        await collection.updateOne(
+            {
+                _id: findUser._id,
+                "doc_list.unique_id": requestUniqueID
+            },
+            {
+                $set: {
+                    "doc_list.$.file": base64String,
+                    "doc_list.$.isRequested": false
+                }
+            }
+        );
+
+        response.status(200).send({
+            message: 'File uploaded successfully!'
+        });
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        response.status(500).send('Internal server error');
+    }
+});
 
 //expected request header:
 // {
 //     "username": "jimbob"
 // }
+//This request header is used to identify the user that is making the request, a special case where we NEED for the get api request
+//For this case only we will not be using the request body and therefore not the entirety of the User Object.
+
+//returns an array of JSON objects with the following format:
+// {
+//     "name": "newfile.pdf",
+//     "file": <binary file>,
+//     "description": "this is a new file",
+//     "date": "2023-10-01",
+//     "type": "HIPAA",
+//     "isRequested": true,
+//     "id": 1
+// }
+//This is going to be transmutated into a File Object in the frontend
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
@@ -179,7 +200,7 @@ app.get("/api/getFiles",async (request,response)=>{
     const result = await collection.findOne({username:requestUsername});
     
     
-    const result_doc_list = result.doc_list
+    const result_doc_list = result.files
     //const pdfBuffer = Buffer.from(base64String, 'base64');
 
     const fileArray = [];
@@ -189,22 +210,26 @@ app.get("/api/getFiles",async (request,response)=>{
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
 
-        const pdfFileName = result_doc_list[i].file_name;
+        const pdfFileName = result_doc_list[i].name;
         const pdfDescription = result_doc_list[i].description;
         const isRequested = result_doc_list[i].isRequested;
         const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].filetype;
-        const unique_id = result_doc_list[i].unique_id;
+        const pdfFileType = result_doc_list[i].type;
+        const unique_id = result_doc_list[i].id;
+        const requestedBy = result_doc_list[i].requestedBy;
+        const requestedFor = result_doc_list[i].requestedFor;
 
 
         const miniPackage = {
-            file_name: pdfFileName,
+            name: pdfFileName,
             file: pdfBuffer,
             description: pdfDescription,
             date:pdfDate,
-            file_type: pdfFileType,
+            type: pdfFileType,
             isRequested: isRequested,
-            unique_id: unique_id
+            id: unique_id,
+            requestedBy: requestedBy,
+            requestedFor: requestedFor
         }
 
         fileArray.push(miniPackage);
@@ -220,11 +245,8 @@ app.get("/api/getFiles",async (request,response)=>{
 
 //expected request body:
 // {
-//     "username": "jimbob",
-//     "file_name": "newfile.pdf",
-//     "description": "this is a new file",
-//     "filetype": "HIPAA",
-//     "due_date": "2023-10-01",
+//     The user as a JSON object
+//     The file as a JSON object
 
 app.post("/api/createRequest",async (request,response)=>{
 
@@ -240,4 +262,29 @@ app.post("/api/createRequest",async (request,response)=>{
     response.status(200).send({
         message: 'Request created successfully!'
       });
+})
+
+/*
+expected request body:
+{
+    "role": "Patient"
+    "firstName": "Joshua"
+    "lastName": "Paulino Ozuna"
+    "username": "joshypooh17"
+    "password": "mEdVaUlT*2025"}
+*/
+
+app.post('/api/createAccount', async (request, response) => {
+
+    const requestBody = request.body;
+
+    const requestRole = requestBody.role;
+    const requestFirstName = requestBody.firstName;
+    const requestLastName = requestBody.lastName;
+    const requestUsername = requestBody.username;
+    const requestPassword = requestBody.password;
+
+    response.status(200).send ({
+        message: 'Account created successfully!'
+    });
 })
