@@ -17,9 +17,6 @@ app.use(express.json());
 app.use(cors())
 
 
-
-
-
 const DB_USERNAME = process.env.db_username || '';
 const DB_PASSWORD = process.env.db_password || '';
 
@@ -337,4 +334,28 @@ app.post('/api/createAccount', async (request, response) => {
     response.status(200).send ({
         message: 'Account created successfully!'
     });
+})
+
+// route to get a user from their username and password
+app.get('/api/login', async (request, response) => {
+    const username = request.headers["username"];
+    const password = request.headers["password"];
+
+    if ( !username || !password ) {
+        return response.status(400).send( {
+            message: 'Username and password are required'
+        });
+    }
+
+    const collection = database.collection ("user-1");
+
+    const userData = await collection.findOne({
+        username: username,
+        password: password
+    });
+
+    response.status(200).send({
+        message: 'Login successful',
+        user: userData
+    })
 })
