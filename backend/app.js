@@ -113,8 +113,8 @@ app.listen(defaultPort, () => {
 
 //expected request .body:
 // {
-//     File Object as JSON
-//     User Object as JSON
+//     username: "jimbob",
+//     id: 1
 // }
 //expected request .file:
 // {
