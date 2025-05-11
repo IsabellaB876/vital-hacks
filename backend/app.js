@@ -106,6 +106,56 @@ app.listen(defaultPort, () => {
 
 //this is where you can add your routes
 
+//expected request body:
+// {
+//     "username": "jimbob",
+//     "id": 1
+//     "edits": {}
+
+
+//json object for edits:
+// {
+//     "key": "this is a string and is the name of the property that you want to edit",
+//     "value": "this is the new value that you want to set it to, it can be whatever value you want"
+
+app.patch("/api/editFile",async (request, response) => {
+
+    const collection = database.collection("user-1");
+
+
+    const requestBody = request.body;
+    const requestUsername = requestBody.username;
+    const requestID = Number(requestBody.id);
+    const requestEdits = requestBody.edits;
+
+    const findUser = await collection.findOne({
+        "username": requestUsername
+    });
+
+
+    for (const edit in requestEdits) {
+        const key = edit.key;
+        const value = edit.value;
+        const update = {
+            $set: {
+                [`files.$.${key}`]: value
+            }
+        };
+        await collection.updateOne(
+            {
+                _id: findUser._id,
+                "files.id": requestID
+            },
+            update
+        );
+        console.log(`Updated ${key} to ${value}`);
+    }
+
+    response.status(200).send({
+        message: 'File edited successfully!'
+    });
+
+});
 
 
 //expected request .body:
