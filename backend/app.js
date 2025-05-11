@@ -304,6 +304,12 @@ app.get('/api/login', async (request, response) => {
         password: password
     });
 
+    if (!userData) {
+        return response.status(401).send({
+          message: 'Invalid username or password'
+        });
+      }
+
     response.status(200).send({
         message: 'Login successful',
         user: userData
