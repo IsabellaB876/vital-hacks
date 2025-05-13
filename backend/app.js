@@ -294,18 +294,52 @@ app.get("/api/getFiles",async (request,response)=>{
 
 //expected request body:
 // {
-//     The user as a JSON object
-//     The file as a JSON object
+//     "username": "jimbob",
+//     "requester_username": "joshypooh17",
+//     "request_attributes": {
+//         "name": "newfile.pdf",
+//         "description": "this is a new file",
+//         "date": "2023-10-01",
+//         "type": "HIPAA"
+//     }
 
 app.post("/api/createRequest",async (request,response)=>{
 
     const requestBody = request.body;
+    const requestAttributes = requestBody.request_attributes;
 
     const requestUsername = requestBody.username;
-    const requestFileName = requestBody.file_name;
-    const requestDescription = requestBody.description;
-    const requestFileType = requestBody.filetype;
-    const requestDueDate = requestBody.due_date;
+    const requestFileName = requestAttributes.name;
+    const requestDescription = requestAttributes.description;
+    const requestFileType = requestAttributes.type;
+    const requestDueDate = requestAttributes.date;
+
+    const collection = await database.collection("user-1");
+    const result = await collection.findOne({username:requestUsername});
+    const findUser = await collection.findOne({
+        "username": requestUsername
+    });
+
+    await collection.updateOne(
+        {
+            _id: findUser._id
+        },
+        {
+            $push: {
+                "files": {
+                    "name": requestFileName,
+                    "description": requestDescription,
+                    "file": "",
+                    "due_date": requestDueDate,
+                    "type": requestFileType,
+                    "isRequested": true,
+                    "id": result.files.length + 1,
+                    "requestedBy": [requestBody.requester_username],
+                    "requestedFor": [requestBody.username]
+                }
+            }
+        }
+    );
 
 
     response.status(200).send({
