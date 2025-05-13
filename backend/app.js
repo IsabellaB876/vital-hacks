@@ -110,7 +110,7 @@ app.listen(defaultPort, () => {
 // {
 //     "username": "jimbob",
 //     "id": 1
-//     "edits": {}
+//     "edits": []
 
 
 //json object for edits:
@@ -120,13 +120,14 @@ app.listen(defaultPort, () => {
 
 app.patch("/api/editFile",async (request, response) => {
 
-    const collection = database.collection("user-1");
+    const collection = await database.collection("user-1");
 
 
     const requestBody = request.body;
     const requestUsername = requestBody.username;
     const requestID = Number(requestBody.id);
     const requestEdits = requestBody.edits;
+    
 
     const findUser = await collection.findOne({
         "username": requestUsername
@@ -134,8 +135,9 @@ app.patch("/api/editFile",async (request, response) => {
 
 
     for (const edit in requestEdits) {
-        const key = edit.key;
-        const value = edit.value;
+        const key = requestEdits[edit].key;
+        const value = requestEdits[edit].value;
+        
         const update = {
             $set: {
                 [`files.$.${key}`]: value
