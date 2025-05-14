@@ -3,7 +3,7 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /*padding: 2rem;*/
   text-align: center;
 }
 
@@ -19,21 +19,6 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
   padding: 2em;
 }
@@ -44,16 +29,17 @@
   border: 3px dashed;
   border-color: #274472;
   padding: 20px;
+  font-size: 20px;
 }
 
 .read-the-docs {
   color: #888;
 }
 
-.filecarousel {
+/*.filecarousel {
   width: 100%;
-  position: relative; /* Ensure positioning context for arrows and pagination */
-  overflow: visible; /* Allow arrows/pagination to stay visible */
+  position: relative; 
+  overflow: visible; 
   padding: 1em;
   padding-bottom: 0em;
   border-radius: 10px;
@@ -61,11 +47,11 @@
 
 .carousel {
   width: 100%;
-  position: relative; /* Ensure positioning context for arrows and pagination */
-  overflow: visible; /* Allow arrows/pagination to stay visible */
+  position: relative; 
+  overflow: visible; 
   /* padding-left: 5em;
   padding-right: 5em;
-  padding-bottom: 5em; */
+  padding-bottom: 5em; 
   position: relative;
 }
 
@@ -79,7 +65,7 @@
   justify-content: center;
   top: 50%;
   transform: translateY(-100%);
-}
+}*/
 
 .toast {
   width: 100%;
@@ -95,26 +81,26 @@
 .search-bar{
   width:460px;
   height: 60px;
+  font-size: 20px;
 }
 
 .upload-btn {
-  width: 182px;
-  height: 60px;
   background-color: #274472;
   color: white;
-  font-size: 25px;
+  font-size: 2vw;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .upload-icon{
   padding-right: 7px;
 }
 
-
 .request-btn {
-  width: 196px;
-  height: 60px;
   background-color: #E7F9FA;
   color: #274472;
-  font-size: 25px;
+  font-size: 2vw;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 

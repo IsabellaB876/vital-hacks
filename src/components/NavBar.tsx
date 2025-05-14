@@ -14,36 +14,45 @@ function NavBar() {
   const toggleDisplay = () => setDisplay(!display);
   return (
     <>
-      <Navbar data-bs-theme="light" fixed="top">
+      <Navbar
+        data-bs-theme="light"
+        fixed="top"
+        style={{ backgroundColor: "white" }}
+      >
         <Container className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
             <Image className="hammy" src={hammy} alt="hammy" /> <br />
-
             <Navbar.Brand href="/" className="m-0">
               <Image className="logo" src={logo} alt="Logo" /> MedVault
             </Navbar.Brand>
-
           </div>
 
           <form className="d-flex">
-            <input className="search-bar form-control shadow me-2" type="search" placeholder="Search for anything..." aria-label="Search" />
+            <input
+              className="search-bar form-control shadow me-2"
+              type="search"
+              placeholder="Search for anything..."
+              aria-label="Search"
+            />
           </form>
 
           <Nav className="justify-content-end align-items-center">
-
-            <div className="d-flex gap-5 mb-2">
-              <Button onClick={toggleDisplay} className="upload-btn" size="lg">
-                <Image className="upload-icon" src={uploadIcon} style={{color: "white"}} alt="upload"/> Upload
+            <div className="d-flex gap-5">
+              <Button onClick={toggleDisplay} className="upload-btn">
+                <Image
+                  className="upload-icon"
+                  src={uploadIcon}
+                  style={{ color: "white" }}
+                  alt="upload"
+                />{" "}
+                Upload
               </Button>
 
-              <Button className="request-btn" size="lg">
-                <Image className="request-icon" src={taskAdd} alt="task" /> Request
+              <Button className="request-btn">
+                <Image className="request-icon" src={taskAdd} alt="task" />{" "}
+                Request
               </Button>
             </div>
-
-            {/* <Nav.Link href="#contact">Profile Name</Nav.Link>
-            <Image src={profile} alt="Profile Photo" roundedCircle /> */}
-
           </Nav>
         </Container>
       </Navbar>
