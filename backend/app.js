@@ -334,8 +334,8 @@ app.post("/api/createRequest",async (request,response)=>{
                     "type": requestFileType,
                     "isRequested": true,
                     "id": result.files.length + 1,
-                    "requestedBy": [requestBody.requester_username],
-                    "requestedFor": [requestBody.username]
+                    "requestedBy": requestBody.requester_username,
+                    "requestedFor": requestBody.username
                 }
             }
         }
