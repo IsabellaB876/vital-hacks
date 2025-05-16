@@ -17,9 +17,6 @@ app.use(express.json());
 app.use(cors())
 
 
-
-
-
 const DB_USERNAME = process.env.db_username || '';
 const DB_PASSWORD = process.env.db_password || '';
 
@@ -109,6 +106,58 @@ app.listen(defaultPort, () => {
 
 //this is where you can add your routes
 
+//expected request body:
+// {
+//     "username": "jimbob",
+//     "id": 1
+//     "edits": []
+
+
+//json object for edits:
+// {
+//     "key": "this is a string and is the name of the property that you want to edit",
+//     "value": "this is the new value that you want to set it to, it can be whatever value you want"
+
+app.patch("/api/editFile",async (request, response) => {
+
+    const collection = await database.collection("user-1");
+
+
+    const requestBody = request.body;
+    const requestUsername = requestBody.username;
+    const requestID = Number(requestBody.id);
+    const requestEdits = requestBody.edits;
+    
+
+    const findUser = await collection.findOne({
+        "username": requestUsername
+    });
+
+
+    for (const edit in requestEdits) {
+        const key = requestEdits[edit].key;
+        const value = requestEdits[edit].value;
+        
+        const update = {
+            $set: {
+                [`files.$.${key}`]: value
+            }
+        };
+        await collection.updateOne(
+            {
+                _id: findUser._id,
+                "files.id": requestID
+            },
+            update
+        );
+        console.log(`Updated ${key} to ${value}`);
+    }
+
+    response.status(200).send({
+        message: 'File edited successfully!'
+    });
+
+});
 
 
 //expected request .body:
@@ -122,9 +171,9 @@ app.listen(defaultPort, () => {
 // }
 
 
-//this is the endpoint that will be used to edit the pdf file
+//this is the endpoint that will be used to upload the pdf file
 
-app.patch("/api/editFile", upload.single('file'), async (request, response) => {
+app.patch("/api/uploadFile", upload.single('file'), async (request, response) => {
     try {
         if (!request.file) {
             response.status(400).send('No file uploaded');
@@ -133,7 +182,7 @@ app.patch("/api/editFile", upload.single('file'), async (request, response) => {
 
         const requestBody = request.body;
         const requestUsername = requestBody.username;
-        const requestUniqueID = Number(requestBody.unique_id);
+        const requestUniqueID = Number(requestBody.id);
 
         const requestFile = request.file;
         const requestFileBuffer = requestFile.buffer;
@@ -148,12 +197,12 @@ app.patch("/api/editFile", upload.single('file'), async (request, response) => {
         await collection.updateOne(
             {
                 _id: findUser._id,
-                "doc_list.unique_id": requestUniqueID
+                "files.id": requestUniqueID
             },
             {
                 $set: {
-                    "doc_list.$.file": base64String,
-                    "doc_list.$.isRequested": false
+                    "files.$.file": base64String,
+                    "files.$.isRequested": false
                 }
             }
         );
@@ -175,20 +224,35 @@ app.patch("/api/editFile", upload.single('file'), async (request, response) => {
 //For this case only we will not be using the request body and therefore not the entirety of the User Object.
 
 //returns an array of JSON objects with the following format:
-// {
-//     "name": "newfile.pdf",
-//     "file": <binary file>,
-//     "description": "this is a new file",
-//     "date": "2023-10-01",
-//     "type": "HIPAA",
-//     "isRequested": true,
-//     "id": 1
+//
+// user: {
+    //     firstName: "Joshua",
+    //     lastName: "Paulino Ozuna",
+    //     username: "joshypooh17",
+    //     role: "Patient",
+    //     birthDate: "2000-01-01",
+    //     files: [
+    //         {
+    //             name: "file1.pdf",
+    //             file: <binary file>,
+    //             description: "this is a new file",
+    //             date: "2023-10-01",
+    //             type: "HIPAA"
+    //         },
+    //         {
+    //             name: "file2.pdf",
+    //             file: <binary file>,
+    //             description: "this is another new file",
+    //             date: "2023-10-02",
+    //             type: "non-HIPAA"
+    //         }
+    //     ]
 // }
 //This is going to be transmutated into a File Object in the frontend
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
-app.get("/api/getFiles",async (request,response)=>{
+app.get("/api/getUser",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
@@ -237,30 +301,91 @@ app.get("/api/getFiles",async (request,response)=>{
 
 
     response.status(200).send({
-        message: 'Files retrieved successfully!',
-        files: fileArray,  // Send back file details
+        message: 'User Object retrieved successfully!',
+        user: {
+            firstName: result.firstName,
+            lastName: result.lastName,
+            username: result.username,
+            role: result.role,
+            birthDate: result.birthDate,
+            files:fileArray
+        }
       });
 })
 
 
 //expected request body:
 // {
-//     The user as a JSON object
-//     The file as a JSON object
+//     "username": "jimbob",
+//     "requester_username": "joshypooh17",
+//     "request_attributes": {
+//         "name": "newfile.pdf",
+//         "description": "this is a new file",
+//         "date": "2023-10-01",
+//         "type": "HIPAA"
+//     }
 
 app.post("/api/createRequest",async (request,response)=>{
 
     const requestBody = request.body;
+    const requestAttributes = requestBody.request_attributes;
 
     const requestUsername = requestBody.username;
-    const requestFileName = requestBody.file_name;
-    const requestDescription = requestBody.description;
-    const requestFileType = requestBody.filetype;
-    const requestDueDate = requestBody.due_date;
+    const requestFileName = requestAttributes.name;
+    const requestDescription = requestAttributes.description;
+    const requestFileType = requestAttributes.type;
+    const requestDueDate = requestAttributes.date;
+
+    const collection = await database.collection("user-1");
+    const result = await collection.findOne({username:requestUsername});
+    const findUser = await collection.findOne({
+        "username": requestUsername
+    });
+
+    await collection.updateOne(
+        {
+            _id: findUser._id
+        },
+        {
+            $push: {
+                "files": {
+                    "name": requestFileName,
+                    "description": requestDescription,
+                    "file": "",
+                    "due_date": requestDueDate,
+                    "type": requestFileType,
+                    "isRequested": true,
+                    "id": result.files.length + 1,
+                    "requestedBy": requestBody.requester_username,
+                    "requestedFor": requestBody.username
+                }
+            }
+        }
+    );
 
 
     response.status(200).send({
         message: 'Request created successfully!'
+      });
+})
+
+app.get("/api/getUserPublic",async (request,response)=>{
+    const requestUsername = request.headers["username"];
+    const collection = await database.collection("user-1");
+
+    const result = await collection.findOne({username:requestUsername});
+    
+    console.log(result);
+
+    response.status(200).send({
+        message: `${requestUsername} retrieved successfully!`,
+        user: {
+            firstName: result.firstName,
+            lastName: result.lastName,
+            username: result.username,
+            role: result.role,
+            birthDate: result.birthDate,
+        }
       });
 })
 
@@ -287,4 +412,34 @@ app.post('/api/createAccount', async (request, response) => {
     response.status(200).send ({
         message: 'Account created successfully!'
     });
+})
+
+// route to get a user from their username and password
+app.get('/api/login', async (request, response) => {
+    const username = request.headers["username"];
+    const password = request.headers["password"];
+
+    if ( !username || !password ) {
+        return response.status(400).send( {
+            message: 'Username and password are required'
+        });
+    }
+
+    const collection = database.collection ("user-1");
+
+    const userData = await collection.findOne({
+        username: username,
+        password: password
+    });
+
+    if (!userData) {
+        return response.status(401).send({
+          message: 'Invalid username or password'
+        });
+      }
+
+    response.status(200).send({
+        message: 'Login successful',
+        user: userData
+    })
 })
