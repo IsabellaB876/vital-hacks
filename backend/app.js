@@ -224,20 +224,35 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
 //For this case only we will not be using the request body and therefore not the entirety of the User Object.
 
 //returns an array of JSON objects with the following format:
-// {
-//     "name": "newfile.pdf",
-//     "file": <binary file>,
-//     "description": "this is a new file",
-//     "date": "2023-10-01",
-//     "type": "HIPAA",
-//     "isRequested": true,
-//     "id": 1
+//
+// user: {
+    //     firstName: "Joshua",
+    //     lastName: "Paulino Ozuna",
+    //     username: "joshypooh17",
+    //     role: "Patient",
+    //     birthDate: "2000-01-01",
+    //     files: [
+    //         {
+    //             name: "file1.pdf",
+    //             file: <binary file>,
+    //             description: "this is a new file",
+    //             date: "2023-10-01",
+    //             type: "HIPAA"
+    //         },
+    //         {
+    //             name: "file2.pdf",
+    //             file: <binary file>,
+    //             description: "this is another new file",
+    //             date: "2023-10-02",
+    //             type: "non-HIPAA"
+    //         }
+    //     ]
 // }
 //This is going to be transmutated into a File Object in the frontend
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
-app.get("/api/getFiles",async (request,response)=>{
+app.get("/api/getUser",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
@@ -286,8 +301,15 @@ app.get("/api/getFiles",async (request,response)=>{
 
 
     response.status(200).send({
-        message: 'Files retrieved successfully!',
-        files: fileArray,  // Send back file details
+        message: 'User Object retrieved successfully!',
+        user: {
+            firstName: result.firstName,
+            lastName: result.lastName,
+            username: result.username,
+            role: result.role,
+            birthDate: result.birthDate,
+            files:fileArray
+        }
       });
 })
 
@@ -344,6 +366,26 @@ app.post("/api/createRequest",async (request,response)=>{
 
     response.status(200).send({
         message: 'Request created successfully!'
+      });
+})
+
+app.get("/api/getUserPublic",async (request,response)=>{
+    const requestUsername = request.headers["username"];
+    const collection = await database.collection("user-1");
+
+    const result = await collection.findOne({username:requestUsername});
+    
+    console.log(result);
+
+    response.status(200).send({
+        message: `${requestUsername} retrieved successfully!`,
+        user: {
+            firstName: result.firstName,
+            lastName: result.lastName,
+            username: result.username,
+            role: result.role,
+            birthDate: result.birthDate,
+        }
       });
 })
 
