@@ -40,12 +40,18 @@ function FileCard({ hasFile, name, date, type, requestedBy }: FileCardProps) {
             <h3>{requestedBy}</h3>
           </Stack>
         </div>
-        <Image
-          style={{ width: "140px", borderRadius: "15px" }}
-          src={hasFile ? icon : ""}
-          alt="Uploaded file"
+        <Stack
           className="blue-upload"
-        />
+          style={{ width: "140px", height: "140px", borderRadius: "15px" }}
+        >
+          <Image
+            className="mx-auto"
+            style={{ width: "50px" }}
+            src={hasFile ? icon : ""}
+            alt="Uploaded file"
+          />
+          <h3>Choose a file or drag here</h3>
+        </Stack>
       </div>
     </div>
   );

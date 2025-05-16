@@ -104,3 +104,30 @@
   padding-right: 1em;
 }
 
+.folder-card {
+  position: relative;
+  background-color: #e6f7fa;
+  border-radius: 12px;
+  width: 200px;
+  min-height: 150px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 16px 12px 12px 12px;
+  margin-top: 30px; /* So the tab doesn't overlap heading */
+  display: flex;
+  align-items: flex-end; /* Align content toward the bottom */
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.folder-card::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0px;
+  width: 60px;
+  height: 25px;
+  background-color: #e6f7fa;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+}
