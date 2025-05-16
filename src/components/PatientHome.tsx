@@ -1,17 +1,15 @@
 import { Stack } from "react-bootstrap";
 import FileCarousel from "./FileCarousel";
+import FolderSection from "./FolderSection";
 import NavBar from "./NavBar";
 
 function PatientHome() {
   return (
     <Stack gap={3} className="text-start">
       <NavBar />
-      <h2>Welcome Patient!</h2>
+      <h1>Welcome Patient!</h1>
       <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
-      <FileCarousel text="Patient Intake Forms" bgColor="#FFFFFF" />
-      <FileCarousel text="HIPAA" bgColor="#FFFFFF" />
-      <FileCarousel text="Treatments and Prescriptions" bgColor="#FFFFFF" />
-      <FileCarousel text="Insurance" bgColor="#FFFFFF" />
+      <FolderSection />
     </Stack>
   );
 }
