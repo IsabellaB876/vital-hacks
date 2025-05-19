@@ -6,6 +6,7 @@ import hammy from "../assets/menu.svg";
 import uploadIcon from "../assets/WhiteUploadIcon.svg";
 import taskAdd from "../assets/taskAdd.svg";
 import UploadScreen from "./UploadScreen";
+import SideBar from "./SideBar";
 import { useState } from "react";
 
 function NavBar() {
@@ -26,6 +27,7 @@ function NavBar() {
               <Image className="logo" src={logo} alt="Logo" /> MedVault
             </Navbar.Brand>
           </div>
+          <SideBar/>
 
           <form className="d-flex">
             <input
