@@ -78,9 +78,14 @@
   background-color: rgba(255, 255, 255, 1); /* Solid white background */
 }
 
+.hammy-btn{
+  background-color: transparent;
+  border: transparent;
+}
+
 .search-bar{
-  width:460px;
   height: 60px;
+  border-radius: 15px;
   font-size: 20px;
 }
 
@@ -88,8 +93,7 @@
   background-color: #274472;
   color: white;
   font-size: 2vw;
-  padding-left: 1em;
-  padding-right: 1em;
+  border-radius: 15px;
 }
 
 .upload-icon{
@@ -100,8 +104,7 @@
   background-color: #E7F9FA;
   color: #274472;
   font-size: 2vw;
-  padding-left: 1em;
-  padding-right: 1em;
+  border-radius: 15px;
 }
 
 .folder-card {
@@ -133,10 +136,36 @@
 }
 
 #side-menu {
-  background-color: #E7F9FA;
+  background-color: #F7FFFF;
+  z-index: 1 !important;
+  position: fixed;
+  font-size: 20px;
+  color:#274472;
+}
+
+.side-menu-components{
+  padding-top: 100px;
 }
 
 .list-group-item{
-  background-color: #E7F9FA;
-  border-color: #E7F9FA;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.collapse{
+  margin-left: 50px;
+}
+
+.profile-btn{
+  background-color: #F7FFFF;
+  border-radius: 15px;
+  width: 240px;
+  height: 60px;
+  margin-left: 20px;
+  color: #274472;
+  border: transparent;
+}
+
+.full-logo{
+  margin-left: 50px;
 }

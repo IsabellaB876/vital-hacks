@@ -20,42 +20,45 @@ function NavBar() {
         fixed="top"
         style={{ backgroundColor: "white" }}
       >
-        <Container className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-2">
-            <Image className="hammy" src={hammy} alt="hammy" /> <br />
-            <Navbar.Brand href="/" className="m-0">
-              <Image className="logo" src={logo} alt="Logo" /> MedVault
-            </Navbar.Brand>
-          </div>
-          <SideBar/>
+        <SideBar />
+        <div className="full-logo d-flex align-items-center gap-2" style={{ zIndex: 10, position: 'relative' }}>
+          <Image className="hammy" src={hammy} alt="hammy" /> <br />
+          <Navbar.Brand href="/PatientHome" className="m-0">
+            <Image className="logo" src={logo} alt="Logo" /> MedVault
+          </Navbar.Brand>
+        </div>
 
-          <form className="d-flex">
+        <Container className="d-flex justify-content-center align-items-center gap-5">
+          {/* Search Bar */}
+          <form className="d-flex w-50">
             <input
-              className="search-bar form-control shadow me-2"
+              className="search-bar form-control shadow"
               type="search"
               placeholder="Search for anything..."
               aria-label="Search"
             />
           </form>
 
-          <Nav className="justify-content-end align-items-center">
-            <div className="d-flex gap-5">
-              <Button onClick={toggleDisplay} className="upload-btn">
-                <Image
-                  className="upload-icon"
-                  src={uploadIcon}
-                  style={{ color: "white" }}
-                  alt="upload"
-                />{" "}
-                Upload
-              </Button>
+          {/* Upload and Request Buttons */}
+          <div className="d-flex gap-5 ms-5">
+            <Button onClick={toggleDisplay} className="upload-btn d-flex align-items-center px-3 py-2">
+              <Image
+                className="me-2"
+                src={uploadIcon}
+                alt="upload"
+              />
+              Upload
+            </Button>
 
-              <Button className="request-btn">
-                <Image className="request-icon" src={taskAdd} alt="task" />{" "}
-                Request
-              </Button>
-            </div>
-          </Nav>
+            <Button className="request-btn d-flex align-items-center px-3 py-2">
+              <Image
+                className="me-2"
+                src={taskAdd}
+                alt="task"
+              />
+              Request
+            </Button>
+          </div>
         </Container>
       </Navbar>
       {display && <UploadScreen toggleDisplay={toggleDisplay} />}
