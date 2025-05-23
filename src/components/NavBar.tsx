@@ -8,9 +8,11 @@ import taskAdd from "../assets/taskAdd.svg";
 import UploadScreen from "./UploadScreen";
 import SideBar from "./SideBar";
 import { useState } from "react";
+import { useSidebar } from "../context/appContext";
 
 function NavBar() {
   const [display, setDisplay] = useState<boolean>(false);
+  const { toggleSidebar } = useSidebar();
 
   const toggleDisplay = () => setDisplay(!display);
   return (
@@ -21,8 +23,17 @@ function NavBar() {
         style={{ backgroundColor: "white" }}
       >
         <SideBar />
-        <div className="full-logo d-flex align-items-center gap-2" style={{ zIndex: 10, position: 'relative' }}>
-          <Image className="hammy" src={hammy} alt="hammy" /> <br />
+        <div
+          className="full-logo d-flex align-items-center gap-2"
+          style={{ zIndex: 10, position: "relative" }}
+        >
+          <Image
+            onClick={toggleSidebar}
+            className="hammy"
+            src={hammy}
+            alt="hammy"
+          />{" "}
+          <br />
           <Navbar.Brand href="/PatientHome" className="m-0">
             <Image className="logo" src={logo} alt="Logo" /> MedVault
           </Navbar.Brand>
@@ -41,21 +52,16 @@ function NavBar() {
 
           {/* Upload and Request Buttons */}
           <div className="d-flex gap-5 ms-5">
-            <Button onClick={toggleDisplay} className="upload-btn d-flex align-items-center px-3 py-2">
-              <Image
-                className="me-2"
-                src={uploadIcon}
-                alt="upload"
-              />
+            <Button
+              onClick={toggleDisplay}
+              className="upload-btn d-flex align-items-center px-3 py-2"
+            >
+              <Image className="me-2" src={uploadIcon} alt="upload" />
               Upload
             </Button>
 
             <Button className="request-btn d-flex align-items-center px-3 py-2">
-              <Image
-                className="me-2"
-                src={taskAdd}
-                alt="task"
-              />
+              <Image className="me-2" src={taskAdd} alt="task" />
               Request
             </Button>
           </div>
