@@ -51,12 +51,12 @@ function SideBar() {
             className="list-group-item"
             data-bs-toggle="collapse"
             role="button"
-            aria-expanded="false"
+            aria-expanded="true"
             aria-controls="collapseExample"
           >
             <Image className="all-file" src={Folder} alt="all-file" /> All Files
           </a>
-          <div className="collapse" id="collapseExample">
+          <div className="collapse show" id="collapseExample">
             <div>
               <Link to="" id="treat-link" className="list-group-item">
                 {" "}
