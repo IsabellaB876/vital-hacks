@@ -14,7 +14,7 @@ function SideBar() {
     <div
       id="side-menu"
       style={{
-        width: showSidebar ? "25%" : 0,
+        width: showSidebar ? 280 : 0,
         overflowX: "hidden",
         transition: "width 0.3s ease",
         zIndex: 1030, // behind Navbar if needed
