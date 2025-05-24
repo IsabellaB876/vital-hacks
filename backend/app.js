@@ -433,17 +433,16 @@ app.post('/api/createAccount', async (request, response) => {
             firstName: requestFirstName,
             lastName: requestLastName,
             username: requestUsername,
-            password: requestPassword, // Note: In production, you should hash this password
+            password: requestPassword,
             birthDate: requestBirthDate,
-            files: [], // Initialize with empty files array
-            createdAt: new Date()
+            files: []
         };
 
         // Insert the new user into the database
         const result = await collection.insertOne(newUser);
 
         if (result.acknowledged) {
-            response.status(201).send({
+            response.status(200).send({
                 message: 'Account created successfully!',
                 userId: result.insertedId,
                 username: requestUsername
