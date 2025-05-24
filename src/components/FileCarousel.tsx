@@ -21,7 +21,7 @@ interface CustomCarouselProps {
   bgColor: string;
 }
 
-function FileCarousel({ text, bgColor }: CustomCarouselProps) {
+function FileCarousel({ text }: CustomCarouselProps) {
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex: number) => {
@@ -51,32 +51,19 @@ function FileCarousel({ text, bgColor }: CustomCarouselProps) {
       : files.filter((file) => file.type === text);
 
   return (
-    <Stack
-      gap={3}
-      style={{ backgroundColor: bgColor }}
-      className="filecarousel"
-    >
-      <h3>{text}</h3>
-      <Carousel
-        activeIndex={index}
-        onSelect={handleSelect}
-        data-bs-theme="dark"
-        interval={null}
-        controls={true}
-        indicators={true}
-      >
+    <Stack gap={3} className="filecarousel m-1">
+      <h2>{text}</h2>
+      <div className="d-flex overflow-auto flex-nowrap" style={{ gap: "1rem" }}>
         {filteredFiles.map((file) => (
-          <Carousel.Item key={file.unique_id}>
-            <FileCard
-              hasFile={file.isRequested}
-              title={file.file_name}
-              date={file.date}
-              description={file.description}
-            />
-          </Carousel.Item>
+          <FileCard
+            hasFile={file.isRequested}
+            name={file.name}
+            date={file.date}
+            type={file.type}
+            requestedBy={file.requestedBy}
+          />
         ))}
-      </Carousel>
-      {}
+      </div>
     </Stack>
   );
 }
