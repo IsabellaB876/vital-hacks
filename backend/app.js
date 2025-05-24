@@ -413,25 +413,3 @@ app.post('/api/createAccount', async (request, response) => {
         message: 'Account created successfully!'
     });
 })
-
-// route to get a user from their username and password
-app.get('/api/getUserByUsername', async (request, response) => {
-    const username = request.headers["username"];
-
-    const collection = database.collection ("user-1");
-
-    const userData = await collection.findOne({
-        username: username
-    });
-
-    if (!userData) {
-        return response.status(401).send({
-          message: 'Invalid username'
-        });
-      }
-
-    response.status(200).send({
-        message: 'Login successful',
-        user: userData
-    })
-})
