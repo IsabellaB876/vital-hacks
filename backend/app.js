@@ -415,26 +415,18 @@ app.post('/api/createAccount', async (request, response) => {
 })
 
 // route to get a user from their username and password
-app.get('/api/login', async (request, response) => {
+app.get('/api/getUserByUsername', async (request, response) => {
     const username = request.headers["username"];
-    const password = request.headers["password"];
-
-    if ( !username || !password ) {
-        return response.status(400).send( {
-            message: 'Username and password are required'
-        });
-    }
 
     const collection = database.collection ("user-1");
 
     const userData = await collection.findOne({
-        username: username,
-        password: password
+        username: username
     });
 
     if (!userData) {
         return response.status(401).send({
-          message: 'Invalid username or password'
+          message: 'Invalid username'
         });
       }
 
