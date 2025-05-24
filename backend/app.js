@@ -400,16 +400,64 @@ expected request body:
 */
 
 app.post('/api/createAccount', async (request, response) => {
+    try {
+        const requestBody = request.body;
 
-    const requestBody = request.body;
+        const requestRole = requestBody.role;
+        const requestFirstName = requestBody.firstName;
+        const requestLastName = requestBody.lastName;
+        const requestUsername = requestBody.username;
+        const requestPassword = requestBody.password;
+        const requestBirthDate = requestBody.birthDate || null; // if birth date is optional
 
-    const requestRole = requestBody.role;
-    const requestFirstName = requestBody.firstName;
-    const requestLastName = requestBody.lastName;
-    const requestUsername = requestBody.username;
-    const requestPassword = requestBody.password;
+        // Validate required fields
+        if (!requestRole || !requestFirstName || !requestLastName || !requestUsername || !requestPassword) {
+            return response.status(400).send({
+                message: 'Missing required fields: role, firstName, lastName, username, and password are required'
+            });
+        }
 
-    response.status(200).send ({
-        message: 'Account created successfully!'
-    });
-})
+        const collection = database.collection("user-1");
+
+        // Check if username already exists
+        const existingUser = await collection.findOne({ username: requestUsername });
+        if (existingUser) {
+            return response.status(409).send({
+                message: 'Username already exists. Please choose a different username.'
+            });
+        }
+
+        // Create new user document
+        const newUser = {
+            role: requestRole,
+            firstName: requestFirstName,
+            lastName: requestLastName,
+            username: requestUsername,
+            password: requestPassword, // Note: In production, you should hash this password
+            birthDate: requestBirthDate,
+            files: [], // Initialize with empty files array
+            createdAt: new Date()
+        };
+
+        // Insert the new user into the database
+        const result = await collection.insertOne(newUser);
+
+        if (result.acknowledged) {
+            response.status(201).send({
+                message: 'Account created successfully!',
+                userId: result.insertedId,
+                username: requestUsername
+            });
+        } else {
+            response.status(500).send({
+                message: 'Failed to create account. Please try again.'
+            });
+        }
+
+    } catch (error) {
+        console.error('Error creating account:', error);
+        response.status(500).send({
+            message: 'Internal server error while creating account'
+        });
+    }
+});
