@@ -216,6 +216,59 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
     }
 });
 
+
+//expected request .body:
+// {
+//     username: "jimbob",
+//     id: 1
+// }
+//expected request .file:
+// {
+ //   "file": <binary file>
+// }
+app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) => {
+    try {
+        if (!request.file) {
+            response.status(400).send('No file uploaded');
+            return;
+        }
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestPhoto = request.file
+         const requestUniqueID = Number(requestBody.id);
+        const collection = database.collection("user-1");
+
+
+        // We find the specific request object that has the same unique_id as the one in the request body
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+        const requestFileBuffer = requestPhoto.buffer;
+        const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
+
+
+        await collection.updateOne(
+            {
+                _id: findUser._id,
+                "files.id": requestUniqueID
+            },
+            {
+                $set: {
+                    "files.$.photo": base64String
+                }
+            }
+        );
+
+        response.status(200).send({
+            message: 'Photo uploaded successfully!'
+        });
+    } catch (error) {
+        console.error('Error uploading photo:', error);
+        response.status(500).send('Internal server error');
+    }
+});
+
 //expected request header:
 // {
 //     "username": "jimbob"
@@ -274,6 +327,9 @@ app.get("/api/getUser",async (request,response)=>{
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
 
+        const base64sStringPhoto = result_doc_list[i].photo;
+        const pdfBufferPhoto = Buffer.from(base64sStringPhoto, 'base64');
+
         const pdfFileName = result_doc_list[i].name;
         const pdfDescription = result_doc_list[i].description;
         const isRequested = result_doc_list[i].isRequested;
@@ -282,6 +338,7 @@ app.get("/api/getUser",async (request,response)=>{
         const unique_id = result_doc_list[i].id;
         const requestedBy = result_doc_list[i].requestedBy;
         const requestedFor = result_doc_list[i].requestedFor;
+        
 
 
         const miniPackage = {
@@ -293,7 +350,8 @@ app.get("/api/getUser",async (request,response)=>{
             isRequested: isRequested,
             id: unique_id,
             requestedBy: requestedBy,
-            requestedFor: requestedFor
+            requestedFor: requestedFor,
+            photo: pdfBufferPhoto
         }
 
         fileArray.push(miniPackage);
@@ -357,7 +415,8 @@ app.post("/api/createRequest",async (request,response)=>{
                     "isRequested": true,
                     "id": result.files.length + 1,
                     "requestedBy": requestBody.requester_username,
-                    "requestedFor": requestBody.username
+                    "requestedFor": requestBody.username,
+                    "photo": ""
                 }
             }
         }
