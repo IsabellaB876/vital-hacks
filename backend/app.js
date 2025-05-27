@@ -302,6 +302,7 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
+// gets everything in relation to a user
 app.get("/api/getUser",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
@@ -426,6 +427,7 @@ app.post("/api/createRequest",async (request,response)=>{
       });
 })
 
+// gets everything except files in case of security issues
 app.get("/api/getUserPublic",async (request,response)=>{
     try {
         const requestUsername = request.headers["username"];
