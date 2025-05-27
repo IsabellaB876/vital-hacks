@@ -459,41 +459,49 @@ expected request body:
 
 app.post('/api/createAccount', async (request, response) => {
 
-    const requestBody = request.body;
+    try {
+        const requestBody = request.body;
 
-    const requestRole = requestBody.role;
-    const requestFirstName = requestBody.firstName;
-    const requestLastName = requestBody.lastName;
-    const requestUsername = requestBody.username;
-    const requestPassword = requestBody.password;
-    const requestBirthDate = requestBody.birthDate;
+        const requestRole = requestBody.role;
+        const requestFirstName = requestBody.firstName;
+        const requestLastName = requestBody.lastName;
+        const requestUsername = requestBody.username;
+        const requestPassword = requestBody.password;
+        const requestBirthDate = requestBody.birthDate;
 
-    const collection = await database.collection("user-1");
 
-    // Check if username already exists
-    const existingUser = await collection.findOne({ username: requestUsername });
-    if (existingUser) {
-        response.status(409).send({
-            message: 'Username already exists!'
+        const collection = await database.collection("user-1");
+
+        // Check if username already exists
+        const existingUser = await collection.findOne({ username: requestUsername });
+        if (existingUser) {
+            response.status(409).send({
+                message: 'Username already exists!'
+            });
+            return;
+        }
+
+        // Create new user document
+        const newUser = {
+            role: requestRole,
+            firstName: requestFirstName,
+            lastName: requestLastName,
+            username: requestUsername,
+            password: requestPassword,
+            birthDate: requestBirthDate,
+            files: [],
+            photo: "", // Initialize with an empty string or a default photo
+        };
+
+        await collection.insertOne(newUser);
+
+        response.status(200).send({
+            message: 'Account created successfully!'
         });
-        return;
+    } catch (error) {
+        console.error('Error creating account: ', error);
+        response.status(500).send ({
+            message: 'Internal error when creating account'
+        })
     }
-
-    // Create new user document
-    const newUser = {
-        role: requestRole,
-        firstName: requestFirstName,
-        lastName: requestLastName,
-        username: requestUsername,
-        password: requestPassword,
-        birthDate: requestBirthDate,
-        files: [],
-        photo: "", // Initialize with an empty string or a default photo
-    };
-
-    await collection.insertOne(newUser);
-
-    response.status(200).send({
-        message: 'Account created successfully!'
-    });
 });
