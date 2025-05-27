@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Button, Alert, Spinner } from "react-bootstrap";
+import upload from "../assets/BlueUploadIcon.svg";
+import { Button, Alert, Spinner, Image } from "react-bootstrap";
 import { analyzeDocumentFromBuffer } from "../lib/textract";
 
 // Define types for the Textract result
@@ -202,12 +203,27 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
         <strong className="me-auto">Upload {selectedDocType}</strong>
       </Toast.Header>
       <Toast.Body>
-        <div className="d-flex justify-content-between mb-3">
+        <div className="dropdowns d-flex flex-column gap-3 mb-3">
+          <Dropdown>
+            <Dropdown.Toggle id="dropdown-basic" className="shadow">
+              Doctor
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="shadow">
+              <Dropdown.Item eventKey="Doctor Xie">
+                Larry Glory Xie
+              </Dropdown.Item>
+              <Dropdown.Item eventKey="Doctor Borda">Isabella Borda</Dropdown.Item>
+              <Dropdown.Item eventKey="Doctor Maloney">
+                Roslyn Maloney
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
           <Dropdown onSelect={handleDocTypeSelect}>
-            <Dropdown.Toggle id="dropdown-basic">
+            <Dropdown.Toggle id="dropdown-basic" className="shadow">
               {selectedDocType}
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu className="shadow">
               <Dropdown.Item eventKey="Health Care Proxy">
                 Health Care Proxy
               </Dropdown.Item>
@@ -218,7 +234,9 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             </Dropdown.Menu>
           </Dropdown>
 
-          <Button onClick={handleSubmit} disabled={!file || isValidating}>
+          <Button className="submit-btn" onClick={handleSubmit} disabled={!file || isValidating} style={{
+            backgroundColor: "#274472",
+          }}>
             {isValidating ? (
               <>
                 <Spinner
@@ -237,13 +255,11 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
         </div>
 
         <div
-          className="file-upload-container d-flex align-items-center justify-content-end"
+          className="file-upload-container d-flex gap-4 justify-content-end mb-3"
           style={{ marginTop: "20px" }}
         >
-          <label htmlFor="file-upload" className="me-2">
-            Upload PDF:
-          </label>
-          <div className="d-flex">
+          <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
+            <Image className="mb-2" src={upload} alt="upload" width={26} height={25} />
             <input
               type="file"
               id="file-upload"

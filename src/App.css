@@ -169,3 +169,37 @@
 .full-logo{
   margin-left: 50px;
 }
+
+.upload-pdf{
+  border: #274472 dashed 3px;
+  background-color: #e6f7fa;
+  border-radius: 25px;
+  width: 25vw;
+  height: 25vw;
+}
+
+.submit-btn{
+  background-color: #274472;
+  border-radius: 15px;
+  width: 25vw;
+  height: 60px;
+}
+
+.toast-header{
+  font-size: 25px;
+  color:#274472;
+}
+
+#dropdown-basic{
+  background-color: white;
+  border-radius: 15px;
+  border: transparent;
+  color:#274472;
+  font-size: 20px;
+  width: 50vw;
+  height: 60px;
+}
+
+.dropdowns{
+
+}
