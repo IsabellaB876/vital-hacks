@@ -384,7 +384,7 @@ app.get("/api/getUser",async (request,response)=>{
                 birthDate: result.birthDate,
                 files:fileArray,
                 users: result.users, // This is the array of users that the user has requested files from
-                photo: pdfBufferPhoto // This is the user's photo in base64 format
+                photo: base64StringPhoto // This is the user's photo in base64 format
             }
         });
     } catch (error) {
@@ -511,14 +511,16 @@ expected request body:
     "firstName": "Joshua"
     "lastName": "Paulino Ozuna"
     "username": "joshypooh17"
-    "password": "mEdVaUlT*2025"}
+    "password": "mEdVaUlT*2025"
     "birthDate": "2000/01/01"
+}
 */
 
 app.post('/api/createAccount', async (request, response) => {
 
     try {
-        const requestBody = request.body;
+        const requestBody = await request.body;
+        console.log(request);
 
         const requestRole = requestBody.role;
         const requestFirstName = requestBody.firstName;
@@ -532,12 +534,20 @@ app.post('/api/createAccount', async (request, response) => {
         // Check if username already exists
         const existingUser = await collection.findOne({ username: requestUsername });
 
-        if (existingUser) {
+        if (existingUser != null) {
             response.status(409).send({
                 message: 'Username already exists!'
             });
             return;
         }
+
+        if (requestRole == null || requestFirstName == null || requestLastName == null 
+            || requestUsername == null || requestPassword == null || requestBirthDate == null) {
+                response.status(400).send({
+                    message: "Missing required fields!"
+                });
+                return;
+            }
 
         // Create new user document
         const newUser = {
@@ -554,12 +564,7 @@ app.post('/api/createAccount', async (request, response) => {
 
         await collection.insertOne(newUser);
 
-        if (!requestBody.role || !requestBody.firstName || !requestBody.lastName 
-            || !requestBody.username || !requestBody.password || !requestBody.birthDate) {
-                response.status(400).send({
-                    message: "Missing required fields!"
-                })
-            }
+        
 
         response.status(200).send({
             message: 'Account created successfully!'
@@ -568,6 +573,7 @@ app.post('/api/createAccount', async (request, response) => {
         console.error('Error creating account: ', error);
         response.status(500).send ({
             message: 'Internal error when creating account'
-        })
+        });
+        return;
     }
 });
