@@ -1,6 +1,6 @@
 export interface FileData {
   name: string;
-  file: string;
+  file: any;
   description: string;
   date: string;
   type: string;

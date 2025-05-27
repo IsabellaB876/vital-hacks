@@ -1,5 +1,6 @@
 import { Card, Stack, Image, Badge } from "react-bootstrap";
 import icon from "../assets/BlueUploadIcon.svg";
+import Account from "../assets/Account.svg";
 
 interface FileCardProps {
   hasFile: boolean;
@@ -35,8 +36,8 @@ function FileCard({ hasFile, name, date, type, requestedBy }: FileCardProps) {
           <Badge bg={badgeColor}>Due in {dueInDays} days</Badge>
           <h2>{name}</h2>
           <h3>{type}</h3>
-          <Stack direction="horizontal">
-            <Image src="" alt="profile pic" />
+          <Stack direction="horizontal" gap={2}>
+            <Image src={Account} alt="profile pic" />
             <h3>{requestedBy}</h3>
           </Stack>
         </div>

@@ -7,6 +7,7 @@ export interface UserData {
   role: string;
   birthDate: string;
   files: FileData[];
+  photo: any;
 }
 
 export const userDataDefault = {
@@ -16,4 +17,5 @@ export const userDataDefault = {
   role: "",
   birthDate: "",
   files: [],
+  photo: null,
 };

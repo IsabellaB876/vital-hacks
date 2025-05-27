@@ -19,6 +19,7 @@ function Signup() {
       updateUserData("role", userData.user.role);
       updateUserData("birthDate", userData.user.birthDate);
       updateUserData("files", userData.user.files);
+      updateUserData("photo", userData.user.photo);
 
       // Only navigate once all updates are done
       navigate("/PatientHome");
