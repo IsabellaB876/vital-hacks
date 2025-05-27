@@ -4,6 +4,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import upload from "../assets/BlueUploadIcon.svg";
 import { Button, Alert, Spinner, Image } from "react-bootstrap";
 import { analyzeDocumentFromBuffer } from "../lib/textract";
+import { useSidebar } from "../context/appContext";
 
 // Define types for the Textract result
 interface TextractBlock {
@@ -33,6 +34,7 @@ interface UploadScreenProps {
 type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
 
 function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
+  const { showSidebar, user } = useSidebar();
   const [file, setFile] = useState<File | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [selectedDocType, setSelectedDocType] =
@@ -198,7 +200,14 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   };
 
   return (
-    <Toast onClose={toggleDisplay} show={true}>
+    <Toast
+      onClose={toggleDisplay}
+      show={true}
+      style={{
+        marginLeft: showSidebar ? 320 : 0,
+        transition: "margin-left 0.3s ease",
+      }}
+    >
       <Toast.Header>
         <strong className="me-auto">Upload {selectedDocType}</strong>
       </Toast.Header>
@@ -212,7 +221,9 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
               <Dropdown.Item eventKey="Doctor Xie">
                 Larry Glory Xie
               </Dropdown.Item>
-              <Dropdown.Item eventKey="Doctor Borda">Isabella Borda</Dropdown.Item>
+              <Dropdown.Item eventKey="Doctor Borda">
+                Isabella Borda
+              </Dropdown.Item>
               <Dropdown.Item eventKey="Doctor Maloney">
                 Roslyn Maloney
               </Dropdown.Item>
@@ -234,9 +245,14 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             </Dropdown.Menu>
           </Dropdown>
 
-          <Button className="submit-btn" onClick={handleSubmit} disabled={!file || isValidating} style={{
-            backgroundColor: "#274472",
-          }}>
+          <Button
+            className="submit-btn"
+            onClick={handleSubmit}
+            disabled={!file || isValidating}
+            style={{
+              backgroundColor: "#274472",
+            }}
+          >
             {isValidating ? (
               <>
                 <Spinner
@@ -259,7 +275,13 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
           style={{ marginTop: "20px" }}
         >
           <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
-            <Image className="mb-2" src={upload} alt="upload" width={26} height={25} />
+            <Image
+              className="mb-2"
+              src={upload}
+              alt="upload"
+              width={26}
+              height={25}
+            />
             <input
               type="file"
               id="file-upload"

@@ -19,10 +19,10 @@ function SideBar() {
         transition: "width 0.3s ease",
         zIndex: 1030, // behind Navbar if needed
       }}
-      className="list-group position-fixed bottom-0 top-0 start-0 shadow"
+      className="list-group position-fixed bottom-0 top-0 start-0 end-0 shadow"
     >
       {showSidebar && (
-        <div className="side-menu-components d-flex flex-column">
+        <div className="side-menu-components d-flex flex-column m-0">
           <Button className="profile-btn d-flex align-items-center shadow gap-3 px-4 py-3">
             <Image
               className="profile-img"
