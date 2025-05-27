@@ -17,12 +17,12 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
 
   // define document list
   const medDocList = [
-    { Id: 'Doc1', Doc: 'HIPAA' },
-    { Id: 'Doc2', Doc: 'TB Test' },
-    { Id: 'Doc3', Doc: 'Blood Test' },
-    { Id: 'Doc4', Doc: 'Insulin Prescription' },
-    { Id: 'Doc5', Doc: 'Health Care Proxy' },
-    { Id: 'Doc6', Doc: 'Medical History' }
+    { Id: "Doc1", Doc: "HIPAA" },
+    { Id: "Doc2", Doc: "TB Test" },
+    { Id: "Doc3", Doc: "Blood Test" },
+    { Id: "Doc4", Doc: "Insulin Prescription" },
+    { Id: "Doc5", Doc: "Health Care Proxy" },
+    { Id: "Doc6", Doc: "Medical History" },
   ];
 
   // Handle document type selection
@@ -45,7 +45,9 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
     // Call the onSubmit callback with current selection
     if (onSubmit) {
       // If there's a custom document type, use that instead of the dropdown selection
-      const finalDocType = customDocType.trim() ? customDocType : selectedDocType;
+      const finalDocType = customDocType.trim()
+        ? customDocType
+        : selectedDocType;
       onSubmit(finalDocType, true, "Selection submitted successfully");
     }
   };
@@ -59,18 +61,20 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
         <div className="mb-3">
           <Form.Group className="mb-3">
             <Form.Label>Select from predefined documents</Form.Label>
-            <Form.Select 
+            <Form.Select
               aria-label="Select document type"
               value={selectedDocType}
               onChange={handleDocTypeSelect}
             >
               <option value="">Select a document</option>
-              {medDocList.map(doc => (
-                <option key={doc.Id} value={doc.Doc}>{doc.Doc}</option>
+              {medDocList.map((doc) => (
+                <option key={doc.Id} value={doc.Doc}>
+                  {doc.Doc}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
-          
+
           <Form.Group className="mb-3">
             <Form.Label>Or enter a custom document type</Form.Label>
             <Form.Control
@@ -80,11 +84,9 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
               onChange={handleCustomDocType}
             />
           </Form.Group>
-          
+
           <div className="d-flex justify-content-end">
-            <Button onClick={handleSubmit}>
-              Submit
-            </Button>
+            <Button onClick={handleSubmit}>Submit</Button>
           </div>
         </div>
       </Toast.Body>

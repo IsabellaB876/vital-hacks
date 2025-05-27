@@ -13,6 +13,7 @@
     "@aws-sdk/client-textract": "^3.777.0",
     "@aws-sdk/credential-providers": "^3.778.0",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/bootstrap": "^5.2.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

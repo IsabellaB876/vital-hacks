@@ -3,13 +3,12 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /*padding: 2rem;*/
   text-align: center;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 3em;
   will-change: filter;
   transition: filter 300ms;
 }
@@ -20,33 +19,27 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
   padding: 2em;
+}
+
+.blue-upload {
+  background-color: #E7F9FA;
+  border-radius: 15;
+  border: 3px dashed;
+  border-color: #274472;
+  padding: 20px;
+  font-size: 20px;
 }
 
 .read-the-docs {
   color: #888;
 }
 
-.filecarousel {
+/*.filecarousel {
   width: 100%;
-  position: relative; /* Ensure positioning context for arrows and pagination */
-  overflow: visible; /* Allow arrows/pagination to stay visible */
+  position: relative; 
+  overflow: visible; 
   padding: 1em;
   padding-bottom: 0em;
   border-radius: 10px;
@@ -54,11 +47,11 @@
 
 .carousel {
   width: 100%;
-  position: relative; /* Ensure positioning context for arrows and pagination */
-  overflow: visible; /* Allow arrows/pagination to stay visible */
-  padding-left: 5em;
+  position: relative; 
+  overflow: visible; 
+  /* padding-left: 5em;
   padding-right: 5em;
-  padding-bottom: 5em;
+  padding-bottom: 5em; 
   position: relative;
 }
 
@@ -72,7 +65,7 @@
   justify-content: center;
   top: 50%;
   transform: translateY(-100%);
-}
+}*/
 
 .toast {
   width: 100%;
@@ -83,4 +76,130 @@
   z-index: 9999;
   margin-top: 5%;
   background-color: rgba(255, 255, 255, 1); /* Solid white background */
+}
+
+.hammy-btn{
+  background-color: transparent;
+  border: transparent;
+}
+
+.search-bar{
+  height: 60px;
+  border-radius: 15px;
+  font-size: 20px;
+}
+
+.upload-btn {
+  background-color: #274472;
+  color: white;
+  font-size: 2vw;
+  border-radius: 15px;
+}
+
+.upload-icon{
+  padding-right: 7px;
+}
+
+.request-btn {
+  background-color: #E7F9FA;
+  color: #274472;
+  font-size: 2vw;
+  border-radius: 15px;
+}
+
+.folder-card {
+  position: relative;
+  background-color: #e6f7fa;
+  border-radius: 12px;
+  width: 200px;
+  min-height: 150px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 16px 12px 12px 12px;
+  margin-top: 30px; /* So the tab doesn't overlap heading */
+  display: flex;
+  align-items: flex-end; /* Align content toward the bottom */
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.folder-card::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0px;
+  width: 60px;
+  height: 25px;
+  background-color: #e6f7fa;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+}
+
+#side-menu {
+  background-color: #F7FFFF;
+  z-index: 1 !important;
+  position: fixed;
+  font-size: 20px;
+  color:#274472;
+}
+
+.side-menu-components{
+  padding-top: 100px;
+}
+
+.list-group-item{
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.collapse{
+  margin-left: 50px;
+}
+
+.profile-btn{
+  background-color: #F7FFFF;
+  border-radius: 15px;
+  width: 240px;
+  height: 60px;
+  margin-left: 20px;
+  color: #274472;
+  border: transparent;
+}
+
+.full-logo{
+  margin-left: 50px;
+}
+
+.upload-pdf{
+  border: #274472 dashed 3px;
+  background-color: #e6f7fa;
+  border-radius: 25px;
+  width: 25vw;
+  height: 25vw;
+}
+
+.submit-btn{
+  background-color: #274472;
+  border-radius: 15px;
+  width: 25vw;
+  height: 60px;
+}
+
+.toast-header{
+  font-size: 25px;
+  color:#274472;
+}
+
+#dropdown-basic{
+  background-color: white;
+  border-radius: 15px;
+  border: transparent;
+  color:#274472;
+  font-size: 20px;
+  width: 50%;
+  height: 60px;
+}
+
+.dropdowns{
+
 }
