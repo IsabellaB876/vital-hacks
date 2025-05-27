@@ -302,73 +302,80 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
 
-// gets everything in relation to a user
+// gets everything in relation to a user by their username
 app.get("/api/getUser",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
-    const requestUsername = request.headers["username"];
-    const collection = await database.collection("user-1");
-
-    
-
-    const result = await collection.findOne({username:requestUsername});
-    
-    
-    const result_doc_list = result.files
-    //const pdfBuffer = Buffer.from(base64String, 'base64');
-
-    const fileArray = [];
-
-    for (let i = 0; i < result_doc_list.length; i++ ){
-
-        const base64String = result_doc_list[i].file;
-        const pdfBuffer = Buffer.from(base64String, 'base64');
+    try {
+        const requestUsername = request.headers["username"];
+        const collection = await database.collection("user-1");
 
         
 
-        const pdfFileName = result_doc_list[i].name;
-        const pdfDescription = result_doc_list[i].description;
-        const isRequested = result_doc_list[i].isRequested;
-        const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].type;
-        const unique_id = result_doc_list[i].id;
-        const requestedBy = result_doc_list[i].requestedBy;
-        const requestedFor = result_doc_list[i].requestedFor;
+        const result = await collection.findOne({username:requestUsername});
         
+        
+        const result_doc_list = result.files
+        //const pdfBuffer = Buffer.from(base64String, 'base64');
+
+        const fileArray = [];
+
+        for (let i = 0; i < result_doc_list.length; i++ ){
+
+            const base64String = result_doc_list[i].file;
+            const pdfBuffer = Buffer.from(base64String, 'base64');
+
+            
+
+            const pdfFileName = result_doc_list[i].name;
+            const pdfDescription = result_doc_list[i].description;
+            const isRequested = result_doc_list[i].isRequested;
+            const pdfDate = result_doc_list[i].due_date;
+            const pdfFileType = result_doc_list[i].type;
+            const unique_id = result_doc_list[i].id;
+            const requestedBy = result_doc_list[i].requestedBy;
+            const requestedFor = result_doc_list[i].requestedFor;
+            
 
 
-        const miniPackage = {
-            name: pdfFileName,
-            file: pdfBuffer,
-            description: pdfDescription,
-            date:pdfDate,
-            type: pdfFileType,
-            isRequested: isRequested,
-            id: unique_id,
-            requestedBy: requestedBy,
-            requestedFor: requestedFor
+            const miniPackage = {
+                name: pdfFileName,
+                file: pdfBuffer,
+                description: pdfDescription,
+                date:pdfDate,
+                type: pdfFileType,
+                isRequested: isRequested,
+                id: unique_id,
+                requestedBy: requestedBy,
+                requestedFor: requestedFor
+            }
+
+            fileArray.push(miniPackage);
         }
 
-        fileArray.push(miniPackage);
+        const base64StringPhoto = result_doc_list[i].file;
+        const pdfBufferPhoto = Buffer.from(base64StringPhoto, 'base64');
+
+
+        response.status(200).send({
+            message: 'User Object retrieved successfully!',
+            user: {
+                firstName: result.firstName,
+                lastName: result.lastName,
+                username: result.username,
+                role: result.role,
+                birthDate: result.birthDate,
+                files:fileArray,
+                photo: pdfBufferPhoto // This is the user's photo in base64 format
+            }
+        });
+    } catch (error) {
+        console.error('Error getting public user: ', error);
+        response.status(500).send ({
+            message: 'Internal error when getting public user'
+        })
     }
-
-    const base64StringPhoto = result_doc_list[i].file;
-    const pdfBufferPhoto = Buffer.from(base64StringPhoto, 'base64');
-
-
-    response.status(200).send({
-        message: 'User Object retrieved successfully!',
-        user: {
-            firstName: result.firstName,
-            lastName: result.lastName,
-            username: result.username,
-            role: result.role,
-            birthDate: result.birthDate,
-            files:fileArray,
-            photo: pdfBufferPhoto // This is the user's photo in base64 format
-        }
-      });
 })
 
 
