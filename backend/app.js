@@ -219,8 +219,7 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
 
 //expected request .body:
 // {
-//     username: "jimbob",
-//     id: 1
+//     username: "jimbob"
 // }
 //expected request .file:
 // {
@@ -234,8 +233,7 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
         }
         const requestBody = request.body;
         const requestUsername = requestBody.username;
-        const requestPhoto = request.file
-         const requestUniqueID = Number(requestBody.id);
+        const requestPhoto = request.file;
         const collection = database.collection("user-1");
 
 
@@ -250,12 +248,11 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
 
         await collection.updateOne(
             {
-                _id: findUser._id,
-                "files.id": requestUniqueID
+                _id: findUser._id
             },
             {
                 $set: {
-                    "files.$.photo": base64String
+                    "photo": base64String
                 }
             }
         );
@@ -327,8 +324,7 @@ app.get("/api/getUser",async (request,response)=>{
         const base64String = result_doc_list[i].file;
         const pdfBuffer = Buffer.from(base64String, 'base64');
 
-        const base64sStringPhoto = result_doc_list[i].photo;
-        const pdfBufferPhoto = Buffer.from(base64sStringPhoto, 'base64');
+        
 
         const pdfFileName = result_doc_list[i].name;
         const pdfDescription = result_doc_list[i].description;
@@ -350,12 +346,14 @@ app.get("/api/getUser",async (request,response)=>{
             isRequested: isRequested,
             id: unique_id,
             requestedBy: requestedBy,
-            requestedFor: requestedFor,
-            photo: pdfBufferPhoto
+            requestedFor: requestedFor
         }
 
         fileArray.push(miniPackage);
     }
+
+    const base64StringPhoto = result_doc_list[i].file;
+    const pdfBufferPhoto = Buffer.from(base64StringPhoto, 'base64');
 
 
     response.status(200).send({
@@ -366,7 +364,8 @@ app.get("/api/getUser",async (request,response)=>{
             username: result.username,
             role: result.role,
             birthDate: result.birthDate,
-            files:fileArray
+            files:fileArray,
+            photo: pdfBufferPhoto // This is the user's photo in base64 format
         }
       });
 })
@@ -415,8 +414,7 @@ app.post("/api/createRequest",async (request,response)=>{
                     "isRequested": true,
                     "id": result.files.length + 1,
                     "requestedBy": requestBody.requester_username,
-                    "requestedFor": requestBody.username,
-                    "photo": ""
+                    "requestedFor": requestBody.username
                 }
             }
         }
@@ -444,6 +442,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
             username: result.username,
             role: result.role,
             birthDate: result.birthDate,
+            photo: result.photo, // This is the user's photo in base64 format
         }
       });
 })
@@ -488,7 +487,8 @@ app.post('/api/createAccount', async (request, response) => {
         username: requestUsername,
         password: requestPassword,
         birthDate: requestBirthDate,
-        files: []
+        files: [],
+        photo: "", // Initialize with an empty string or a default photo
     };
 
     await collection.insertOne(newUser);
