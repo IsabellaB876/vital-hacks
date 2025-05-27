@@ -522,6 +522,13 @@ app.post('/api/createAccount', async (request, response) => {
 
         await collection.insertOne(newUser);
 
+        if (!requestBody.role || !requestBody.firstName || !requestBody.lastName 
+            || !requestBody.username || !requestBody.password) {
+                response.status(400).send({
+                    message: "Missing required fields!"
+                })
+            }
+
         response.status(200).send({
             message: 'Account created successfully!'
         });
