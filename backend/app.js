@@ -367,6 +367,7 @@ app.get("/api/getUser",async (request,response)=>{
                 role: result.role,
                 birthDate: result.birthDate,
                 files:fileArray,
+                users: result.users, // This is the array of users that the user has requested files from
                 photo: pdfBufferPhoto // This is the user's photo in base64 format
             }
         });
@@ -459,6 +460,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
                 username: result.username,
                 role: result.role,
                 birthDate: result.birthDate,
+                users: result.users, // This is the array of users that the user has requested files from
                 photo: result.photo, // This is the user's photo in base64 format
             }
       });
