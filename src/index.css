@@ -24,36 +24,28 @@ a:hover {
 
 body, html {
   margin: 0;
-  place-items: center;
+  /*place-items: center;*/
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  padding-top: 30px;
-  max-width: 100vw;
+  padding: 0px;
+  padding-top: 40px;
+  /*max-width: 100vw;*/
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 25px;
+  color: #274472;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+h2 {
+  font-size: 20px;
+  color: #274472;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+h3 {
+  font-size: 15px;
+  color: #274472;
 }
 
 @media (prefers-color-scheme: light) {
