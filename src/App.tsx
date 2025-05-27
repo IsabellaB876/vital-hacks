@@ -4,11 +4,11 @@ import Account from "./components/Account";
 import { HashRouter } from "react-router-dom";
 import PatientHome from "./components/PatientHome";
 import DoctorHome from "./components/DoctorHome";
-import { SidebarProvider } from "./context/appContext";
+import { Provider } from "./context/appContext";
 
 function App() {
   return (
-    <SidebarProvider>
+    <Provider>
       <HashRouter>
         <div className="wd-main-content-offset p-3">
           <Routes>
@@ -19,7 +19,7 @@ function App() {
           </Routes>
         </div>
       </HashRouter>
-    </SidebarProvider>
+    </Provider>
   );
 }
 export default App;

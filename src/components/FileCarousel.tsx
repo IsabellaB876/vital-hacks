@@ -2,18 +2,7 @@ import { useState, useEffect } from "react";
 import { Carousel, Stack, Container } from "react-bootstrap";
 import FileCard from "./FileCard";
 import { getUserFiles } from "../Service";
-
-interface File {
-  name: string;
-  file: string;
-  description: string;
-  date: string;
-  type: string;
-  isRequested: boolean;
-  id: string;
-  requestedFor: string;
-  requestBy: string;
-}
+import { useSidebar } from "../context/appContext";
 
 // Define the type of props
 interface CustomCarouselProps {
@@ -22,6 +11,8 @@ interface CustomCarouselProps {
 }
 
 function FileCarousel({ text }: CustomCarouselProps) {
+  const { user } = useSidebar();
+
   const [index, setIndex] = useState(0);
 
   const handleSelect = (selectedIndex: number) => {
@@ -33,8 +24,7 @@ function FileCarousel({ text }: CustomCarouselProps) {
   useEffect(() => {
     try {
       async function loadFiles() {
-        const username = "jimbob";
-        const filesData = await getUserFiles(username);
+        const filesData = user.files;
         console.log(filesData);
         setFiles(filesData);
         console.log("FILTERED FILES:", filteredFiles);

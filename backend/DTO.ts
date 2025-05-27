@@ -61,7 +61,7 @@ export class File {
         this.pdf = pdf;
         this.id = id;
         this.requestedBy = requestedBy;
-        this.requestedFor = requestedFor;
+        this.requestedFor = requestedFor;//in the backend this will not be a user object, but a string for the username instead.
     }
 
     public getRawFile(): string {//idk what data type this is yet

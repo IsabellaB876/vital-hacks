@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Stack } from "react-bootstrap";
 import FileCarousel from "./FileCarousel";
 import FolderSection from "./FolderSection";
@@ -5,7 +6,7 @@ import NavBar from "./NavBar";
 import { useSidebar } from "../context/appContext";
 
 function PatientHome() {
-  const { showSidebar } = useSidebar();
+  const { showSidebar, user } = useSidebar();
 
   return (
     <Stack gap={3} className="text-start">
@@ -19,7 +20,7 @@ function PatientHome() {
       >
         <Stack gap={3} className="text-start p-3">
           <NavBar />
-          <h1>Welcome Patient!</h1>
+          <h1>Welcome {user.firstName}!</h1>
           <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
           <FolderSection />
         </Stack>
