@@ -354,7 +354,7 @@ app.get("/api/getUser",async (request,response)=>{
             fileArray.push(miniPackage);
         }
 
-        const base64StringPhoto = result.file;
+        const base64StringPhoto = result.photo;
         const pdfBufferPhoto = Buffer.from(base64StringPhoto, 'base64');
 
 
