@@ -427,24 +427,31 @@ app.post("/api/createRequest",async (request,response)=>{
 })
 
 app.get("/api/getUserPublic",async (request,response)=>{
-    const requestUsername = request.headers["username"];
-    const collection = await database.collection("user-1");
+    try {
+        const requestUsername = request.headers["username"];
+        const collection = await database.collection("user-1");
 
-    const result = await collection.findOne({username:requestUsername});
-    
-    console.log(result);
+        const result = await collection.findOne({username:requestUsername});
+        
+        console.log(result);
 
-    response.status(200).send({
-        message: `${requestUsername} retrieved successfully!`,
-        user: {
-            firstName: result.firstName,
-            lastName: result.lastName,
-            username: result.username,
-            role: result.role,
-            birthDate: result.birthDate,
-            photo: result.photo, // This is the user's photo in base64 format
-        }
+        response.status(200).send({
+            message: `${requestUsername} retrieved successfully!`,
+            user: {
+                firstName: result.firstName,
+                lastName: result.lastName,
+                username: result.username,
+                role: result.role,
+                birthDate: result.birthDate,
+                photo: result.photo, // This is the user's photo in base64 format
+            }
       });
+    } catch (error) {
+        console.error('Error getting public user: ', error);
+        response.status(500).send ({
+            message: 'Internal error when getting public user'
+        })
+    }
 })
 
 /*
