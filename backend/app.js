@@ -133,6 +133,11 @@ app.patch("/api/editFile",async (request, response) => {
             "username": requestUsername
         });
 
+        if (!findUser) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
+
 
         for (const edit in requestEdits) {
             const key = requestEdits[edit].key;
@@ -198,6 +203,11 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
             "username": requestUsername
         });
 
+        if (!findUser) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
+
         await collection.updateOne(
             {
                 _id: findUser._id,
@@ -244,6 +254,11 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
         const findUser = await collection.findOne({
             "username": requestUsername
         });
+
+        if (!findUser) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
 
         const requestFileBuffer = requestPhoto.buffer;
         const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
@@ -408,6 +423,16 @@ app.post("/api/createRequest",async (request,response)=>{
             "username": requestUsername
         });
 
+        if (!result) {
+            console.log("result: user not found");
+            throw new Error("result: user not found!");
+        }
+
+        if (!findUser) {
+            console.log("findUser: user not found");
+            throw new Error("findUser: user not found!");
+        }
+
         await collection.updateOne(
             {
                 _id: findUser._id
@@ -448,6 +473,11 @@ app.get("/api/getUserPublic",async (request,response)=>{
         const collection = await database.collection("user-1");
 
         const result = await collection.findOne({username:requestUsername});
+
+        if (!result) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
         
         console.log(result);
 
@@ -496,6 +526,7 @@ app.post('/api/createAccount', async (request, response) => {
 
         // Check if username already exists
         const existingUser = await collection.findOne({ username: requestUsername });
+
         if (existingUser) {
             response.status(409).send({
                 message: 'Username already exists!'
