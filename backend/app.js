@@ -512,6 +512,7 @@ expected request body:
     "lastName": "Paulino Ozuna"
     "username": "joshypooh17"
     "password": "mEdVaUlT*2025"}
+    "birthDate": "2000/01/01"
 */
 
 app.post('/api/createAccount', async (request, response) => {
@@ -554,7 +555,7 @@ app.post('/api/createAccount', async (request, response) => {
         await collection.insertOne(newUser);
 
         if (!requestBody.role || !requestBody.firstName || !requestBody.lastName 
-            || !requestBody.username || !requestBody.password) {
+            || !requestBody.username || !requestBody.password || !requestBody.birthDate) {
                 response.status(400).send({
                     message: "Missing required fields!"
                 })
