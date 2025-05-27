@@ -120,42 +120,46 @@ app.listen(defaultPort, () => {
 
 app.patch("/api/editFile",async (request, response) => {
 
-    const collection = await database.collection("user-1");
+    try {
+        const collection = await database.collection("user-1");
 
-
-    const requestBody = request.body;
-    const requestUsername = requestBody.username;
-    const requestID = Number(requestBody.id);
-    const requestEdits = requestBody.edits;
-    
-
-    const findUser = await collection.findOne({
-        "username": requestUsername
-    });
-
-
-    for (const edit in requestEdits) {
-        const key = requestEdits[edit].key;
-        const value = requestEdits[edit].value;
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestID = Number(requestBody.id);
+        const requestEdits = requestBody.edits;
         
-        const update = {
-            $set: {
-                [`files.$.${key}`]: value
-            }
-        };
-        await collection.updateOne(
-            {
-                _id: findUser._id,
-                "files.id": requestID
-            },
-            update
-        );
-        console.log(`Updated ${key} to ${value}`);
-    }
 
-    response.status(200).send({
-        message: 'File edited successfully!'
-    });
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+
+        for (const edit in requestEdits) {
+            const key = requestEdits[edit].key;
+            const value = requestEdits[edit].value;
+            
+            const update = {
+                $set: {
+                    [`files.$.${key}`]: value
+                }
+            };
+            await collection.updateOne(
+                {
+                    _id: findUser._id,
+                    "files.id": requestID
+                },
+                update
+            );
+            console.log(`Updated ${key} to ${value}`);
+        }
+
+        response.status(200).send({
+            message: 'File edited successfully!'
+        });
+    } catch (error) {
+        console.error('Error editing file:', error);
+        response.status(500).send('Internal server error');
+    }
 
 });
 
@@ -371,9 +375,9 @@ app.get("/api/getUser",async (request,response)=>{
             }
         });
     } catch (error) {
-        console.error('Error getting public user: ', error);
+        console.error('Error getting user: ', error);
         response.status(500).send ({
-            message: 'Internal error when getting public user'
+            message: 'Internal error when getting user'
         })
     }
 })
@@ -434,9 +438,9 @@ app.post("/api/createRequest",async (request,response)=>{
             message: 'Request created successfully!'
         });
     } catch (error) {
-        console.error('Error getting public user: ', error);
+        console.error('Error creating request: ', error);
         response.status(500).send ({
-            message: 'Internal error when getting public user'
+            message: 'Internal error when creating request'
         })
     }
 })
