@@ -14,7 +14,7 @@ const app = express();
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 
 const DB_USERNAME = process.env.db_username || '';
@@ -240,7 +240,6 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
         const requestPhoto = request.file;
         const collection = database.collection("user-1");
 
-
         // We find the specific request object that has the same unique_id as the one in the request body
         const findUser = await collection.findOne({
             "username": requestUsername
@@ -248,7 +247,6 @@ app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) =
 
         const requestFileBuffer = requestPhoto.buffer;
         const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
-
 
         await collection.updateOne(
             {
@@ -315,10 +313,12 @@ app.get("/api/getUser",async (request,response)=>{
         const requestUsername = request.headers["username"];
         const collection = await database.collection("user-1");
 
-        
-
         const result = await collection.findOne({username:requestUsername});
-        
+
+        if (!result) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
         
         const result_doc_list = result.files
         //const pdfBuffer = Buffer.from(base64String, 'base64');
@@ -330,8 +330,6 @@ app.get("/api/getUser",async (request,response)=>{
             const base64String = result_doc_list[i].file;
             const pdfBuffer = Buffer.from(base64String, 'base64');
 
-            
-
             const pdfFileName = result_doc_list[i].name;
             const pdfDescription = result_doc_list[i].description;
             const isRequested = result_doc_list[i].isRequested;
@@ -341,8 +339,6 @@ app.get("/api/getUser",async (request,response)=>{
             const requestedBy = result_doc_list[i].requestedBy;
             const requestedFor = result_doc_list[i].requestedFor;
             
-
-
             const miniPackage = {
                 name: pdfFileName,
                 file: pdfBuffer,
@@ -495,7 +491,6 @@ app.post('/api/createAccount', async (request, response) => {
         const requestUsername = requestBody.username;
         const requestPassword = requestBody.password;
         const requestBirthDate = requestBody.birthDate;
-
 
         const collection = await database.collection("user-1");
 
