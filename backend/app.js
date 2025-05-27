@@ -385,46 +385,53 @@ app.get("/api/getUser",async (request,response)=>{
 
 app.post("/api/createRequest",async (request,response)=>{
 
-    const requestBody = request.body;
-    const requestAttributes = requestBody.request_attributes;
+    try {
+        const requestBody = request.body;
+        const requestAttributes = requestBody.request_attributes;
 
-    const requestUsername = requestBody.username;
-    const requestFileName = requestAttributes.name;
-    const requestDescription = requestAttributes.description;
-    const requestFileType = requestAttributes.type;
-    const requestDueDate = requestAttributes.date;
+        const requestUsername = requestBody.username;
+        const requestFileName = requestAttributes.name;
+        const requestDescription = requestAttributes.description;
+        const requestFileType = requestAttributes.type;
+        const requestDueDate = requestAttributes.date;
 
-    const collection = await database.collection("user-1");
-    const result = await collection.findOne({username:requestUsername});
-    const findUser = await collection.findOne({
-        "username": requestUsername
-    });
+        const collection = await database.collection("user-1");
+        const result = await collection.findOne({username:requestUsername});
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
 
-    await collection.updateOne(
-        {
-            _id: findUser._id
-        },
-        {
-            $push: {
-                "files": {
-                    "name": requestFileName,
-                    "description": requestDescription,
-                    "file": "",
-                    "due_date": requestDueDate,
-                    "type": requestFileType,
-                    "isRequested": true,
-                    "id": result.files.length + 1,
-                    "requestedBy": requestBody.requester_username,
-                    "requestedFor": requestBody.username
+        await collection.updateOne(
+            {
+                _id: findUser._id
+            },
+            {
+                $push: {
+                    "files": {
+                        "name": requestFileName,
+                        "description": requestDescription,
+                        "file": "",
+                        "due_date": requestDueDate,
+                        "type": requestFileType,
+                        "isRequested": true,
+                        "id": result.files.length + 1,
+                        "requestedBy": requestBody.requester_username,
+                        "requestedFor": requestBody.username
+                    }
                 }
             }
-        }
-    );
+        );
 
 
-    response.status(200).send({
-        message: 'Request created successfully!'
-      });
+        response.status(200).send({
+            message: 'Request created successfully!'
+        });
+    } catch (error) {
+        console.error('Error getting public user: ', error);
+        response.status(500).send ({
+            message: 'Internal error when getting public user'
+        })
+    }
 })
 
 // gets everything except files in case of security issues
