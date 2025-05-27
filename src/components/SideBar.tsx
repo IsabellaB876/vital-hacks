@@ -8,7 +8,7 @@ import Account from "../assets/Account.svg";
 import { useSidebar } from "../context/appContext";
 
 function SideBar() {
-  const { showSidebar } = useSidebar();
+  const { showSidebar, user } = useSidebar();
 
   return (
     <div
@@ -36,8 +36,10 @@ function SideBar() {
               }}
             />
             <div className="d-flex flex-column text-start">
-              <span className="name">First Last</span>
-              <span className="email">Email</span>
+              <span className="name">
+                {user.firstName + " " + user.lastName}
+              </span>
+              <span className="email">{user.username}</span>
             </div>
           </Button>
 

@@ -14,7 +14,7 @@ const app = express();
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 
 const DB_USERNAME = process.env.db_username || '';
@@ -120,42 +120,46 @@ app.listen(defaultPort, () => {
 
 app.patch("/api/editFile",async (request, response) => {
 
-    const collection = await database.collection("user-1");
+    try {
+        const collection = await database.collection("user-1");
 
-
-    const requestBody = request.body;
-    const requestUsername = requestBody.username;
-    const requestID = Number(requestBody.id);
-    const requestEdits = requestBody.edits;
-    
-
-    const findUser = await collection.findOne({
-        "username": requestUsername
-    });
-
-
-    for (const edit in requestEdits) {
-        const key = requestEdits[edit].key;
-        const value = requestEdits[edit].value;
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestID = Number(requestBody.id);
+        const requestEdits = requestBody.edits;
         
-        const update = {
-            $set: {
-                [`files.$.${key}`]: value
-            }
-        };
-        await collection.updateOne(
-            {
-                _id: findUser._id,
-                "files.id": requestID
-            },
-            update
-        );
-        console.log(`Updated ${key} to ${value}`);
-    }
 
-    response.status(200).send({
-        message: 'File edited successfully!'
-    });
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+
+        for (const edit in requestEdits) {
+            const key = requestEdits[edit].key;
+            const value = requestEdits[edit].value;
+            
+            const update = {
+                $set: {
+                    [`files.$.${key}`]: value
+                }
+            };
+            await collection.updateOne(
+                {
+                    _id: findUser._id,
+                    "files.id": requestID
+                },
+                update
+            );
+            console.log(`Updated ${key} to ${value}`);
+        }
+
+        response.status(200).send({
+            message: 'File edited successfully!'
+        });
+    } catch (error) {
+        console.error('Error editing file:', error);
+        response.status(500).send('Internal server error');
+    }
 
 });
 
@@ -216,6 +220,54 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
     }
 });
 
+
+//expected request .body:
+// {
+//     username: "jimbob"
+// }
+//expected request .file:
+// {
+ //   "file": <binary file>
+// }
+app.patch("/api/uploadPhoto", upload.single('file'), async (request, response) => {
+    try {
+        if (!request.file) {
+            response.status(400).send('No file uploaded');
+            return;
+        }
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestPhoto = request.file;
+        const collection = database.collection("user-1");
+
+        // We find the specific request object that has the same unique_id as the one in the request body
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+        const requestFileBuffer = requestPhoto.buffer;
+        const base64String = requestFileBuffer.toString('base64'); // this is the converted base64 string of the file
+
+        await collection.updateOne(
+            {
+                _id: findUser._id
+            },
+            {
+                $set: {
+                    "photo": base64String
+                }
+            }
+        );
+
+        response.status(200).send({
+            message: 'Photo uploaded successfully!'
+        });
+    } catch (error) {
+        console.error('Error uploading photo:', error);
+        response.status(500).send('Internal server error');
+    }
+});
+
 //expected request header:
 // {
 //     "username": "jimbob"
@@ -251,65 +303,79 @@ app.patch("/api/uploadFile", upload.single('file'), async (request, response) =>
 //This is going to be transmutated into a File Object in the frontend
 //this is the endpoint that will be used to retrieve all the files for a specific user
 
+
+// gets everything in relation to a user by their username
 app.get("/api/getUser",async (request,response)=>{
 
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
-    const requestUsername = request.headers["username"];
-    const collection = await database.collection("user-1");
+    try {
+        const requestUsername = request.headers["username"];
+        const collection = await database.collection("user-1");
 
-    
+        const result = await collection.findOne({username:requestUsername});
 
-    const result = await collection.findOne({username:requestUsername});
-    
-    
-    const result_doc_list = result.files
-    //const pdfBuffer = Buffer.from(base64String, 'base64');
+        if (!result) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
+        
+        const result_doc_list = result.files
+        //const pdfBuffer = Buffer.from(base64String, 'base64');
 
-    const fileArray = [];
+        const fileArray = [];
 
-    for (let i = 0; i < result_doc_list.length; i++ ){
+        for (let i = 0; i < result_doc_list.length; i++ ){
 
-        const base64String = result_doc_list[i].file;
-        const pdfBuffer = Buffer.from(base64String, 'base64');
+            const base64String = result_doc_list[i].file;
+            const pdfBuffer = Buffer.from(base64String, 'base64');
 
-        const pdfFileName = result_doc_list[i].name;
-        const pdfDescription = result_doc_list[i].description;
-        const isRequested = result_doc_list[i].isRequested;
-        const pdfDate = result_doc_list[i].due_date;
-        const pdfFileType = result_doc_list[i].type;
-        const unique_id = result_doc_list[i].id;
-        const requestedBy = result_doc_list[i].requestedBy;
-        const requestedFor = result_doc_list[i].requestedFor;
+            const pdfFileName = result_doc_list[i].name;
+            const pdfDescription = result_doc_list[i].description;
+            const isRequested = result_doc_list[i].isRequested;
+            const pdfDate = result_doc_list[i].due_date;
+            const pdfFileType = result_doc_list[i].type;
+            const unique_id = result_doc_list[i].id;
+            const requestedBy = result_doc_list[i].requestedBy;
+            const requestedFor = result_doc_list[i].requestedFor;
+            
+            const miniPackage = {
+                name: pdfFileName,
+                file: pdfBuffer,
+                description: pdfDescription,
+                date:pdfDate,
+                type: pdfFileType,
+                isRequested: isRequested,
+                id: unique_id,
+                requestedBy: requestedBy,
+                requestedFor: requestedFor
+            }
 
-
-        const miniPackage = {
-            name: pdfFileName,
-            file: pdfBuffer,
-            description: pdfDescription,
-            date:pdfDate,
-            type: pdfFileType,
-            isRequested: isRequested,
-            id: unique_id,
-            requestedBy: requestedBy,
-            requestedFor: requestedFor
+            fileArray.push(miniPackage);
         }
 
-        fileArray.push(miniPackage);
+        const base64StringPhoto = result.photo;
+        const pdfBufferPhoto = Buffer.from(base64StringPhoto, 'base64');
+
+
+        response.status(200).send({
+            message: 'User Object retrieved successfully!',
+            user: {
+                firstName: result.firstName,
+                lastName: result.lastName,
+                username: result.username,
+                role: result.role,
+                birthDate: result.birthDate,
+                files:fileArray,
+                photo: pdfBufferPhoto // This is the user's photo in base64 format
+            }
+        });
+    } catch (error) {
+        console.error('Error getting user: ', error);
+        response.status(500).send ({
+            message: 'Internal error when getting user'
+        })
     }
-
-
-    response.status(200).send({
-        message: 'User Object retrieved successfully!',
-        user: {
-            firstName: result.firstName,
-            lastName: result.lastName,
-            username: result.username,
-            role: result.role,
-            birthDate: result.birthDate,
-            files:fileArray
-        }
-      });
 })
 
 
@@ -326,66 +392,82 @@ app.get("/api/getUser",async (request,response)=>{
 
 app.post("/api/createRequest",async (request,response)=>{
 
-    const requestBody = request.body;
-    const requestAttributes = requestBody.request_attributes;
+    try {
+        const requestBody = request.body;
+        const requestAttributes = requestBody.request_attributes;
 
-    const requestUsername = requestBody.username;
-    const requestFileName = requestAttributes.name;
-    const requestDescription = requestAttributes.description;
-    const requestFileType = requestAttributes.type;
-    const requestDueDate = requestAttributes.date;
+        const requestUsername = requestBody.username;
+        const requestFileName = requestAttributes.name;
+        const requestDescription = requestAttributes.description;
+        const requestFileType = requestAttributes.type;
+        const requestDueDate = requestAttributes.date;
 
-    const collection = await database.collection("user-1");
-    const result = await collection.findOne({username:requestUsername});
-    const findUser = await collection.findOne({
-        "username": requestUsername
-    });
+        const collection = await database.collection("user-1");
+        const result = await collection.findOne({username:requestUsername});
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
 
-    await collection.updateOne(
-        {
-            _id: findUser._id
-        },
-        {
-            $push: {
-                "files": {
-                    "name": requestFileName,
-                    "description": requestDescription,
-                    "file": "",
-                    "due_date": requestDueDate,
-                    "type": requestFileType,
-                    "isRequested": true,
-                    "id": result.files.length + 1,
-                    "requestedBy": requestBody.requester_username,
-                    "requestedFor": requestBody.username
+        await collection.updateOne(
+            {
+                _id: findUser._id
+            },
+            {
+                $push: {
+                    "files": {
+                        "name": requestFileName,
+                        "description": requestDescription,
+                        "file": "",
+                        "due_date": requestDueDate,
+                        "type": requestFileType,
+                        "isRequested": true,
+                        "id": result.files.length + 1,
+                        "requestedBy": requestBody.requester_username,
+                        "requestedFor": requestBody.username
+                    }
                 }
             }
-        }
-    );
+        );
 
 
-    response.status(200).send({
-        message: 'Request created successfully!'
-      });
+        response.status(200).send({
+            message: 'Request created successfully!'
+        });
+    } catch (error) {
+        console.error('Error creating request: ', error);
+        response.status(500).send ({
+            message: 'Internal error when creating request'
+        })
+    }
 })
 
+// gets everything except files in case of security issues
 app.get("/api/getUserPublic",async (request,response)=>{
-    const requestUsername = request.headers["username"];
-    const collection = await database.collection("user-1");
+    try {
+        const requestUsername = request.headers["username"];
+        const collection = await database.collection("user-1");
 
-    const result = await collection.findOne({username:requestUsername});
-    
-    console.log(result);
+        const result = await collection.findOne({username:requestUsername});
+        
+        console.log(result);
 
-    response.status(200).send({
-        message: `${requestUsername} retrieved successfully!`,
-        user: {
-            firstName: result.firstName,
-            lastName: result.lastName,
-            username: result.username,
-            role: result.role,
-            birthDate: result.birthDate,
-        }
+        response.status(200).send({
+            message: `${requestUsername} retrieved successfully!`,
+            user: {
+                firstName: result.firstName,
+                lastName: result.lastName,
+                username: result.username,
+                role: result.role,
+                birthDate: result.birthDate,
+                photo: result.photo, // This is the user's photo in base64 format
+            }
       });
+    } catch (error) {
+        console.error('Error getting public user: ', error);
+        response.status(500).send ({
+            message: 'Internal error when getting public user'
+        })
+    }
 })
 
 /*
@@ -400,37 +482,55 @@ expected request body:
 
 app.post('/api/createAccount', async (request, response) => {
 
-    const requestBody = request.body;
+    try {
+        const requestBody = request.body;
 
-    const requestRole = requestBody.role;
-    const requestFirstName = requestBody.firstName;
-    const requestLastName = requestBody.lastName;
-    const requestUsername = requestBody.username;
-    const requestPassword = requestBody.password;
+        const requestRole = requestBody.role;
+        const requestFirstName = requestBody.firstName;
+        const requestLastName = requestBody.lastName;
+        const requestUsername = requestBody.username;
+        const requestPassword = requestBody.password;
+        const requestBirthDate = requestBody.birthDate;
 
-    response.status(200).send ({
-        message: 'Account created successfully!'
-    });
-})
+        const collection = await database.collection("user-1");
 
-// route to get a user from their username and password
-app.get('/api/getUserByUsername', async (request, response) => {
-    const username = request.headers["username"];
+        // Check if username already exists
+        const existingUser = await collection.findOne({ username: requestUsername });
+        if (existingUser) {
+            response.status(409).send({
+                message: 'Username already exists!'
+            });
+            return;
+        }
 
-    const collection = database.collection ("user-1");
+        // Create new user document
+        const newUser = {
+            role: requestRole,
+            firstName: requestFirstName,
+            lastName: requestLastName,
+            username: requestUsername,
+            password: requestPassword,
+            birthDate: requestBirthDate,
+            files: [],
+            photo: "", // Initialize with an empty string or a default photo
+        };
 
-    const userData = await collection.findOne({
-        username: username
-    });
+        await collection.insertOne(newUser);
 
-    if (!userData) {
-        return response.status(401).send({
-          message: 'Invalid username'
+        if (!requestBody.role || !requestBody.firstName || !requestBody.lastName 
+            || !requestBody.username || !requestBody.password) {
+                response.status(400).send({
+                    message: "Missing required fields!"
+                })
+            }
+
+        response.status(200).send({
+            message: 'Account created successfully!'
         });
-      }
-
-    response.status(200).send({
-        message: 'Login successful',
-        user: userData
-    })
-})
+    } catch (error) {
+        console.error('Error creating account: ', error);
+        response.status(500).send ({
+            message: 'Internal error when creating account'
+        })
+    }
+});
