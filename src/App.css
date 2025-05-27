@@ -76,6 +76,7 @@
   z-index: 9999;
   margin-top: 5%;
   background-color: rgba(255, 255, 255, 1); /* Solid white background */
+  margin-left: 0;
 }
 
 .hammy-btn{
@@ -141,6 +142,7 @@
   position: fixed;
   font-size: 20px;
   color:#274472;
+  margin-right: 0;
 }
 
 .side-menu-components{

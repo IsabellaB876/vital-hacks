@@ -208,10 +208,35 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
         transition: "margin-left 0.3s ease",
       }}
     >
+
       <Toast.Header>
         <strong className="me-auto">Upload {selectedDocType}</strong>
       </Toast.Header>
       <Toast.Body>
+        <div className="d-flex gap-5">
+        <div
+          className="file-upload-container d-flex gap-4 justify-content-end mb-3"
+          style={{ marginTop: "20px" }}
+        >
+          <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
+            <Image
+              className="mb-2"
+              src={upload}
+              alt="upload"
+              width={26}
+              height={25}
+            />
+            <input
+              type="file"
+              id="file-upload"
+              accept="application/pdf,image/png,image/jpeg,.doc,.docx"
+              onChange={handleFileChange}
+              title="Click to upload a file"
+              style={{ width: "auto" }}
+            />
+          </div>
+        </div>
+
         <div className="dropdowns d-flex flex-column gap-3 mb-3">
           <Dropdown>
             <Dropdown.Toggle id="dropdown-basic" className="shadow">
@@ -269,28 +294,6 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
             )}
           </Button>
         </div>
-
-        <div
-          className="file-upload-container d-flex gap-4 justify-content-end mb-3"
-          style={{ marginTop: "20px" }}
-        >
-          <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
-            <Image
-              className="mb-2"
-              src={upload}
-              alt="upload"
-              width={26}
-              height={25}
-            />
-            <input
-              type="file"
-              id="file-upload"
-              accept="application/pdf,image/png,image/jpeg,.doc,.docx"
-              onChange={handleFileChange}
-              title="Click to upload a file"
-              style={{ width: "auto" }}
-            />
-          </div>
         </div>
 
         {file && (
