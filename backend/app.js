@@ -520,7 +520,7 @@ app.post('/api/createAccount', async (request, response) => {
 
     try {
         const requestBody = await request.body;
-        console.log(request);
+        console.log(request.get('Content-Type'));
 
         const requestRole = requestBody.role;
         const requestFirstName = requestBody.firstName;
