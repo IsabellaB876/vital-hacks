@@ -4,7 +4,6 @@ import { Routes, Route, Navigate } from "react-router";
 export default function Account() {
   return (
     <div id="wd-account-screen">
-      <h2>Account</h2>
       <Routes>
         <Route path="/" element={<Navigate to="/Account/Signup" />} />
         {/* <Route path="/Signin" element={<Signin />} />

@@ -9,7 +9,7 @@ function PatientHome() {
   const { showSidebar, user } = useSidebar();
 
   return (
-    <Stack gap={3} className="text-start">
+    <Stack gap={3} className="text-start" style={{ paddingTop: "6%" }}>
       <NavBar />
       <div
         className="flex-grow-1"
