@@ -8,6 +8,8 @@ export interface UserData {
   birthDate: string;
   files: FileData[];
   photo: any;
+  users: UserData[];
+  password: string;
 }
 
 export const userDataDefault = {
@@ -18,4 +20,6 @@ export const userDataDefault = {
   birthDate: "",
   files: [],
   photo: null,
+  users: [],
+  password: null,
 };
