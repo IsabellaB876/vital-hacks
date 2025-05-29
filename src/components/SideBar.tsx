@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Link } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
@@ -9,6 +10,16 @@ import { useSidebar } from "../context/appContext";
 
 function SideBar() {
   const { showSidebar, user } = useSidebar();
+
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    const rawBase64Data = user.photo ?? "";
+    if (rawBase64Data) {
+      const fullDataUrl = `data:image/png;base64,${rawBase64Data}`;
+      setImageUrl(fullDataUrl);
+    }
+  }, []);
 
   return (
     <div
@@ -26,7 +37,7 @@ function SideBar() {
           <Button className="profile-btn d-flex align-items-center shadow gap-3 px-4 py-3">
             <Image
               className="profile-img"
-              src={Account}
+              src={imageUrl ?? Account}
               alt="Profile"
               style={{
                 width: "50px",
