@@ -5,16 +5,46 @@ import { useSidebar } from "../../context/appContext";
 import { getUser } from "../../Service";
 import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
-import { Link } from "react-router-dom";
 
-function Signup() {
+function Login() {
   const { updateUserData } = useSidebar();
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+
+  const handleLogin = async () => {
+    try {
+      const userData = await getUser(username);
+
+      setLoading(true);
+
+      updateUserData("firstName", userData.user.firstName);
+      updateUserData("lastName", userData.user.lastName);
+      updateUserData("username", userData.user.username);
+      updateUserData("role", userData.user.role);
+      updateUserData("birthDate", userData.user.birthDate);
+      updateUserData("files", userData.user.files);
+      updateUserData("photo", userData.user.photo);
+      updateUserData("password", userData.user.password);
+      updateUserData("users", userData.user.users);
+
+      // Only navigate once all updates are done
+      if (userData.user.role === "Patient") {
+        navigate("/PatientHome");
+      } else {
+        navigate("/DoctorHome");
+      }
+    } catch (error) {
+      setInvalid("Invalid username or password. Please try again.");
+      console.log("Signup error:", error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
 
   if (loading) {
+    // Render a blank screen with a loading spinner
     return (
       <div
         style={{
@@ -41,8 +71,8 @@ function Signup() {
             <Image src={logo} alt="MedVault Logo" className="logo" />
             <h2>Medvault</h2>
           </Stack>
-          <h1>Glad to have you here!</h1>
-          <p className="subtitle">Create your account.</p>
+          <h1>Welcome Back!</h1>
+          <p className="subtitle">Login to your account.</p>
           <input
             type="text"
             placeholder="Username"
@@ -50,10 +80,12 @@ function Signup() {
             onChange={(e) => setUsername(e.target.value)}
           />
           <input type="password" placeholder="Password" className="input" />
-          <Button className="login-btn">Log in</Button>
+          <Button className="login-btn" onClick={handleLogin}>
+            Log in
+          </Button>
           <h3 style={{ color: "red" }}>{invalid}</h3>
           <p className="account-text">
-            Already have an account? <Link to="/Account/Login">Log in.</Link>
+            New to MedVault? <a href="/Signup">Create an account.</a>
           </p>
         </div>
       </div>
@@ -61,4 +93,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
