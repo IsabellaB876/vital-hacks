@@ -208,6 +208,7 @@ html, body, #root {
   border-radius: 0px;
   margin: 0;
   padding: 0;
+  object-position: left;
 }
 
 /* Right side with centered login form */
