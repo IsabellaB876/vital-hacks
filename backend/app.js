@@ -527,7 +527,6 @@ app.post('/api/createAccount', async (request, response) => {
         const requestLastName = requestBody.lastName;
         const requestUsername = requestBody.username;
         const requestPassword = requestBody.password;
-        const requestBirthDate = requestBody.birthDate;
 
         const collection = await database.collection("user-1");
 

@@ -7,8 +7,9 @@ import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
 
 function Login() {
-  const { updateUserData } = useSidebar();
+  const { updateUserData, user } = useSidebar();
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
@@ -29,6 +30,10 @@ function Login() {
       updateUserData("password", userData.user.password);
       updateUserData("users", userData.user.users);
 
+      if (!passwordVerification()) {
+        return;
+      }
+
       // Only navigate once all updates are done
       if (userData.user.role === "Patient") {
         navigate("/PatientHome");
@@ -41,6 +46,14 @@ function Login() {
     } finally {
       setLoading(false); // Stop loading
     }
+  };
+
+  const passwordVerification = () => {
+    if (user.password !== password) {
+      setInvalid("Invalid username or password. Please try again.");
+      return false;
+    }
+    return true;
   };
 
   if (loading) {
@@ -79,8 +92,13 @@ function Login() {
             className="input"
             onChange={(e) => setUsername(e.target.value)}
           />
-          <input type="password" placeholder="Password" className="input" />
-          <Button className="login-btn" onClick={handleLogin}>
+          <input
+            type="password"
+            placeholder="Password"
+            className="input"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button className="login-btn shadow" onClick={handleLogin}>
             Log in
           </Button>
           <h3 style={{ color: "red" }}>{invalid}</h3>
