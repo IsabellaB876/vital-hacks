@@ -6,6 +6,7 @@ import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
 import { createUser } from "../../Service";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Signup() {
   const { updateUserData } = useSidebar();
@@ -19,6 +20,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
   const options = ["Patient", "Doctor"];
+  const [showPassword, setShowPassword] = useState(false);
 
   const onToggle = (value: string) => console.log("Selected:", value);
 
@@ -139,12 +141,26 @@ function Signup() {
             className="input"
             onChange={(e) => setUsername(e.target.value)}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="input"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              type={showPassword ? "text" : "password"} // Toggle input type
+              placeholder="Password"
+              className="input"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <span
+              style={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
           <Button className="login-btn shadow" onClick={handleSignup}>
             Sign up
           </Button>
