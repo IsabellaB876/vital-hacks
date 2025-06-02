@@ -21,5 +21,5 @@ export const userDataDefault = {
   files: [],
   photo: null,
   users: [],
-  password: null,
+  password: "",
 };

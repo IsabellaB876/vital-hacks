@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Carousel, Stack, Container } from "react-bootstrap";
 import FileCard from "./FileCard";
-import { getUserFiles } from "../Service";
 import { useSidebar } from "../context/appContext";
 
 // Define the type of props

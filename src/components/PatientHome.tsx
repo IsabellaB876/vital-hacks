@@ -9,7 +9,7 @@ function PatientHome() {
   const { showSidebar, user } = useSidebar();
 
   return (
-    <Stack gap={3} className="text-start">
+    <Stack gap={3} className="text-start" style={{ marginTop: "8%" }}>
       <NavBar />
       <div
         className="flex-grow-1"
@@ -19,7 +19,6 @@ function PatientHome() {
         }}
       >
         <Stack gap={3} className="text-start p-3">
-          <NavBar />
           <h1>Welcome {user.firstName}!</h1>
           <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
           <FolderSection />
