@@ -9,7 +9,7 @@ import { createUser } from "../../Service";
 
 function Signup() {
   const { updateUserData } = useSidebar();
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("Patient");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");

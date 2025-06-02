@@ -5,6 +5,7 @@ import { useSidebar } from "../../context/appContext";
 import { getUser } from "../../Service";
 import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const { updateUserData, user } = useSidebar();
@@ -12,9 +13,15 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [invalid, setInvalid] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
+    if (!username || !password) {
+      setInvalid("Please enter both username and password.");
+      return;
+    }
+
     try {
       const userData = await getUser(username);
 
@@ -30,7 +37,9 @@ function Login() {
       updateUserData("password", userData.user.password);
       updateUserData("users", userData.user.users);
 
-      if (!passwordVerification()) {
+      if (userData.user.password !== password) {
+        setInvalid("Invalid username or password. Please try again.");
+        setLoading(false);
         return;
       }
 
@@ -46,14 +55,6 @@ function Login() {
     } finally {
       setLoading(false); // Stop loading
     }
-  };
-
-  const passwordVerification = () => {
-    if (user.password !== password) {
-      setInvalid("Invalid username or password. Please try again.");
-      return false;
-    }
-    return true;
   };
 
   if (loading) {
@@ -92,12 +93,26 @@ function Login() {
             className="input"
             onChange={(e) => setUsername(e.target.value)}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="input"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div style={{ position: "relative" }}>
+            <input
+              type={showPassword ? "text" : "password"} // Toggle input type
+              placeholder="Password"
+              className="input"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <span
+              style={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
           <Button className="login-btn shadow" onClick={handleLogin}>
             Log in
           </Button>
