@@ -5,6 +5,7 @@ import { HashRouter } from "react-router-dom";
 import PatientHome from "./components/PatientHome";
 import DoctorHome from "./components/DoctorHome";
 import { Provider } from "./context/appContext";
+import Profile from "./components/Profile";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/PatientHome" element={<PatientHome />} />
             <Route path="/DoctorHome" element={<DoctorHome />} />
             <Route path="/Account/*" element={<Account />} />
+            <Route path="/Profile" element={<Profile />} />
           </Routes>
         </div>
       </HashRouter>

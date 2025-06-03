@@ -24,11 +24,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #274472;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #151f48;
 }
 
 body, html, #root {
@@ -57,11 +57,11 @@ h3 {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #274472;
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: #151f48;
   }
   button {
     background-color: #f9f9f9;

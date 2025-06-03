@@ -7,10 +7,11 @@ import Setting from "../assets/Setting.svg";
 import Folder from "../assets/Folder.svg";
 import Account from "../assets/Account.svg";
 import { useSidebar } from "../context/appContext";
+import { useNavigate } from "react-router-dom";
 
 function SideBar() {
   const { showSidebar, user } = useSidebar();
-
+  const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
@@ -34,7 +35,10 @@ function SideBar() {
     >
       {showSidebar && (
         <div className="side-menu-components d-flex flex-column m-0">
-          <Button className="profile-btn d-flex align-items-center shadow gap-3 px-4 py-3">
+          <Button
+            className="profile-btn d-flex align-items-center shadow gap-3 px-4 py-3"
+            onClick={() => navigate("/Profile")}
+          >
             <Image
               className="profile-img"
               src={imageUrl ?? Account}

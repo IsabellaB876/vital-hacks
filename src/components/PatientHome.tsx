@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Stack } from "react-bootstrap";
 import FileCarousel from "./FileCarousel";
 import FolderSection from "./FolderSection";
@@ -19,7 +18,7 @@ function PatientHome() {
         }}
       >
         <Stack gap={3} className="text-start p-3">
-          <h1>Welcome {user.firstName}!</h1>
+          <h1>Welcome, {user.firstName}!</h1>
           <FileCarousel text="Requested Documents" bgColor="#9EBDF8" />
           <FolderSection />
         </Stack>

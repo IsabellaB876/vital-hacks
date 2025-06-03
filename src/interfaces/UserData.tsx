@@ -8,7 +8,7 @@ export interface UserData {
   birthDate: string;
   files: FileData[];
   photo: any;
-  users: UserData[];
+  users: string[];
   password: string;
 }
 

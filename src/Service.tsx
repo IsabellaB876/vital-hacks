@@ -10,14 +10,15 @@ export const getUser = async (username: string) => {
       },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch user details");
+    if (!res.ok) {
+      throw new Error("Failed to fetch user details");
+    }
 
     const data = await res.json();
-    console.log(data.firstName);
     return data;
   } catch (error) {
-    console.error(error);
-    return;
+    console.error("Error fetching user:", error);
+    return null; // Return null if the request fails
   }
 };
 
