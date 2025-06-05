@@ -58,8 +58,8 @@ function SideBar() {
             </div>
           </Button>
 
-          <Link to="" id="home-link" className="list-group-item">
-            {" "}
+          <Link to="/PatientHome" id="home-link" className="list-group-item">
+            {""}
             <Image className="home" src={Home} alt="home" /> Home{" "}
           </Link>
           <a
