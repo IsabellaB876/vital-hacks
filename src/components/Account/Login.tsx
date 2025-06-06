@@ -37,6 +37,7 @@ function Login() {
       updateUserData("password", userData.user.password);
       updateUserData("users", userData.user.users);
 
+      //userData to get information about the account. username and password to get input from the user
       if (userData.user.password !== password) {
         setInvalid("Invalid username or password. Please try again.");
         setLoading(false);

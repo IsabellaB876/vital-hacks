@@ -22,6 +22,8 @@ export const Provider = ({ children }: { children: ReactNode }) => {
 
   const [user, setUser] = useState<UserData>(userDataDefault);
 
+  // Function to update user data
+  // This function takes a field and value, and updates the user state accordingly
   const updateUserData = <K extends keyof UserData>(
     field: K,
     value: UserData[K]
