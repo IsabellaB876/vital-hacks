@@ -13,12 +13,12 @@ import { useLocation } from "react-router-dom";
 
 function NavBar() {
   const [display, setDisplay] = useState<boolean>(false);
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, toggleEditMode } = useSidebar();
 
   const toggleDisplay = () => setDisplay(!display);
 
   const location = useLocation();
-  const isProfile = location.pathname === '/Profile';
+  const isProfile = location.pathname === "/Profile";
   return (
     <>
       <Navbar
@@ -73,15 +73,13 @@ function NavBar() {
               </>
             ) : (
               <Button
-                //onClick={toggleDisplay}
                 className="edit-btn d-flex align-items-center px-3 py-2"
+                onClick={toggleEditMode}
               >
                 <Image className="me-2" src={Penciel} alt="edit" />
                 Edit
               </Button>
             )}
-
-
           </div>
         </Container>
       </Navbar>
