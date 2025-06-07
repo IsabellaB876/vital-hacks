@@ -53,7 +53,7 @@ function SideBar() {
           >
             <Image
               className="profile-img"
-              src={imageUrl ?? Account}
+              src={imageUrl || Account}
               alt="Profile"
               style={{
                 width: "50px",

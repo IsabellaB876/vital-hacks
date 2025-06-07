@@ -62,7 +62,7 @@ function PatientHome() {
           >
             <Image
               className="profile-img"
-              src={imageUrl ?? Account}
+              src={imageUrl || Account}
               alt="Profile"
               style={{
                 width: "150px",
