@@ -1,5 +1,5 @@
 const defaultPort = 3000;
-//import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -560,17 +560,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
     }
 })
 
-/*
-expected request body:
-{
-    "token": example token here
-}
-*/
-/*app.post("/api/verifyToken", async(request,response)=>{
-    try{
-        requestToken = request.token;
-    }
-})*/
+
 
 /*
 expected request body:
@@ -644,3 +634,21 @@ app.post('/api/createAccount', async (request, response) => {
         return;
     }
 });
+
+
+/*
+expected request body:
+{
+    Nothing! Just ask for the token!
+}
+*/
+app.post("/api/generateToken", async(request,response)=>{
+    try{
+        // Create a token that expires in 1 hour
+        const token = jwt.sign(
+            { userId: user.id },      // The payload
+            process.env.JWT_SECRET,   // Your secret key
+            { expiresIn: '1h' }      // <-- SET THE EXPIRATION HERE
+        );
+    }
+})
