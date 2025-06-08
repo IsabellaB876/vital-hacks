@@ -103,7 +103,9 @@ app.listen(defaultPort, () => {
 //=====================================================================================
 
 
-
+const ACCESS_TOKEN_LIFETIME = '15m';
+const REFRESH_TOKEN_LIFETIME = '30d'; // 30 days
+const ACCESS_TOKEN_MAX_AGE_MS = 1000 * 60 * 15;
 //this is where you can add your routes
 
 //expected request body:
@@ -585,6 +587,7 @@ app.post('/api/createAccount', async (request, response) => {
         const requestLastName = requestBody.lastName;
         const requestUsername = requestBody.username;
         const requestPassword = requestBody.password;
+        const requestBirthDate = requestBody.birthDate;
 
         const collection = await database.collection("user-1");
 
@@ -639,16 +642,47 @@ app.post('/api/createAccount', async (request, response) => {
 /*
 expected request body:
 {
-    Nothing! Just ask for the token!
+   username:"jimbob",
+   password:"password"
 }
 */
-app.post("/api/generateToken", async(request,response)=>{
+app.post("/api/generateAccessToken", async(request,response)=>{
     try{
+        const requestBody = request.body
+        const requestUsername = requestBody.username
+        const requestPassword = requestBody.password
+
+        const collection = await database.collection("user-1");
+
+        const existingUser = await collection.findOne({ username: requestUsername });
+
+        const databasePassword = existingUser.password;
+        if (databasePassword !== requestPassword){
+            throw new Error("Invalid Username or Password.")
+        }
+
         // Create a token that expires in 1 hour
-        const token = jwt.sign(
-            { userId: user.id },      // The payload
-            process.env.JWT_SECRET,   // Your secret key
-            { expiresIn: '1h' }      // <-- SET THE EXPIRATION HERE
+        const access_token = jwt.sign(
+            { username: requestUsername },      // The payload
+            process.env.ACCESS_SECRET, //we set the access key here
+            { expiresIn: '15m' }      
         );
+
+        response.cookie('accessToken', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: ACCESS_TOKEN_MAX_AGE_MS //matches the JWT's lifetime
+        });
+
+        response.status(200).send({
+            message: 'Access Token generated successfully!'
+        });
+    } catch (error) {
+        console.error('Error generating access token: ', error);
+        response.status(500).send ({
+            message: 'Internal error when generating access token'
+        });
+        return;
     }
 })
