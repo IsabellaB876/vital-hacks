@@ -157,6 +157,24 @@ html, body, #root {
   height: 25vw;
 }
 
+.doctor-input{
+  border-radius: 15px;
+  border: transparent;
+  color: #274472;
+  font-size: 20px;
+  width: 50%;
+  height: 60px;
+}
+
+.type-input{
+  border-radius: 15px;
+  border: transparent;
+  color: #274472;
+  font-size: 20px;
+  width: 50%;
+  height: 60px;
+}
+
 .submit-btn{
   background-color: #274472;
   border-radius: 15px;

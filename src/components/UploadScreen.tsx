@@ -5,7 +5,7 @@ import upload from "../assets/BlueUploadIcon.svg";
 import { Button, Alert, Spinner, Image } from "react-bootstrap";
 import { analyzeDocumentFromBuffer } from "../lib/textract";
 import { useSidebar } from "../context/appContext";
-import { UserData } from "../interfaces/UserData";
+import { FileData } from "../interfaces/FileData";
 
 // Define types for the Textract result
 interface TextractBlock {
@@ -32,10 +32,14 @@ interface UploadScreenProps {
   ) => void;
 }
 
-type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
+type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History" | "Patient Intake Forms";
 
 function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const { showSidebar, user } = useSidebar();
+  const [selectedFile, setSelectedFile] = useState<FileData | null>(null); // sets to selected file
+  const requestedFile = user.files.filter((f) => f.isRequested) // returns a list of requested files
+  const handleSelect = (f: FileData) => { setSelectedFile(f) };
+
   const [file, setFile] = useState<File | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [selectedDocType, setSelectedDocType] =
@@ -137,12 +141,14 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const handleDocTypeSelect = (eventKey: string | null) => {
     if (eventKey) {
       setSelectedDocType(eventKey as DocumentType);
-      // Re-validate if a file is already selected
+  
       if (file) {
         validateDocument(file);
       }
     }
   };
+  
+  
 
   // Validation logic from DocumentValidator - updated to check based on document type
   const checkForKeywords = (
@@ -239,52 +245,39 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
           </div>
 
           <div className="dropdowns d-flex flex-column gap-3 mb-3">
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" className="shadow">
-                Requested File
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="shadow">
-                {user.files
-                  .filter((f) => f.isRequested)
-                  .map((f) => (
-                    <Dropdown.Item key={f.id} eventKey={f.id}>
-                      {f.name}
-                    </Dropdown.Item>
-                  ))}
-              </Dropdown.Menu>
-
-            </Dropdown>
-            <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic" className="shadow disabled">
-                Doctor
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="shadow">
-                <Dropdown.Item eventKey="Doctor Xie">
-                  Larry Glory Xie
-                </Dropdown.Item>
-                <Dropdown.Item eventKey="Doctor Borda">
-                  Isabella Borda
-                </Dropdown.Item>
-                <Dropdown.Item eventKey="Doctor Maloney">
-                  Roslyn Maloney
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-
             <Dropdown onSelect={handleDocTypeSelect}>
-              <Dropdown.Toggle id="dropdown-basic" className="shadow disabled">
-                {selectedDocType}
+              <Dropdown.Toggle id="dropdown-basic" className="shadow">
+                {selectedFile ? selectedFile.name : 'Requested File'}
               </Dropdown.Toggle>
               <Dropdown.Menu className="shadow">
-                <Dropdown.Item eventKey="Health Care Proxy">
-                  Health Care Proxy
-                </Dropdown.Item>
-                <Dropdown.Item eventKey="HIPAA">HIPAA</Dropdown.Item>
-                <Dropdown.Item eventKey="Medical History">
-                  Medical History
-                </Dropdown.Item>
+                {requestedFile.map((f) => (
+                  <Dropdown.Item
+                    key={f.id}
+                    eventKey={f.type}
+                    onClick={() => handleSelect(f)} // ← this is where `file` comes from
+                  >
+                    {f.name}
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </Dropdown>
+
+            <input
+              type="text"
+              className="doctor-input shadow"
+              placeholder="Doctor"
+              disabled
+              value={selectedFile?.requestedBy || ''}
+            />
+
+            <input
+              type="text"
+              className="type-input shadow"
+              placeholder="File Type"
+              disabled
+              value={selectedFile?.type || ''}
+            />
+
 
             <Button
               className="submit-btn"
