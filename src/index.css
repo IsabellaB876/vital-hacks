@@ -15,7 +15,8 @@
   padding: 0 !important;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 * {
@@ -36,8 +37,9 @@ body, html, #root {
   padding: 0 !important;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 h1 {

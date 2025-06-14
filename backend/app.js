@@ -172,6 +172,61 @@ app.patch("/api/editFile",async (request, response) => {
 //expected request .body:
 // {
 //     username: "jimbob",
+//     edits:[]
+// }
+
+//json object for edits:
+// {
+//     "key": "this is a string and is the name of the property that you want to edit",
+//     "value": "this is the new value that you want to set it to, it can be whatever value you want"
+
+app.patch("/api/editUser",async (request, response)=>{
+    try{
+        const collection = await database.collection("user-1");
+
+        const requestBody = request.body;
+        const requestUsername = requestBody.username;
+        const requestEdits = requestBody.edits;
+
+        const findUser = await collection.findOne({
+            "username": requestUsername
+        });
+
+        if (!findUser) {
+            console.log("user not found");
+            throw new Error("user not found!");
+        }
+
+        for (const edit in requestEdits) {
+            const key = requestEdits[edit].key;
+            const value = requestEdits[edit].value;
+            
+            const update = {
+                $set: {
+                    [`${key}`]: value
+                }
+            };
+            await collection.updateOne(
+                {
+                    _id: findUser._id
+                },
+                update
+            );
+            console.log(`Updated ${key} to ${value}`);
+        }
+        response.status(200).send({
+            message: 'File edited successfully!'
+        });
+    } catch (error) {
+        console.error('Error editing file:', error);
+        response.status(500).send('Internal server error');
+    }
+})
+
+
+//expected request .body:
+// {
+//     username: "jimbob",
 //     id: 1
 // }
 //expected request .file:
