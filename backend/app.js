@@ -1,5 +1,5 @@
 const defaultPort = 3000;
-
+//import jwt from 'jsonwebtoken';
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -325,6 +325,7 @@ app.get("/api/getUser",async (request,response)=>{
     //const requestFileType = request.headers["filetype"];//This defines if it is a HIPAA or a non-HIPAA file and so on and so forth.
 
     try {
+        console.log(request.headers)
         const requestUsername = request.headers["username"];
         const collection = await database.collection("user-1");
 
@@ -507,6 +508,18 @@ app.get("/api/getUserPublic",async (request,response)=>{
 /*
 expected request body:
 {
+    "token": example token here
+}
+*/
+/*app.post("/api/verifyToken", async(request,response)=>{
+    try{
+        requestToken = request.token;
+    }
+})*/
+
+/*
+expected request body:
+{
     "role": "Patient"
     "firstName": "Joshua"
     "lastName": "Paulino Ozuna"
@@ -574,5 +587,91 @@ app.post('/api/createAccount', async (request, response) => {
             message: 'Internal error when creating account'
         });
         return;
+    }
+});
+
+app.get('/api/search', async (request, response) => {
+    try {
+        const requestUsername = request.headers["username"];
+        const searchQuery = request.query.q;
+        
+        if (!requestUsername) {
+            return response.status(400).send({
+                message: 'Username is required in headers'
+            });
+        }
+        
+        if (!searchQuery || searchQuery.trim() === '') {
+            return response.status(200).send({
+                message: 'Search results retrieved successfully!',
+                results: []
+            });
+        }
+
+        const collection = database.collection("user-1");
+        const user = await collection.findOne({ username: requestUsername });
+
+        if (!user) {
+            return response.status(404).send({
+                message: 'User not found!'
+            });
+        }
+
+        const searchResults = [];
+        const queryLowerCase = searchQuery.toLowerCase().trim();
+
+        if (user.files && user.files.length > 0) {
+            for (const file of user.files) {
+                const nameMatch = file.name && file.name.toLowerCase().includes(queryLowerCase);
+                const descriptionMatch = file.description && file.description.toLowerCase().includes(queryLowerCase);
+                const typeMatch = file.type && file.type.toLowerCase().includes(queryLowerCase);
+                const requestedByMatch = file.requestedBy && file.requestedBy.toLowerCase().includes(queryLowerCase);
+                const requestedForMatch = file.requestedFor && file.requestedFor.toLowerCase().includes(queryLowerCase);
+
+                if (nameMatch || descriptionMatch || typeMatch || requestedByMatch || requestedForMatch) {
+                    searchResults.push({
+                        id: file.id,
+                        name: file.name,
+                        description: file.description,
+                        date: file.due_date,
+                        type: file.type,
+                        isRequested: file.isRequested,
+                        requestedBy: file.requestedBy,
+                        requestedFor: file.requestedFor,
+                        matchedFields: {
+                            name: nameMatch,
+                            description: descriptionMatch,
+                            type: typeMatch,
+                            requestedBy: requestedByMatch,
+                            requestedFor: requestedForMatch
+                        }
+                    });
+                }
+            }
+        }
+
+        searchResults.sort((a, b) => {
+            const aExactName = a.name && a.name.toLowerCase() === queryLowerCase;
+            const bExactName = b.name && b.name.toLowerCase() === queryLowerCase;
+            
+            if (aExactName && !bExactName) return -1;
+            
+            if (!aExactName && bExactName) return 1;
+            
+            return (a.name || '').localeCompare(b.name || '');
+        });
+
+        response.status(200).send({
+            message: 'Search results retrieved successfully!',
+            query: searchQuery,
+            results: searchResults,
+            totalCount: searchResults.length
+        });
+
+    } catch (error) {
+        console.error('Error performing search:', error);
+        response.status(500).send({
+            message: 'Internal server error during search'
+        });
     }
 });
