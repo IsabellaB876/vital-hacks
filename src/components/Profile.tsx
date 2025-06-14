@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Stack, Image } from "react-bootstrap";
+import { Stack, Image, Button } from "react-bootstrap";
 import NavBar from "./NavBar";
 import { useSidebar } from "../context/appContext";
 import Account from "../assets/Account.svg";
@@ -7,7 +7,7 @@ import { getUser } from "../Service";
 import { UserData } from "../interfaces/UserData";
 
 function PatientHome() {
-  const { showSidebar, user } = useSidebar();
+  const { showSidebar, user, editMode } = useSidebar();
   const [imageUrl, setImageUrl] = useState("");
   const [people, setPeople] = useState<UserData[]>([]);
 
@@ -74,6 +74,24 @@ function PatientHome() {
             <div className="d-flex flex-column text-start">
               <h2 className="name">{user.firstName + " " + user.lastName}</h2>
               <p className="email">{user.username}</p>
+              {people.map((person) => {
+                const photoSrc = person.photo
+                  ? `data:image/png;base64,${person.photo}`
+                  : Account;
+
+                return (
+                  <Image
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      objectFit: "cover",
+                      borderRadius: "50%",
+                    }}
+                    src={photoSrc}
+                    alt="Profile"
+                  />
+                );
+              })}
             </div>
           </div>
           <h2>Personal Information</h2>
@@ -108,12 +126,27 @@ function PatientHome() {
               {user.role === "Patient" ? "Doctors" : "Patients"}
             </span>
             <br />
-            {people.map((person) => (
-              <span key={person.username} style={{ display: "block" }}>
-                {person.firstName} {person.lastName}
-              </span>
-            ))}
+            {people.map((person) => {
+              const photoSrc = person.photo
+                ? `data:image/png;base64,${person.photo}`
+                : Account;
+
+              return (
+                <span
+                  key={person.username}
+                  style={{ display: "block", gap: "10px" }}
+                >
+                  <Image src={photoSrc} alt="Profile" />
+                  {person.firstName} {person.lastName}
+                </span>
+              );
+            })}
           </h2>
+          {editMode && (
+            <div className="d-flex justify-content-end">
+              <Button>Confirm</Button>
+            </div>
+          )}
         </Stack>
       </div>
     </Stack>
