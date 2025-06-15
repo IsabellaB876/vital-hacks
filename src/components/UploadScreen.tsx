@@ -254,7 +254,7 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
                   <Dropdown.Item
                     key={f.id}
                     eventKey={f.type}
-                    onClick={() => handleSelect(f)} // ← this is where `file` comes from
+                    onClick={() => handleSelect(f)}
                   >
                     {f.name}
                   </Dropdown.Item>

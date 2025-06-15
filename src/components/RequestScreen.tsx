@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import { Button, Form } from "react-bootstrap";
+import { UserData } from "../interfaces/UserData";
+import { useSidebar } from "../context/appContext";
 
 interface RequestScreenProps {
   toggleDisplay: () => void;
@@ -14,6 +16,9 @@ interface RequestScreenProps {
 function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   const [selectedDocType, setSelectedDocType] = useState<string>("");
   const [customDocType, setCustomDocType] = useState<string>("");
+  const { user } = useSidebar();
+  const [selectedPatient] = useState<UserData | null>(null);;
+  const PatientList = user.users;
 
   // define document list
   const medDocList = [
@@ -39,6 +44,8 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   const handleCustomDocType = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCustomDocType(event.target.value);
   };
+
+  // const handleSelectPatient = (event: React)
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -84,6 +91,37 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
               onChange={handleCustomDocType}
             />
           </Form.Group>
+
+          <Form.Group>
+            <Form.Label>{selectedPatient ? selectedPatient.firstName : 'Select a Patient'}</Form.Label>
+            <Form.Select
+              aria-label="Select a Patient"
+            >
+              <option value="">Select a Patient</option>
+              {PatientList.map((p) => (
+                <option>
+                  {p}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+
+
+          <Form.Group className="mb-3">
+            <Form.Label>Enter a Description</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter a description of the document"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Enter Due Date</Form.Label>
+            <Form.Control
+            type="date"
+            />
+          </Form.Group>
+
 
           <div className="d-flex justify-content-end">
             <Button onClick={handleSubmit}>Submit</Button>
