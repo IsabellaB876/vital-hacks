@@ -16,6 +16,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 
 const DB_USERNAME = process.env.db_username || '';
 const DB_PASSWORD = process.env.db_password || '';
@@ -640,6 +643,7 @@ app.post('/api/createAccount', async (request, response) => {
 
 
 /*
+not tested
 expected request body:
 {
    username:"jimbob",
@@ -663,7 +667,9 @@ app.post("/api/generateAccessToken", async(request,response)=>{
 
         // Create a token that expires in 1 hour
         const access_token = jwt.sign(
-            { username: requestUsername },      // The payload
+            { username: requestUsername,
+                password: existingUser.password
+             },      // The payload
             process.env.ACCESS_SECRET, //we set the access key here
             { expiresIn: '15m' }      
         );
@@ -684,5 +690,30 @@ app.post("/api/generateAccessToken", async(request,response)=>{
             message: 'Internal error when generating access token'
         });
         return;
+    }
+})
+//No required  requestBody, we extract directly from the user's cookies.
+//not tested
+app.get("/api/verifyAccessToken", async(request,response)=>{
+    const accessToken = request.cookies.accessToken;
+    
+    if (!accessToken){
+        return response.status(401).send({ message: "No access token found." });
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken,process.env.ACCESS_SECRET)
+
+        response.status(200).send({
+            message: "Access token verified.",
+            username: decoded.username,
+            password: decoded.password
+        })
+
+
+
+
+    }catch (error) {
+        response.status(401).send({ message: "Invalid or expired access token." });
     }
 })
