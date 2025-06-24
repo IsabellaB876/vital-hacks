@@ -44,10 +44,14 @@ const database = client.db('user-storage');
 
 async function run(){
     try{
+        
         await client.connect();
+        
         console.log("Connected to MongoDB");
         await client.db("admin").command({ping:1});
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } catch(error) {
+        console.error(error);
     } finally{
         //we don't want the connection to immediately close so we'll just pass for now.
         return;
