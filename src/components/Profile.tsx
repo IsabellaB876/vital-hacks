@@ -8,7 +8,6 @@ import { UserData } from "../interfaces/UserData";
 
 function PatientHome() {
   const { showSidebar, user, editMode, updateUserData } = useSidebar();
-  const [imageUrl, setImageUrl] = useState("");
   const [people, setPeople] = useState<UserData[]>([]);
 
   useEffect(() => {
@@ -36,13 +35,13 @@ function PatientHome() {
     }
   }, [user]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const rawBase64Data = user.photo ?? "";
     if (rawBase64Data) {
       const fullDataUrl = `data:image/png;base64,${rawBase64Data}`;
       setImageUrl(fullDataUrl);
     }
-  }, []);
+  }, []);*/
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +50,6 @@ function PatientHome() {
       const result = await uploadPhoto(file, user.username);
       if (result && result.photo) {
         updateUserData("photo", result.photo);
-        setImageUrl(`data:image/png;base64,${result.photo}`);
       }
     } catch (err) {
       console.error("Failed to upload photo", err);
@@ -77,7 +75,9 @@ function PatientHome() {
             >
               <Image
                 className="profile-img"
-                src={imageUrl || Account}
+                src={
+                  user.photo ? `data:image/png;base64,${user.photo}` : Account
+                }
                 alt="Profile"
                 style={{
                   width: "150px",
@@ -176,7 +176,9 @@ function PatientHome() {
               <div className="d-flex flex-column text-start">
                 <Image
                   className="profile-img"
-                  src={imageUrl || Account}
+                  src={
+                    user.photo ? `data:image/png;base64,${user.photo}` : Account
+                  }
                   alt="Profile"
                   style={{
                     width: "150px",
@@ -234,19 +236,39 @@ function PatientHome() {
                 <span style={{ color: "#497FD5" }}>Username</span> <br />{" "}
                 {user.username}
               </h2>
-              <h2>
-                <span style={{ color: "#497FD5" }}>Date of Birth</span> <br />{" "}
-                {user.birthDate}
-              </h2>
+              <Stack>
+                <h2>
+                  <span style={{ color: "#497FD5" }}>Date of Birth</span> <br />{" "}
+                </h2>
+                <input
+                  type="text"
+                  placeholder={user.birthDate}
+                  className="input"
+                />
+              </Stack>
             </div>
-            <h2>
-              <span style={{ color: "#497FD5" }}>Health Insurance</span> <br />{" "}
-              Not coded yet...
-            </h2>
-            <h2>
-              <span style={{ color: "#497FD5" }}>Health Restrictions</span>{" "}
-              <br /> Not coded yet...
-            </h2>
+            <Stack>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Health Insurance</span>{" "}
+                <br />{" "}
+              </h2>
+              <input
+                type="text"
+                placeholder="Not coded yet..."
+                className="input"
+              />
+            </Stack>
+            <Stack>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Health Restrictions</span>{" "}
+                <br />{" "}
+              </h2>
+              <input
+                type="text"
+                placeholder="Not coded yet..."
+                className="input"
+              />
+            </Stack>
             <h2>
               <span style={{ color: "#497FD5" }}>
                 {user.role === "Patient" ? "Doctors" : "Patients"}

@@ -54,7 +54,7 @@ export async function uploadPhoto(
   formData.append("file", file);
   formData.append("username", username);
 
-  const response = await fetch("/api/uploadPhoto", {
+  const response = await fetch("http://localhost:3000/api/uploadPhoto", {
     method: "PATCH",
     body: formData,
   });
