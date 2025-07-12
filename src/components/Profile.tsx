@@ -3,11 +3,11 @@ import { Stack, Image, Button } from "react-bootstrap";
 import NavBar from "./NavBar";
 import { useSidebar } from "../context/appContext";
 import Account from "../assets/Account.svg";
-import { getUser } from "../Service";
+import { getUser, uploadPhoto } from "../Service";
 import { UserData } from "../interfaces/UserData";
 
 function PatientHome() {
-  const { showSidebar, user, editMode } = useSidebar();
+  const { showSidebar, user, editMode, updateUserData } = useSidebar();
   const [imageUrl, setImageUrl] = useState("");
   const [people, setPeople] = useState<UserData[]>([]);
 
@@ -44,111 +44,234 @@ function PatientHome() {
     }
   }, []);
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const result = await uploadPhoto(file, user.username);
+      if (result && result.photo) {
+        updateUserData("photo", result.photo);
+        setImageUrl(`data:image/png;base64,${result.photo}`);
+      }
+    } catch (err) {
+      console.error("Failed to upload photo", err);
+    }
+  };
+
   return (
     <Stack gap={3} className="text-start" style={{ marginTop: "8%" }}>
       <NavBar />
-      <div
-        className="flex-grow-1"
-        style={{
-          marginLeft: showSidebar ? 320 : 0,
-          transition: "margin-left 0.3s ease",
-        }}
-      >
-        <Stack gap={3} className="text-start p-3">
-          <h1>My Profile</h1>
-          <div
-            className="d-flex align-items-center shadow gap-5 px-4 py-3"
-            style={{ borderRadius: "15px" }}
-          >
-            <Image
-              className="profile-img"
-              src={imageUrl || Account}
-              alt="Profile"
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                borderRadius: "50%",
-              }}
-            />
-            <div className="d-flex flex-column text-start">
-              <h2 className="name">{user.firstName + " " + user.lastName}</h2>
-              <p className="email">{user.username}</p>
+      {!editMode ? (
+        <div
+          className="flex-grow-1"
+          style={{
+            marginLeft: showSidebar ? 320 : 0,
+            transition: "margin-left 0.3s ease",
+          }}
+        >
+          <Stack gap={3} className="text-start p-3">
+            <h1>My Profile</h1>
+            <div
+              className="d-flex align-items-center shadow gap-5 px-4 py-3"
+              style={{ borderRadius: "15px" }}
+            >
+              <Image
+                className="profile-img"
+                src={imageUrl || Account}
+                alt="Profile"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+              <div className="d-flex flex-column text-start">
+                <h2 className="name">{user.firstName + " " + user.lastName}</h2>
+                <p className="email">{user.username}</p>
+                {people.map((person) => {
+                  const photoSrc = person.photo
+                    ? `data:image/png;base64,${person.photo}`
+                    : Account;
+
+                  return (
+                    <Image
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      src={photoSrc}
+                      alt="Profile"
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <h2>Personal Information</h2>
+            <div className="d-flex gap-5">
+              <h2>
+                <span style={{ color: "#497FD5" }}>First Name</span> <br />{" "}
+                {user.firstName}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Last Name</span> <br />{" "}
+                {user.lastName}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Username</span> <br />{" "}
+                {user.username}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Date of Birth</span> <br />{" "}
+                {user.birthDate}
+              </h2>
+            </div>
+            <h2>
+              <span style={{ color: "#497FD5" }}>Health Insurance</span> <br />{" "}
+              Not coded yet...
+            </h2>
+            <h2>
+              <span style={{ color: "#497FD5" }}>Health Restrictions</span>{" "}
+              <br /> Not coded yet...
+            </h2>
+            <h2>
+              <span style={{ color: "#497FD5" }}>
+                {user.role === "Patient" ? "Doctors" : "Patients"}
+              </span>
+              <br />
               {people.map((person) => {
                 const photoSrc = person.photo
                   ? `data:image/png;base64,${person.photo}`
                   : Account;
 
                 return (
-                  <Image
-                    style={{
-                      width: "30px",
-                      height: "30px",
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                    }}
-                    src={photoSrc}
-                    alt="Profile"
-                  />
+                  <span
+                    key={person.username}
+                    style={{ display: "block", gap: "10px" }}
+                  >
+                    <Image src={photoSrc} alt="Profile" />
+                    {person.firstName} {person.lastName}
+                  </span>
                 );
               })}
-            </div>
-          </div>
-          <h2>Personal Information</h2>
-          <div className="d-flex gap-5">
-            <h2>
-              <span style={{ color: "#497FD5" }}>First Name</span> <br />{" "}
-              {user.firstName}
             </h2>
-            <h2>
-              <span style={{ color: "#497FD5" }}>Last Name</span> <br />{" "}
-              {user.lastName}
-            </h2>
-            <h2>
-              <span style={{ color: "#497FD5" }}>Username</span> <br />{" "}
-              {user.username}
-            </h2>
-            <h2>
-              <span style={{ color: "#497FD5" }}>Date of Birth</span> <br />{" "}
-              {user.birthDate}
-            </h2>
-          </div>
-          <h2>
-            <span style={{ color: "#497FD5" }}>Health Insurance</span> <br />{" "}
-            Not coded yet...
-          </h2>
-          <h2>
-            <span style={{ color: "#497FD5" }}>Health Restrictions</span> <br />{" "}
-            Not coded yet...
-          </h2>
-          <h2>
-            <span style={{ color: "#497FD5" }}>
-              {user.role === "Patient" ? "Doctors" : "Patients"}
-            </span>
-            <br />
-            {people.map((person) => {
-              const photoSrc = person.photo
-                ? `data:image/png;base64,${person.photo}`
-                : Account;
+          </Stack>
+        </div>
+      ) : (
+        <div
+          className="flex-grow-1"
+          style={{
+            marginLeft: showSidebar ? 320 : 0,
+            transition: "margin-left 0.3s ease",
+          }}
+        >
+          <Stack gap={3} className="text-start p-3">
+            <h1>My Profile</h1>
+            <div
+              className="d-flex align-items-center shadow gap-5 px-4 py-3"
+              style={{ borderRadius: "15px" }}
+            >
+              <div className="d-flex flex-column text-start">
+                <Image
+                  className="profile-img"
+                  src={imageUrl || Account}
+                  alt="Profile"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept="image/png,image/jpeg,image/jpg"
+                  onChange={handlePhotoUpload}
+                  title="Click to upload a file"
+                  style={{ width: "auto", marginTop: "1rem" }}
+                />
+              </div>
+              <div className="d-flex flex-column text-start">
+                <h2 className="name">{user.firstName + " " + user.lastName}</h2>
+                <p className="email">{user.username}</p>
+                {people.map((person) => {
+                  const photoSrc = person.photo
+                    ? `data:image/png;base64,${person.photo}`
+                    : Account;
 
-              return (
-                <span
-                  key={person.username}
-                  style={{ display: "block", gap: "10px" }}
-                >
-                  <Image src={photoSrc} alt="Profile" />
-                  {person.firstName} {person.lastName}
-                </span>
-              );
-            })}
-          </h2>
-          {editMode && (
-            <div className="d-flex justify-content-end">
-              <Button>Confirm</Button>
+                  return (
+                    <Image
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      src={photoSrc}
+                      alt="Profile"
+                    />
+                  );
+                })}
+                <a href="">
+                  + Add {user.role == "Patient" ? "Doctor" : "Patient"}
+                </a>
+              </div>
             </div>
-          )}
-        </Stack>
-      </div>
+            <h2>Personal Information</h2>
+            <div className="d-flex gap-5">
+              <h2>
+                <span style={{ color: "#497FD5" }}>First Name</span> <br />{" "}
+                {user.firstName}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Last Name</span> <br />{" "}
+                {user.lastName}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Username</span> <br />{" "}
+                {user.username}
+              </h2>
+              <h2>
+                <span style={{ color: "#497FD5" }}>Date of Birth</span> <br />{" "}
+                {user.birthDate}
+              </h2>
+            </div>
+            <h2>
+              <span style={{ color: "#497FD5" }}>Health Insurance</span> <br />{" "}
+              Not coded yet...
+            </h2>
+            <h2>
+              <span style={{ color: "#497FD5" }}>Health Restrictions</span>{" "}
+              <br /> Not coded yet...
+            </h2>
+            <h2>
+              <span style={{ color: "#497FD5" }}>
+                {user.role === "Patient" ? "Doctors" : "Patients"}
+              </span>
+              <br />
+              {people.map((person) => {
+                const photoSrc = person.photo
+                  ? `data:image/png;base64,${person.photo}`
+                  : Account;
+
+                return (
+                  <span
+                    key={person.username}
+                    style={{ display: "block", gap: "10px" }}
+                  >
+                    <Image src={photoSrc} alt="Profile" />
+                    {person.firstName} {person.lastName}
+                  </span>
+                );
+              })}
+            </h2>
+            <Button>Confirm</Button>
+          </Stack>
+        </div>
+      )}
     </Stack>
   );
 }
