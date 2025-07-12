@@ -439,7 +439,7 @@ app.get("/api/getUser",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - I don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 files:fileArray,
@@ -549,7 +549,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 users: result.users, // This is the array of users that the user has requested files from
