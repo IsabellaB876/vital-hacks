@@ -557,6 +557,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
             }
       });
     } catch (error) {
+        // next(error);
         console.error('Error getting public user: ', error);
         response.status(500).send ({
             message: 'Internal error when getting public user'
@@ -642,6 +643,7 @@ app.post('/api/createAccount', async (request, response) => {
             message: 'Account created successfully!'
         });
     } catch (error) {
+        // next(error);
         console.error('Error creating account: ', error);
         response.status(500).send ({
             message: 'Internal error when creating account'
@@ -729,9 +731,19 @@ app.get('/api/search', async (request, response) => {
         });
 
     } catch (error) {
+        // next(error);
         console.error('Error performing search:', error);
         response.status(500).send({
             message: 'Internal server error during search'
         });
     }
+});
+
+// new error handler - simplify redundant code (base code only for now)
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).send({
+        message: err.message || 'Internal Server Error',
+    });
 });
