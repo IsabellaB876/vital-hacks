@@ -143,9 +143,9 @@ app.patch("/api/editFile",async (request, response) => {
         }
 
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
@@ -201,9 +201,9 @@ app.patch("/api/editUser",async (request, response)=>{
             throw new Error("user not found!");
         }
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
