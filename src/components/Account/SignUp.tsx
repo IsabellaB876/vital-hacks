@@ -158,7 +158,15 @@ function Signup() {
               }}
               onClick={() => setShowPassword(!showPassword)} // Toggle visibility
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              <span
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                role="button"
+                tabIndex={0}
+                onClick={() => setShowPassword(!showPassword)}
+                onKeyPress={e => { if (e.key === "Enter") setShowPassword(!showPassword); }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </span>
           </div>
           <Button className="login-btn shadow" onClick={handleSignup}>

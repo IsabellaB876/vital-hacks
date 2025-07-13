@@ -143,9 +143,9 @@ app.patch("/api/editFile",async (request, response) => {
         }
 
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
@@ -201,9 +201,9 @@ app.patch("/api/editUser",async (request, response)=>{
             throw new Error("user not found!");
         }
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
@@ -439,7 +439,7 @@ app.get("/api/getUser",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - I don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 files:fileArray,
@@ -549,7 +549,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 users: result.users, // This is the array of users that the user has requested files from
@@ -557,6 +557,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
             }
       });
     } catch (error) {
+        // next(error);
         console.error('Error getting public user: ', error);
         response.status(500).send ({
             message: 'Internal error when getting public user'
@@ -642,6 +643,7 @@ app.post('/api/createAccount', async (request, response) => {
             message: 'Account created successfully!'
         });
     } catch (error) {
+        // next(error);
         console.error('Error creating account: ', error);
         response.status(500).send ({
             message: 'Internal error when creating account'
@@ -729,9 +731,19 @@ app.get('/api/search', async (request, response) => {
         });
 
     } catch (error) {
+        // next(error);
         console.error('Error performing search:', error);
         response.status(500).send({
             message: 'Internal server error during search'
         });
     }
+});
+
+// new error handler - simplify redundant code (base code only for now)
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).send({
+        message: err.message || 'Internal Server Error',
+    });
 });

@@ -4,7 +4,6 @@ import DocNavBar from "./DocNavBar";
 import { useSidebar } from "../context/appContext";
 
 function DoctorHome() {
-  console.log("hello");
   const { user } = useSidebar();
   return (
     <Stack gap={3} className="text-start">

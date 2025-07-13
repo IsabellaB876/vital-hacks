@@ -45,3 +45,26 @@ export const createUser = async (user: UserData) => {
     throw error;
   }
 };
+
+export async function uploadPhoto(
+  file: File,
+  username: string
+): Promise<{ photo: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("username", username);
+
+  const response = await fetch("http://localhost:3000/api/uploadPhoto", {
+    method: "PATCH",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Upload failed: ${message}`);
+  }
+
+  const result = await response.json();
+
+  return result;
+}
