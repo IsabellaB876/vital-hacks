@@ -10,6 +10,7 @@ import SideBar from "./SideBar";
 import { useState } from "react";
 import { useSidebar } from "../context/appContext";
 import { useLocation } from "react-router-dom";
+import DocNavBar from "./DocNavBar";
 
 function NavBar() {
   const [display, setDisplay] = useState<boolean>(false);
@@ -19,6 +20,12 @@ function NavBar() {
 
   const location = useLocation();
   const isProfile = location.pathname === "/Profile";
+  const user = useSidebar();
+
+  if (user.role === "Doctor") {
+    return <DocNavBar />;
+  }
+  
   return (
     <>
       <Navbar

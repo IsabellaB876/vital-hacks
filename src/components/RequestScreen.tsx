@@ -3,6 +3,7 @@ import Toast from "react-bootstrap/Toast";
 import { Button, Form } from "react-bootstrap";
 import { UserData } from "../interfaces/UserData";
 import { useSidebar } from "../context/appContext";
+// import { FileData } from "../interfaces/FileData";
 
 interface RequestScreenProps {
   toggleDisplay: () => void;
@@ -15,6 +16,9 @@ interface RequestScreenProps {
 
 function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   const [selectedDocType, setSelectedDocType] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
   const [customDocType, setCustomDocType] = useState<string>("");
   const { user } = useSidebar();
   const [selectedPatient] = useState<UserData | null>(null);;
@@ -112,13 +116,17 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
             <Form.Control
               type="text"
               placeholder="Enter a description of the document"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Enter Due Date</Form.Label>
             <Form.Control
-            type="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
             />
           </Form.Group>
 

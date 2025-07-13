@@ -25,7 +25,7 @@ function DocNavBar() {
         fixed="top"
         style={{ backgroundColor: "white" }}
       >
-        {/* <SideBar /> */}
+        <SideBar />
         <div
           className="full-logo d-flex align-items-center gap-2"
           style={{ zIndex: 10, position: "relative" }}
@@ -37,7 +37,7 @@ function DocNavBar() {
             alt="hammy"
           />{" "}
           <br />
-          <Navbar.Brand href="/PatientHome" className="m-0">
+          <Navbar.Brand href="/DoctorHome/DoctorHome" className="m-0">
             <Image className="logo" src={logo} alt="Logo" /> MedVault
           </Navbar.Brand>
         </div>
