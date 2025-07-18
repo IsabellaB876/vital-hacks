@@ -659,6 +659,7 @@ app.post("/api/generateAccessToken", async(request,response)=>{
         const collection = await database.collection("user-1");
 
         const existingUser = await collection.findOne({ username: requestUsername });
+        console.log(existingUser)
 
         const databasePassword = existingUser.password;
         if (databasePassword !== requestPassword){
