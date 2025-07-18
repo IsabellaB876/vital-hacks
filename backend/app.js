@@ -643,7 +643,7 @@ app.post('/api/createAccount', async (request, response) => {
 
 
 /*
-not tested
+tested!
 expected request body:
 {
    username:"jimbob",
@@ -694,7 +694,7 @@ app.post("/api/generateAccessToken", async(request,response)=>{
     }
 })
 //No required  requestBody, we extract directly from the user's cookies.
-//not tested
+//tested!
 app.get("/api/verifyAccessToken", async(request,response)=>{
     const accessToken = request.cookies.accessToken;
     
