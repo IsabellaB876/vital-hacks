@@ -1,13 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Fira+Sans");
 
-html, body, #root {
-  margin: 0 !important; 
-  padding: 0 !important; 
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
 .logo {
   height: 3em;
   will-change: filter;
@@ -157,6 +149,24 @@ html, body, #root {
   height: 25vw;
 }
 
+.doctor-input{
+  border-radius: 15px;
+  border: transparent;
+  color: #274472;
+  font-size: 20px;
+  width: 50%;
+  height: 60px;
+}
+
+.type-input{
+  border-radius: 15px;
+  border: transparent;
+  color: #274472;
+  font-size: 20px;
+  width: 50%;
+  height: 60px;
+}
+
 .submit-btn{
   background-color: #274472;
   border-radius: 15px;
@@ -280,3 +290,5 @@ html, body, #root {
   color: #274472;
   text-decoration: underline;
 }
+
+

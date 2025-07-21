@@ -5,6 +5,7 @@ import upload from "../assets/BlueUploadIcon.svg";
 import { Button, Alert, Spinner, Image } from "react-bootstrap";
 import { analyzeDocumentFromBuffer } from "../lib/textract";
 import { useSidebar } from "../context/appContext";
+import { FileData } from "../interfaces/FileData";
 
 // Define types for the Textract result
 interface TextractBlock {
@@ -31,10 +32,14 @@ interface UploadScreenProps {
   ) => void;
 }
 
-type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History";
+type DocumentType = "Health Care Proxy" | "HIPAA" | "Medical History" | "Patient Intake Forms";
 
 function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const { showSidebar, user } = useSidebar();
+  const [selectedFile, setSelectedFile] = useState<FileData | null>(null); // sets to selected file
+  const requestedFile = user.files.filter((f) => f.isRequested) // returns a list of requested files
+  const handleSelect = (f: FileData) => { setSelectedFile(f) };
+
   const [file, setFile] = useState<File | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [selectedDocType, setSelectedDocType] =
@@ -136,12 +141,14 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
   const handleDocTypeSelect = (eventKey: string | null) => {
     if (eventKey) {
       setSelectedDocType(eventKey as DocumentType);
-      // Re-validate if a file is already selected
+  
       if (file) {
         validateDocument(file);
       }
     }
   };
+  
+  
 
   // Validation logic from DocumentValidator - updated to check based on document type
   const checkForKeywords = (
@@ -214,86 +221,88 @@ function UploadScreen({ toggleDisplay, onFileUpload }: UploadScreenProps) {
       </Toast.Header>
       <Toast.Body>
         <div className="d-flex gap-5">
-        <div
-          className="file-upload-container d-flex gap-4 justify-content-end mb-3"
-          style={{ marginTop: "20px" }}
-        >
-          <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
-            <Image
-              className="mb-2"
-              src={upload}
-              alt="upload"
-              width={26}
-              height={25}
-            />
-            <input
-              type="file"
-              id="file-upload"
-              accept="application/pdf,image/png,image/jpeg,.doc,.docx"
-              onChange={handleFileChange}
-              title="Click to upload a file"
-              style={{ width: "auto" }}
-            />
-          </div>
-        </div>
-
-        <div className="dropdowns d-flex flex-column gap-3 mb-3">
-          <Dropdown>
-            <Dropdown.Toggle id="dropdown-basic" className="shadow">
-              Doctor
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="shadow">
-              <Dropdown.Item eventKey="Doctor Xie">
-                Larry Glory Xie
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="Doctor Borda">
-                Isabella Borda
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="Doctor Maloney">
-                Roslyn Maloney
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Dropdown onSelect={handleDocTypeSelect}>
-            <Dropdown.Toggle id="dropdown-basic" className="shadow">
-              {selectedDocType}
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="shadow">
-              <Dropdown.Item eventKey="Health Care Proxy">
-                Health Care Proxy
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="HIPAA">HIPAA</Dropdown.Item>
-              <Dropdown.Item eventKey="Medical History">
-                Medical History
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Button
-            className="submit-btn"
-            onClick={handleSubmit}
-            disabled={!file || isValidating}
-            style={{
-              backgroundColor: "#274472",
-            }}
+          <div
+            className="file-upload-container d-flex gap-4 justify-content-end mb-3"
+            style={{ marginTop: "20px" }}
           >
-            {isValidating ? (
-              <>
-                <Spinner
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-                <span className="ms-2">Validating...</span>
-              </>
-            ) : (
-              "Submit"
-            )}
-          </Button>
-        </div>
+            <div className=" upload-pdf d-flex flex-column justify-content-center align-items-center">
+              <Image
+                className="mb-2"
+                src={upload}
+                alt="upload"
+                width={26}
+                height={25}
+              />
+              <input
+                type="file"
+                id="file-upload"
+                accept="application/pdf,image/png,image/jpeg,.doc,.docx"
+                onChange={handleFileChange}
+                title="Click to upload a file"
+                style={{ width: "auto" }}
+              />
+            </div>
+          </div>
+
+          <div className="dropdowns d-flex flex-column gap-3 mb-3">
+            <Dropdown onSelect={handleDocTypeSelect}>
+              <Dropdown.Toggle id="dropdown-basic" className="shadow">
+                {selectedFile ? selectedFile.name : 'Requested File'}
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="shadow">
+                {requestedFile.map((f) => (
+                  <Dropdown.Item
+                    key={f.id}
+                    eventKey={f.type}
+                    onClick={() => handleSelect(f)}
+                  >
+                    {f.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+
+            <input
+              type="text"
+              className="doctor-input shadow"
+              placeholder="Doctor"
+              disabled
+              value={selectedFile?.requestedBy || ''}
+            />
+
+            <input
+              type="text"
+              className="type-input shadow"
+              placeholder="File Type"
+              disabled
+              value={selectedFile?.type || ''}
+            />
+
+
+            <Button
+              className="submit-btn"
+              onClick={handleSubmit}
+              disabled={!file || isValidating}
+              style={{
+                backgroundColor: "#274472",
+              }}
+            >
+              {isValidating ? (
+                <>
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  <span className="ms-2">Validating...</span>
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+          </div>
         </div>
 
         {file && (

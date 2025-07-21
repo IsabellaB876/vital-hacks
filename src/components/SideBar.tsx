@@ -3,14 +3,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Link } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 import Home from "../assets/Home.svg";
-import Setting from "../assets/Setting.svg";
+import Setting from "../assets/prime_sign-out.svg";
 import Folder from "../assets/Folder.svg";
 import Account from "../assets/Account.svg";
 import { useSidebar } from "../context/appContext";
 import { useNavigate } from "react-router-dom";
 
 function SideBar() {
-  const { showSidebar, user } = useSidebar();
+  const { showSidebar, user, updateUserData } = useSidebar();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState("");
 
@@ -21,6 +21,18 @@ function SideBar() {
       setImageUrl(fullDataUrl);
     }
   }, []);
+
+  const handleSignOut = () => {
+    updateUserData("firstName", "");
+    updateUserData("lastName", "");
+    updateUserData("username", "");
+    updateUserData("role", "");
+    updateUserData("birthDate", "");
+    updateUserData("files", []);
+    updateUserData("photo", "");
+    updateUserData("users", []);
+    updateUserData("password", "");
+  };
 
   return (
     <div
@@ -41,7 +53,7 @@ function SideBar() {
           >
             <Image
               className="profile-img"
-              src={imageUrl ?? Account}
+              src={imageUrl || Account}
               alt="Profile"
               style={{
                 width: "50px",
@@ -97,9 +109,14 @@ function SideBar() {
               </Link>
             </div>
           </div>
-          <Link to="" id="setting" className="list-group-item">
+          <Link
+            to="/Account"
+            id="setting"
+            className="list-group-item"
+            onClick={handleSignOut}
+          >
             {" "}
-            <Image className="setting" src={Setting} alt="setting" /> Settings
+            <Image className="setting" src={Setting} alt="signout" /> Sign Out
           </Link>
         </div>
       )}

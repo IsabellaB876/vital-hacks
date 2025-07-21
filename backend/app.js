@@ -47,10 +47,14 @@ const database = client.db('user-storage');
 
 async function run(){
     try{
+        
         await client.connect();
+        
         console.log("Connected to MongoDB");
         await client.db("admin").command({ping:1});
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } catch(error) {
+        console.error(error);
     } finally{
         //we don't want the connection to immediately close so we'll just pass for now.
         return;
@@ -144,9 +148,9 @@ app.patch("/api/editFile",async (request, response) => {
         }
 
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
@@ -202,9 +206,9 @@ app.patch("/api/editUser",async (request, response)=>{
             throw new Error("user not found!");
         }
 
-        for (const edit in requestEdits) {
-            const key = requestEdits[edit].key;
-            const value = requestEdits[edit].value;
+        for (const edit of requestEdits) {
+            const key = edit.key;
+            const value = edit.value;
             
             const update = {
                 $set: {
@@ -440,7 +444,7 @@ app.get("/api/getUser",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - I don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 files:fileArray,
@@ -550,7 +554,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                password:result.password,
+                // password:result.password, - don't think we should return passwords - AT
                 role: result.role,
                 birthDate: result.birthDate,
                 users: result.users, // This is the array of users that the user has requested files from
@@ -558,6 +562,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
             }
       });
     } catch (error) {
+        // next(error);
         console.error('Error getting public user: ', error);
         response.status(500).send ({
             message: 'Internal error when getting public user'
@@ -633,6 +638,7 @@ app.post('/api/createAccount', async (request, response) => {
             message: 'Account created successfully!'
         });
     } catch (error) {
+        // next(error);
         console.error('Error creating account: ', error);
         response.status(500).send ({
             message: 'Internal error when creating account'
@@ -718,3 +724,98 @@ app.get("/api/verifyAccessToken", async(request,response)=>{
         response.status(401).send({ message: "Invalid or expired access token." });
     }
 })
+app.get('/api/search', async (request, response) => {
+    try {
+        const requestUsername = request.headers["username"];
+        const searchQuery = request.query.q;
+        
+        if (!requestUsername) {
+            return response.status(400).send({
+                message: 'Username is required in headers'
+            });
+        }
+        
+        if (!searchQuery || searchQuery.trim() === '') {
+            return response.status(200).send({
+                message: 'Search results retrieved successfully!',
+                results: []
+            });
+        }
+
+        const collection = database.collection("user-1");
+        const user = await collection.findOne({ username: requestUsername });
+
+        if (!user) {
+            return response.status(404).send({
+                message: 'User not found!'
+            });
+        }
+
+        const searchResults = [];
+        const queryLowerCase = searchQuery.toLowerCase().trim();
+
+        if (user.files && user.files.length > 0) {
+            for (const file of user.files) {
+                const nameMatch = file.name && file.name.toLowerCase().includes(queryLowerCase);
+                const descriptionMatch = file.description && file.description.toLowerCase().includes(queryLowerCase);
+                const typeMatch = file.type && file.type.toLowerCase().includes(queryLowerCase);
+                const requestedByMatch = file.requestedBy && file.requestedBy.toLowerCase().includes(queryLowerCase);
+                const requestedForMatch = file.requestedFor && file.requestedFor.toLowerCase().includes(queryLowerCase);
+
+                if (nameMatch || descriptionMatch || typeMatch || requestedByMatch || requestedForMatch) {
+                    searchResults.push({
+                        id: file.id,
+                        name: file.name,
+                        description: file.description,
+                        date: file.due_date,
+                        type: file.type,
+                        isRequested: file.isRequested,
+                        requestedBy: file.requestedBy,
+                        requestedFor: file.requestedFor,
+                        matchedFields: {
+                            name: nameMatch,
+                            description: descriptionMatch,
+                            type: typeMatch,
+                            requestedBy: requestedByMatch,
+                            requestedFor: requestedForMatch
+                        }
+                    });
+                }
+            }
+        }
+
+        searchResults.sort((a, b) => {
+            const aExactName = a.name && a.name.toLowerCase() === queryLowerCase;
+            const bExactName = b.name && b.name.toLowerCase() === queryLowerCase;
+            
+            if (aExactName && !bExactName) return -1;
+            
+            if (!aExactName && bExactName) return 1;
+            
+            return (a.name || '').localeCompare(b.name || '');
+        });
+
+        response.status(200).send({
+            message: 'Search results retrieved successfully!',
+            query: searchQuery,
+            results: searchResults,
+            totalCount: searchResults.length
+        });
+
+    } catch (error) {
+        // next(error);
+        console.error('Error performing search:', error);
+        response.status(500).send({
+            message: 'Internal server error during search'
+        });
+    }
+});
+
+// new error handler - simplify redundant code (base code only for now)
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).send({
+        message: err.message || 'Internal Server Error',
+    });
+});

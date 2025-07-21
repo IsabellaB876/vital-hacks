@@ -2,6 +2,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { UserData, userDataDefault } from "../interfaces/UserData";
 
 interface ContextType {
+  //role: string;
   showSidebar: boolean;
   setShowSidebar: (show: boolean) => void;
   toggleSidebar: () => void;
@@ -11,6 +12,8 @@ interface ContextType {
     field: K,
     value: UserData[K]
   ) => void;
+  editMode: boolean;
+  toggleEditMode: () => void;
 }
 
 const Context = createContext<ContextType | undefined>(undefined);
@@ -19,6 +22,10 @@ export const Provider = ({ children }: { children: ReactNode }) => {
   const [showSidebar, setShowSidebar] = useState(true);
 
   const toggleSidebar = () => setShowSidebar((prev) => !prev);
+
+  const [editMode, setEditMode] = useState(false);
+
+  const toggleEditMode = () => setEditMode((prev) => !prev);
 
   const [user, setUser] = useState<UserData>(userDataDefault);
 
@@ -39,6 +46,8 @@ export const Provider = ({ children }: { children: ReactNode }) => {
         user,
         setUser,
         updateUserData,
+        editMode,
+        toggleEditMode,
       }}
     >
       {children}

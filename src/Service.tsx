@@ -45,3 +45,55 @@ export const createUser = async (user: UserData) => {
     throw error;
   }
 };
+
+export async function uploadPhoto(
+  file: File,
+  username: string
+): Promise<{ photo: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("username", username);
+
+  const response = await fetch("http://localhost:3000/api/uploadPhoto", {
+    method: "PATCH",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`Upload failed: ${message}`);
+  }
+
+  const result = await response.json();
+
+  return result;
+}
+
+export const editUser = async (
+  username: string,
+  edits: { key: string; value: any }[]
+): Promise<{ message: string }> => {
+  try {
+    const res = await fetch("http://localhost:3000/api/editUser", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        edits,
+      }),
+    });
+
+    if (!res.ok) {
+      const message = await res.text();
+      throw new Error(`Edit failed: ${message}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Error editing user:", error);
+    throw error;
+  }
+};
