@@ -10,6 +10,8 @@ function PatientHome() {
   const { showSidebar, user, editMode, toggleEditMode, updateUserData } =
     useSidebar();
   const [people, setPeople] = useState<UserData[]>([]);
+  const [newUser, setNewUser] = useState("");
+  const [invalidUser, setInvalidUser] = useState("");
 
   useEffect(() => {
     async function fetchPeople() {
@@ -61,7 +63,6 @@ function PatientHome() {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     try {
-      console.log(e.target.value);
       const result = await editUser(user.username, [
         { key: "birthDate", value: e.target.value },
       ]);
@@ -69,7 +70,28 @@ function PatientHome() {
         updateUserData("birthDate", e.target.value);
       }
     } catch (err) {
-      console.error("Failed to updat user data", err);
+      console.error("Failed to update user data", err);
+    }
+  };
+
+  const handleAddUser = async () => {
+    if (!newUser.trim()) return;
+    try {
+      const userData = await getUser(newUser);
+      if (!userData || !userData.user) {
+        setInvalidUser("User not found");
+        return;
+      }
+      const result = await editUser(user.username, [
+        { key: "users", value: [...user.users, newUser] },
+      ]);
+      if (result) {
+        updateUserData("users", [...user.users, newUser]);
+        setNewUser("");
+        setInvalidUser("");
+      }
+    } catch (err) {
+      console.error("Failed to update user data", err);
     }
   };
 
@@ -168,8 +190,17 @@ function PatientHome() {
                     key={person.username}
                     style={{ display: "block", gap: "10px" }}
                   >
-                    <Image src={photoSrc} alt="Profile" />
-                    {person.firstName} {person.lastName}
+                    <Image
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      src={photoSrc}
+                      alt="Profile"
+                    />
+                    {} {person.firstName} {person.lastName}
                   </span>
                 );
               })}
@@ -234,9 +265,6 @@ function PatientHome() {
                     />
                   );
                 })}
-                <a href="">
-                  + Add {user.role == "Patient" ? "Doctor" : "Patient"}
-                </a>
               </div>
             </div>
             <h2>Personal Information</h2>
@@ -302,11 +330,31 @@ function PatientHome() {
                     key={person.username}
                     style={{ display: "block", gap: "10px" }}
                   >
-                    <Image src={photoSrc} alt="Profile" />
-                    {person.firstName} {person.lastName}
+                    <Image
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                      src={photoSrc}
+                      alt="Profile"
+                    />
+                    {} {person.firstName} {person.lastName}
                   </span>
                 );
               })}
+              <div className="d-flex gap-2">
+                <input
+                  type="text"
+                  placeholder="username"
+                  className="input"
+                  value={newUser}
+                  onChange={(e) => setNewUser(e.target.value)}
+                ></input>
+                <Button onClick={handleAddUser}>Add</Button>
+              </div>
+              <h3 style={{ color: "red" }}>{invalidUser}</h3>
             </h2>
             <Button onClick={toggleEditMode}>Done</Button>
           </Stack>
