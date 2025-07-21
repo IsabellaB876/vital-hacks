@@ -14,18 +14,17 @@ import DocNavBar from "./DocNavBar";
 
 function NavBar() {
   const [display, setDisplay] = useState<boolean>(false);
-  const { toggleSidebar, toggleEditMode } = useSidebar();
+  const { toggleSidebar, toggleEditMode, user } = useSidebar();
 
   const toggleDisplay = () => setDisplay(!display);
 
   const location = useLocation();
   const isProfile = location.pathname === "/Profile";
-  const user = useSidebar();
 
   if (user.role === "Doctor") {
     return <DocNavBar />;
   }
-  
+
   return (
     <>
       <Navbar

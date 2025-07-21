@@ -3,11 +3,12 @@ import { Stack, Image, Button } from "react-bootstrap";
 import NavBar from "./NavBar";
 import { useSidebar } from "../context/appContext";
 import Account from "../assets/Account.svg";
-import { getUser, uploadPhoto } from "../Service";
+import { getUser, uploadPhoto, editUser } from "../Service";
 import { UserData } from "../interfaces/UserData";
 
 function PatientHome() {
-  const { showSidebar, user, editMode, updateUserData } = useSidebar();
+  const { showSidebar, user, editMode, toggleEditMode, updateUserData } =
+    useSidebar();
   const [people, setPeople] = useState<UserData[]>([]);
 
   useEffect(() => {
@@ -53,6 +54,22 @@ function PatientHome() {
       }
     } catch (err) {
       console.error("Failed to upload photo", err);
+    }
+  };
+
+  const handleBirthDateChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      console.log(e.target.value);
+      const result = await editUser(user.username, [
+        { key: "birthDate", value: e.target.value },
+      ]);
+      if (result) {
+        updateUserData("birthDate", e.target.value);
+      }
+    } catch (err) {
+      console.error("Failed to updat user data", err);
     }
   };
 
@@ -242,8 +259,9 @@ function PatientHome() {
                 </h2>
                 <input
                   type="text"
-                  placeholder={user.birthDate}
+                  placeholder={user.birthDate || "MM/DD/YYYY"}
                   className="input"
+                  onChange={handleBirthDateChange}
                 />
               </Stack>
             </div>
@@ -290,7 +308,7 @@ function PatientHome() {
                 );
               })}
             </h2>
-            <Button>Confirm</Button>
+            <Button onClick={toggleEditMode}>Done</Button>
           </Stack>
         </div>
       )}

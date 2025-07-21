@@ -68,3 +68,32 @@ export async function uploadPhoto(
 
   return result;
 }
+
+export const editUser = async (
+  username: string,
+  edits: { key: string; value: any }[]
+): Promise<{ message: string }> => {
+  try {
+    const res = await fetch("http://localhost:3000/api/editUser", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        edits,
+      }),
+    });
+
+    if (!res.ok) {
+      const message = await res.text();
+      throw new Error(`Edit failed: ${message}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Error editing user:", error);
+    throw error;
+  }
+};

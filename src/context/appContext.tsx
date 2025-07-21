@@ -2,7 +2,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { UserData, userDataDefault } from "../interfaces/UserData";
 
 interface ContextType {
-  role: string;
+  //role: string;
   showSidebar: boolean;
   setShowSidebar: (show: boolean) => void;
   toggleSidebar: () => void;
