@@ -1,5 +1,5 @@
 const defaultPort = 3000;
-//import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -15,6 +15,9 @@ const app = express();
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
 app.use(cors());
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 
 const DB_USERNAME = process.env.db_username || '';
@@ -107,7 +110,9 @@ app.listen(defaultPort, () => {
 //=====================================================================================
 
 
-
+const ACCESS_TOKEN_LIFETIME = '15m';
+const REFRESH_TOKEN_LIFETIME = '30d'; // 30 days
+const ACCESS_TOKEN_MAX_AGE_MS = 1000 * 60 * 15;
 //this is where you can add your routes
 
 //expected request body:
@@ -565,17 +570,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
     }
 })
 
-/*
-expected request body:
-{
-    "token": example token here
-}
-*/
-/*app.post("/api/verifyToken", async(request,response)=>{
-    try{
-        requestToken = request.token;
-    }
-})*/
+
 
 /*
 expected request body:
@@ -600,7 +595,7 @@ app.post('/api/createAccount', async (request, response) => {
         const requestLastName = requestBody.lastName;
         const requestUsername = requestBody.username;
         const requestPassword = requestBody.password;
-        const requestBirthDate = requestBody.birthDate
+        const requestBirthDate = requestBody.birthDate;
 
         const collection = await database.collection("user-1");
 
@@ -652,6 +647,83 @@ app.post('/api/createAccount', async (request, response) => {
     }
 });
 
+
+/*
+tested!
+expected request body:
+{
+   username:"jimbob",
+   password:"password"
+}
+*/
+app.post("/api/generateAccessToken", async(request,response)=>{
+    try{
+        const requestBody = request.body
+        const requestUsername = requestBody.username
+        const requestPassword = requestBody.password
+
+        const collection = await database.collection("user-1");
+
+        const existingUser = await collection.findOne({ username: requestUsername });
+        console.log(existingUser)
+
+        const databasePassword = existingUser.password;
+        if (databasePassword !== requestPassword){
+            throw new Error("Invalid Username or Password.")
+        }
+
+        // Create a token that expires in 1 hour
+        const access_token = jwt.sign(
+            { username: requestUsername,
+                password: existingUser.password
+             },      // The payload
+            process.env.ACCESS_SECRET, //we set the access key here
+            { expiresIn: '15m' }      
+        );
+
+        response.cookie('accessToken', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: ACCESS_TOKEN_MAX_AGE_MS //matches the JWT's lifetime
+        });
+
+        response.status(200).send({
+            message: 'Access Token generated successfully!'
+        });
+    } catch (error) {
+        console.error('Error generating access token: ', error);
+        response.status(500).send ({
+            message: 'Internal error when generating access token'
+        });
+        return;
+    }
+})
+//No required  requestBody, we extract directly from the user's cookies.
+//tested!
+app.get("/api/verifyAccessToken", async(request,response)=>{
+    const accessToken = request.cookies.accessToken;
+    
+    if (!accessToken){
+        return response.status(401).send({ message: "No access token found." });
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken,process.env.ACCESS_SECRET)
+
+        response.status(200).send({
+            message: "Access token verified.",
+            username: decoded.username,
+            password: decoded.password
+        })
+
+
+
+
+    }catch (error) {
+        response.status(401).send({ message: "Invalid or expired access token." });
+    }
+})
 app.get('/api/search', async (request, response) => {
     try {
         const requestUsername = request.headers["username"];
