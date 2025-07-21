@@ -705,7 +705,10 @@ app.get("/api/verifyAccessToken", async(request,response)=>{
     const accessToken = request.cookies.accessToken;
     
     if (!accessToken){
-        return response.status(401).send({ message: "No access token found." });
+        return response.status(401).send({ message: "No access token found.",
+            username:"",
+            password:""
+         });
     }
 
     try {
@@ -721,7 +724,10 @@ app.get("/api/verifyAccessToken", async(request,response)=>{
 
 
     }catch (error) {
-        response.status(401).send({ message: "Invalid or expired access token." });
+        response.status(401).send({ message: "Invalid or expired access token.",
+            username:"",
+            password:""
+        });
     }
 })
 app.get('/api/search', async (request, response) => {
