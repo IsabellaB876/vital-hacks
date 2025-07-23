@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Image, Spinner, Stack } from "react-bootstrap";
 import { useSidebar } from "../../context/appContext";
-import { getUser } from "../../Service";
+import { getUser, generateToken, verifyToken } from "../../Service";
 import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -15,6 +15,16 @@ function Login() {
   const [invalid, setInvalid] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (user && user.username && user.role) {
+      if (user.role === "Patient") {
+        navigate("/PatientHome");
+      } else {
+        navigate("/DoctorHome");
+      }
+    }
+  }, [user, navigate]);
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -45,8 +55,11 @@ function Login() {
 
       // Only navigate once all updates are done
       if (userData.user.role === "Patient") {
+        const data = await generateToken(username, password);
+        console.log("TOKEN: " + data);
         navigate("/PatientHome");
       } else {
+        await generateToken(username, password);
         navigate("/DoctorHome");
       }
     } catch (error) {

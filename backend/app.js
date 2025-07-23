@@ -14,7 +14,17 @@ const app = express();
 
 //automatically parse any incoming requests into a JSON format
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (/^http:\/\/localhost:\d+$/.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true
+}));
+
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -444,7 +454,7 @@ app.get("/api/getUser",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                // password:result.password, - I don't think we should return passwords - AT
+                password:result.password,
                 role: result.role,
                 birthDate: result.birthDate,
                 files:fileArray,
@@ -554,7 +564,7 @@ app.get("/api/getUserPublic",async (request,response)=>{
                 firstName: result.firstName,
                 lastName: result.lastName,
                 username: result.username,
-                // password:result.password, - don't think we should return passwords - AT
+                password: result.password,
                 role: result.role,
                 birthDate: result.birthDate,
                 users: result.users, // This is the array of users that the user has requested files from
@@ -684,7 +694,7 @@ app.post("/api/generateAccessToken", async(request,response)=>{
         response.cookie('accessToken', access_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: ACCESS_TOKEN_MAX_AGE_MS //matches the JWT's lifetime
         });
 

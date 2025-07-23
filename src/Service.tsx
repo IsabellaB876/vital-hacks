@@ -97,3 +97,60 @@ export const editUser = async (
     throw error;
   }
 };
+
+export const generateToken = async (
+  username: string,
+  password: string
+): Promise<{ message: string }> => {
+  try {
+    const res = await fetch("http://localhost:3000/api/generateAccessToken", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    if (!res.ok) {
+      const message = await res.text();
+      throw new Error(`Failed to generate token: ${message}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to generate token:", error);
+    throw error;
+  }
+};
+
+export const verifyToken = async (): Promise<{
+  message: string;
+  username: string;
+  password: string;
+}> => {
+  try {
+    const res = await fetch("http://localhost:3000/api/verifyAccessToken", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const message = await res.text();
+      throw new Error(`Failed to verify token: ${message}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to verify token:", error);
+    throw error;
+  }
+};
