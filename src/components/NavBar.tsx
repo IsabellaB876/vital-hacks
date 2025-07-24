@@ -86,6 +86,29 @@ function NavBar() {
     } finally {
       setIsSearching(false);
     }
+  };
+
+  // handle changes to search text
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // performs search with every key clicked
+    performSearch(query);
+  };
+
+  // handle search submission
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    performSearch(searchQuery);
+  }
+
+  // handle clicking on a search result
+  const handleResultClick = (result: SearchResult) => {
+    console.log('Selected file: ', result);
+    setShowResults(false);
+    setSearchQuery(result.name);
+    // navigate(`/file/${result.id}` - navigate to specific file - not correct yet
   }
 
   if (user.role === "Doctor") {
