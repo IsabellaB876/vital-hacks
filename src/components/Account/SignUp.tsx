@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Image, Spinner, Stack } from "react-bootstrap";
 import { useSidebar } from "../../context/appContext";
 import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
-import { createUser, generateToken } from "../../Service";
+import { createUser } from "../../Service";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Signup() {
-  const { updateUserData, user } = useSidebar();
+  const { updateUserData } = useSidebar();
   const [role, setRole] = useState("Patient");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,16 +29,6 @@ function Signup() {
     setRole(options[index]);
     onToggle?.(options[index]);
   };
-
-  useEffect(() => {
-    if (user && user.username && user.role) {
-      if (user.role === "Patient") {
-        navigate("/PatientHome");
-      } else {
-        navigate("/DoctorHome");
-      }
-    }
-  }, [user, navigate]);
 
   const handleSignup = async () => {
     if (!firstName || !lastName || !username || !password || !role) {
@@ -62,8 +52,6 @@ function Signup() {
       const userData = await createUser(user);
 
       if (userData) {
-        generateToken(username, password);
-
         setLoading(true);
         updateUserData("firstName", firstName);
         updateUserData("lastName", lastName);
@@ -175,11 +163,9 @@ function Signup() {
                 role="button"
                 tabIndex={0}
                 onClick={() => setShowPassword(!showPassword)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") setShowPassword(!showPassword);
-                }}
+                onKeyPress={e => { if (e.key === "Enter") setShowPassword(!showPassword); }}
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </span>
           </div>

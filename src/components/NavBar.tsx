@@ -7,19 +7,86 @@ import uploadIcon from "../assets/WhiteUploadIcon.svg";
 import taskAdd from "../assets/taskAdd.svg";
 import UploadScreen from "./UploadScreen";
 import SideBar from "./SideBar";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSidebar } from "../context/appContext";
 import { useLocation } from "react-router-dom";
 import DocNavBar from "./DocNavBar";
 
+interface SearchResult {
+  id: number;
+  name: string;
+  description: string;
+  date: string;
+  type: string;
+  isRequested: boolean;
+  requestedBy: string;
+  requestedFor: string;
+  matchedFields: {
+    name: boolean;
+    description: string;
+    type: string;
+    requestedBy: string;
+    requestedFor: string;
+  };
+}
+
+interface SearchResponse {
+  message: string;
+  query: string;
+  results: SearchResult[];
+  totalCount: number;
+}
+
 function NavBar() {
   const [display, setDisplay] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
   const { toggleSidebar, toggleEditMode, user } = useSidebar();
 
   const toggleDisplay = () => setDisplay(!display);
 
   const location = useLocation();
   const isProfile = location.pathname === "/Profile";
+
+  // function for immediate search
+  const performSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+        method: 'GET',
+        headers: {
+          'username': user.username,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data: SearchResponse = await response.json();
+        setSearchResults(data.results);
+        setShowResults(true);
+      } else {
+        console.error('Search failed: ', response.statusText);
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    } catch (error) {
+      console.error('Search error: ', error);
+      setSearchResults([]);
+      setShowResults(false);
+    } finally {
+      setIsSearching(false);
+    }
+  }
 
   if (user.role === "Doctor") {
     return <DocNavBar />;
