@@ -43,7 +43,6 @@ function NavBar() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const { toggleSidebar, toggleEditMode, user } = useSidebar();
 
@@ -140,15 +139,113 @@ function NavBar() {
         </div>
 
         <Container className="d-flex justify-content-center align-items-center gap-5">
-          {/* Search Bar */}
-          <form className="d-flex w-50">
-            <input
-              className="search-bar form-control shadow"
-              type="search"
-              placeholder="Search for anything..."
-              aria-label="Search"
-            />
-          </form>
+          {/* Simple Search Bar */}
+          <div className="search-container position-relative w-50">
+            <form className="d-flex" onSubmit={handleSearchSubmit}>
+              <div className="position-relative w-100">
+                <input
+                  className="search-bar form-control shadow"
+                  type="search"
+                  placeholder="Search for files, descriptions, types..."
+                  aria-label="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onFocus={() => searchResults.length > 0 && setShowResults(true)}
+                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                />
+                
+                {/* Loading indicator */}
+                {isSearching && (
+                  <div 
+                    className="position-absolute end-0 top-50 translate-middle-y me-3"
+                    style={{ zIndex: 5 }}
+                  >
+                    <div className="spinner-border spinner-border-sm text-primary" role="status">
+                      <span className="visually-hidden">Searching...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </form>
+
+            {/* Search Results Dropdown */}
+            {showResults && (
+              <div 
+                className="search-results position-absolute w-100 bg-white border rounded shadow-lg mt-1"
+                style={{ 
+                  zIndex: 1000, 
+                  maxHeight: '400px', 
+                  overflowY: 'auto',
+                  top: '100%'
+                }}
+              >
+                {searchResults.length > 0 ? (
+                  <>
+                    <div className="px-3 py-2 border-bottom bg-light">
+                      <small className="text-muted">
+                        Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                      </small>
+                    </div>
+                    {searchResults.map((result) => (
+                      <div
+                        key={result.id}
+                        className="search-result-item px-3 py-2 border-bottom cursor-pointer hover-bg-light"
+                        onClick={() => handleResultClick(result)}
+                        style={{ cursor: 'pointer' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f8f9fa';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div className="flex-grow-1">
+                            <div className="fw-bold text-primary mb-1">
+                              {result.name}
+                            </div>
+                            {result.description && (
+                              <div className="text-muted small mb-1">
+                                {result.description}
+                              </div>
+                            )}
+                            <div className="d-flex gap-2 align-items-center">
+                              <span className={`badge ${result.type === 'HIPAA' ? 'bg-danger' : 'bg-info'}`}>
+                                {result.type}
+                              </span>
+                              {result.isRequested && (
+                                <span className="badge bg-warning text-dark">
+                                  Requested
+                                </span>
+                              )}
+                              <small className="text-muted">
+                                Due: {result.date}
+                              </small>
+                            </div>
+                          </div>
+                          <div className="text-end">
+                            {result.requestedBy && (
+                              <small className="text-muted d-block">
+                                By: {result.requestedBy}
+                              </small>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="px-3 py-4 text-center text-muted">
+                    <div className="mb-2">
+                      <i className="bi bi-search fs-1 text-muted"></i>
+                    </div>
+                    <div>No files found matching "{searchQuery}"</div>
+                    <small>Try searching for file names, descriptions, or types</small>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Upload and Request Buttons */}
           <div className="d-flex gap-5 ms-5">
