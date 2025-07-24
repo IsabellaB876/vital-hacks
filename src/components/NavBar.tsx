@@ -61,7 +61,7 @@ function NavBar() {
 
     setIsSearching(true);
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+      const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(query)}`, {
         method: 'GET',
         headers: {
           'username': user.username,
