@@ -23,10 +23,10 @@ interface SearchResult {
   requestedFor: string;
   matchedFields: {
     name: boolean;
-    description: string;
-    type: string;
-    requestedBy: string;
-    requestedFor: string;
+    description: boolean;
+    type: boolean;
+    requestedBy: boolean;
+    requestedFor: boolean;
   };
 }
 
