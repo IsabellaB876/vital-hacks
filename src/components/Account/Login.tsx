@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Image, Spinner, Stack } from "react-bootstrap";
 import { useSidebar } from "../../context/appContext";
-import { getUser, generateToken, verifyToken } from "../../Service";
+import { getUser, generateToken } from "../../Service";
 import loginImg from "../../assets/login-img.svg";
 import logo from "../../assets/logo.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";

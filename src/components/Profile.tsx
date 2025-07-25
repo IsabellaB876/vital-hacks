@@ -38,14 +38,6 @@ function PatientHome() {
     }
   }, [user]);
 
-  /*useEffect(() => {
-    const rawBase64Data = user.photo ?? "";
-    if (rawBase64Data) {
-      const fullDataUrl = `data:image/png;base64,${rawBase64Data}`;
-      setImageUrl(fullDataUrl);
-    }
-  }, []);*/
-
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -92,6 +84,17 @@ function PatientHome() {
       }
     } catch (err) {
       console.error("Failed to update user data", err);
+    }
+  };
+
+  const handleDeleteUser = async (deletedUser: string) => {
+    const updatedUsers = user.users.filter((u) => u !== deletedUser);
+    const result = await editUser(user.username, [
+      { key: "users", value: [...user.users, newUser] },
+    ]);
+    if (result) {
+      updateUserData("users", updatedUsers);
+      console.log("Connection deleted: " + updatedUsers);
     }
   };
 
@@ -340,7 +343,13 @@ function PatientHome() {
                       src={photoSrc}
                       alt="Profile"
                     />
-                    {} {person.firstName} {person.lastName}
+                    {} {person.firstName} {person.lastName} {}
+                    <Button
+                      onClick={() => handleDeleteUser(person.username)}
+                      className="btn btn-link"
+                    >
+                      x
+                    </Button>
                   </span>
                 );
               })}
