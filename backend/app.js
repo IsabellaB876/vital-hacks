@@ -658,6 +658,62 @@ app.post('/api/createAccount', async (request, response) => {
 });
 
 
+app.post('/api/createFile', async (request, response) => {
+
+    try {
+        const requestBody = await request.body;
+        console.log(request.get('Content-Type'));
+
+        const requestName = requestBody.name;
+        const requestDescription = requestBody.description;
+        const requestDate = requestBody.date;
+        const requestType = requestBody.type;
+        const requestIsRequested = requestBody.isRequested;
+        const requestRequestedBy = requestBody.requestedBy;
+        const requestRequestedFor = requestBody.requestedFor;
+
+        const collection = await database.collection("user-1");
+
+
+        if (requestName == null || requestDescription == null || requestDate == null 
+            || requestType == null || requestRequestedFor == null || requestRequestedBy == null) {
+                response.status(400).send({
+                    message: "Missing required fields!"
+                });
+                return;
+            }
+
+        // Create new file document
+        const newFile = {
+            name: requestName,
+            description: requestDescription,
+            date: requestDate,
+            type: requestType,
+            isRequested: true,
+            requestedBy: requestRequestedBy,
+            // requestedFor: requestRequestedFor
+
+
+        };
+
+        await collection.insertOne(newFile);
+
+        
+
+        response.status(200).send({
+            message: 'File created successfully!'
+        });
+    } catch (error) {
+        // next(error);
+        console.error('Error creating file: ', error);
+        response.status(500).send ({
+            message: 'Internal error when creating file'
+        });
+        return;
+    }
+});
+
+
 /*
 tested!
 expected request body:

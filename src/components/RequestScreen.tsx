@@ -3,6 +3,7 @@ import Toast from "react-bootstrap/Toast";
 import { Button, Form } from "react-bootstrap";
 import { UserData } from "../interfaces/UserData";
 import { useSidebar } from "../context/appContext";
+import { createFile } from "../Service";
 // import { FileData } from "../interfaces/FileData";
 
 interface RequestScreenProps {
@@ -16,13 +17,19 @@ interface RequestScreenProps {
 
 function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
   const [selectedDocType, setSelectedDocType] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>("");
 
-  const [customDocType, setCustomDocType] = useState<string>("");
   const { user } = useSidebar();
-  const [selectedPatient] = useState<UserData | null>(null);;
+  const { updateFile, file } = useSidebar();
+  const [selectedPatient] = useState<UserData | null>(null);
   const PatientList = user.users;
+
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [customDocType, setCustomDocType] = useState("");
+  const [name, setName] = useState("");
+  // const [isRequested, setRequested] = useState("");
+  // const [by, setBy] = useState("");
+  // const [to, setTo] = useState("");
 
   // define document list
   const medDocList = [
@@ -53,91 +60,131 @@ function RequestScreen({ toggleDisplay, onSubmit }: RequestScreenProps) {
 
   // Handle form submission
   const handleSubmit = async () => {
-    // Call the onSubmit callback with current selection
-    if (onSubmit) {
-      // If there's a custom document type, use that instead of the dropdown selection
-      const finalDocType = customDocType.trim()
-        ? customDocType
-        : selectedDocType;
-      onSubmit(finalDocType, true, "Selection submitted successfully");
+    const finalDocType = customDocType.trim() ? customDocType : selectedDocType;
+
+
+    if (!finalDocType || !name || !selectedPatient || !description) {
+      alert("Please fill out all required fields.");
+      return;
+    }
+
+    const file = {
+      name,
+      file: null, 
+      description,
+      date,
+      type: finalDocType,
+      isRequested: true,
+      requestedBy: user,
+      // requestedFor: selectedPatient,
+    };
+
+    try {
+      const fileData = await createFile(file);
+
+      if (fileData) {
+        updateFile("name", name);
+        updateFile("description", description);
+        updateFile("date", date);
+        updateFile("type", finalDocType);
+        updateFile("isRequested", true);
+        updateFile("file", null);
+        updateFile("requestedBy", user);
+        updateFile("requestedFor", selectedPatient);
+      }
+
+      if (onSubmit) {
+        onSubmit(finalDocType, true, "Selection submitted successfully");
+      }
     }
   };
 
-  return (
-    <Toast onClose={toggleDisplay} show={true}>
-      <Toast.Header>
-        <strong className="me-auto">Select Documents to Request</strong>
-      </Toast.Header>
-      <Toast.Body>
-        <div className="mb-3">
-          <Form.Group className="mb-3">
-            <Form.Label>Select from predefined documents</Form.Label>
-            <Form.Select
-              aria-label="Select document type"
-              value={selectedDocType}
-              onChange={handleDocTypeSelect}
-            >
-              <option value="">Select a document</option>
-              {medDocList.map((doc) => (
-                <option key={doc.Id} value={doc.Doc}>
-                  {doc.Doc}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Or enter a custom document type</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter custom document type here"
-              value={customDocType}
-              onChange={handleCustomDocType}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>{selectedPatient ? selectedPatient.firstName : 'Select a Patient'}</Form.Label>
-            <Form.Select
-              aria-label="Select a Patient"
-            >
-              <option value="">Select a Patient</option>
-              {PatientList.map((p) => (
-                <option>
-                  {p}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+    return (
+      <Toast onClose={toggleDisplay} show={true}>
+        <Toast.Header>
+          <strong className="me-auto">Select Documents to Request</strong>
+        </Toast.Header>
+        <Toast.Body>
+          <div className="mb-3">
+            <Form.Group>
+              <Form.Label>Enter a Name for Document</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter custom document name here"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Group>
 
 
-          <Form.Group className="mb-3">
-            <Form.Label>Enter a Description</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter a description of the document"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Select from predefined documents</Form.Label>
+              <Form.Select
+                aria-label="Select document type"
+                value={selectedDocType}
+                onChange={handleDocTypeSelect}
+              >
+                <option value="">Select a document</option>
+                {medDocList.map((doc) => (
+                  <option key={doc.Id} value={doc.Doc}>
+                    {doc.Doc}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Enter Due Date</Form.Label>
-            <Form.Control
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Or enter a custom document type</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter custom document type here"
+                value={customDocType}
+                onChange={handleCustomDocType}
+              />
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>{selectedPatient ? selectedPatient.firstName : 'Select a Patient'}</Form.Label>
+              <Form.Select
+                aria-label="Select a Patient"
+              >
+                <option value="">Select a Patient</option>
+                {PatientList.map((p) => (
+                  <option>
+                    {p}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
 
-          <div className="d-flex justify-content-end">
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Form.Group className="mb-3">
+              <Form.Label>Enter a Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter a description of the document"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Enter Due Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </Form.Group>
+
+
+            <div className="d-flex justify-content-end">
+              <Button onClick={handleSubmit}>Submit</Button>
+            </div>
           </div>
-        </div>
-      </Toast.Body>
-    </Toast>
-  );
-}
+        </Toast.Body>
+      </Toast>
+    );
+  }
 
-export default RequestScreen;
+  export default RequestScreen;

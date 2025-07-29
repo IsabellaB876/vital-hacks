@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { UserData, userDataDefault } from "../interfaces/UserData";
+import { FileData } from "../interfaces/FileData";
 
 interface ContextType {
   //role: string;
@@ -7,6 +8,7 @@ interface ContextType {
   setShowSidebar: (show: boolean) => void;
   toggleSidebar: () => void;
   user: UserData;
+  file: FileData;
   setUser: React.Dispatch<React.SetStateAction<UserData>>;
   updateUserData: <K extends keyof UserData>(
     field: K,

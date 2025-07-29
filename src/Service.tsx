@@ -1,3 +1,4 @@
+import { FileData } from "./interfaces/FileData";
 import { UserData } from "./interfaces/UserData";
 
 export const getUser = async (username: string) => {
@@ -45,6 +46,32 @@ export const createUser = async (user: UserData) => {
     throw error;
   }
 };
+
+export const createFile = async (file: FileData) => {
+  try {
+    const res = await fetch("http://localhost:3000/api/createFile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(file),
+    });
+
+    if (res.status === 409) {
+      throw new Error("File already exists!");
+    }
+
+    if (!res.ok) throw new Error("Failed to create file");
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating file:", error);
+    throw error;
+  }
+};
+
+
 
 export async function uploadPhoto(
   file: File,
